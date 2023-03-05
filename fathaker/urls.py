@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('radio/', include('radio.urls', namespace='radio'), name='radio'),
     path('verses/', include('verses.urls', namespace='verses'), name='verses'),
+    path('api/verses/', include('verses.api.urls', namespace='verses_api'), name='verses_api'),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
