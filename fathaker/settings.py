@@ -42,6 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Third Party apps
+    'rest_framework',
+
     # Fathaker Apps
     'radio',
     'verses',
