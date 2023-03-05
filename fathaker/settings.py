@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     # Fathaker Apps
     'radio',
+    'verses',
 ]
 
 MIDDLEWARE = [
