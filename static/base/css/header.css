@@ -1,0 +1,45 @@
+body {
+    background-color: #f7f7f7;
+}
+
+.navbar {
+    background-color: #025955;
+}
+
+.navbar-brand {
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    color: #f7f7f7;
+    font-size: 24px;
+}
+
+.navbar-toggler {
+    border: none;
+    outline: none;
+}
+
+.navbar-toggler i {
+    color: #f7f7f7;
+    font-size: 24px;
+}
+
+.navbar-nav {
+    text-align: right;
+}
+
+.nav-item {
+    margin-left: 30px;
+}
+
+.nav-link {
+    color: #f7f7f7;
+    font-size: 16px;
+}
+.nav-link.active {
+    color: #c45e36 !important;
+}
+.nav-link i {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
