@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework',
 
     # Fathaker Apps
+    'core',
     'radio',
     'verses',
 ]
@@ -65,7 +66,7 @@ ROOT_URLCONF = 'fathaker.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -73,6 +74,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'core.context_processors.get_nav_links',
             ],
         },
     },
@@ -127,7 +129,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = 'static/'
 MEDIA_URL = 'media/'
 MEDIA_ROOT = 'media/'
 
@@ -137,4 +138,9 @@ MEDIA_ROOT = 'media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 if bool(int(os.getenv('DEBLOYED'))):
+    STATIC_ROOT = 'static/'
     CSRF_TRUSTED_ORIGINS = os.getenv('TRUSTEDORIGINS').split(';')
+else:
+    STATICFILES_DIRS = [
+        BASE_DIR / "static",
+    ]
