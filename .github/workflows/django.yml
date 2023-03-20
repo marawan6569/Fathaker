@@ -23,5 +23,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     - name: Run Tests
+      env:
+        SECRETKEY: ${{secrets.SECRET_KEY}}  
+        DEBUG: 1
+        ALLOWEDHOSTS: 127.0.0.1;
+        DEBLOYED: 0
       run: |
         python manage.py test
