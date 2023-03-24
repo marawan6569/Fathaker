@@ -25,7 +25,7 @@
                     <ul class="navbar-nav">
                         {% for link in navbar_links %}
                             <li class="nav-item">
-                                <a class="nav-link {% if link.get_path == current_page_link.get_path %}active{% endif %}" href="{{ link.get_link }}" >
+                                <a class="nav-link {% if link.get_link == current_page_link.get_link %}active{% endif %}" href="{{ link.get_link }}" >
                                     <i class="{{ link.icon }}"></i>{{link.display_name }}
                                 </a>
                             </li>
