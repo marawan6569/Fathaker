@@ -6,5 +6,5 @@ from .models import NavLink
 
 @admin.register(NavLink)
 class NavLinkAdmin(admin.ModelAdmin):
-    list_display = ['name', 'display_name', 'path', 'link_type', 'is_active',]
-    list_filter = ['link_type', 'is_active']
+    list_display = ['name', 'display_name', 'destination', 'link_type', 'is_active', 'is_external', ]
+    list_filter = ['link_type', 'is_active', 'is_external', ]
