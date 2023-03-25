@@ -1,0 +1,81 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block style %}
+    <link href="{% static 'radio/css/swiper-bundle.min.css' %}" rel="stylesheet">
+    <link href="{% static 'radio/css/radios.css' %}" rel="stylesheet">
+{% endblock style %}
+{% block title %}فذكر | إذاعات مباشرة{% endblock title %}
+
+{% block content %}
+    <div class="container mt-5 overflow-hidden" style="min-height: 100vh;">
+    <div class="row">
+
+
+
+        {% for category in categories %}
+            <div class="swiper-container my-5">
+            <h2 class="slider-title">{{ category.category_name }}<span>{{ category.radios_count }}</span></h2>
+
+            <div class="swiper-wrapper">
+
+
+                {% for radio in category.radios.all %}
+                    <div class="swiper-slide">
+                    <div class="card" data-url="{{ radio.stream_url }}" data-name="{{ radio.name }}" data-category="{{ category.category_name }}" data-img="{% if radio.image %}{{ radio.image.url}}{% else %}{% static 'radio/img/radio_img_not_available.png' %}{% endif %}">
+                        <div class="card-image">
+                            <img src="{% if radio.image %}{{ radio.image.url}}{% else %}{% static 'radio/img/radio_img_not_available.png' %}{% endif %}" alt="card-image">
+                            <div class="card-caption">{{ radio.name }}</div>
+                        </div>
+                        <div class="card-overlay">
+                            <button class="play-button"></button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+            <div class="swiper-pagination"></div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+        </div>
+        {% endfor %}
+
+        <div class="" style="height: 10vh;"></div>
+        <div class="container" id="music-player-container">
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <div class="music-player d-none">
+                        <div class="player-info">
+                            <div class="album-cover">
+                                <img src="" id="radio-img" alt="Radio Cover">
+                            </div>
+                            <div class="radio-details">
+                                <h3 class="category-name" id="radio-category"></h3>
+                                <h3 class="radio-name" id="radio-name"></h3>
+                            </div>
+                        </div>
+                        <div class="player-controls">
+                            <button class="play-btn"><i class="fas fa-play"></i></button>
+                            <div class="progress-bar-container">
+                                <input type="range" class="progress-bar" value="0" min="0" max="100">
+                                <div class="time-display">
+                                    <span class="current-time">0:00</span> / <span class="total-time">0:00</span>
+                                </div>
+                            </div>
+                            <button class="volume-btn"><i class="fas fa-volume"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+</div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'radio/js/swiper-bundle.min.js' %}"></script>
+    <script src="{% static 'radio/js/radios.js' %}"></script>
+{% endblock %}

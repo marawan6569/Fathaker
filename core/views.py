@@ -1,7 +1,8 @@
-from django.views.generic import TemplateView
+from django.views.generic import RedirectView
 
 # Create your views here.
 
 
-class HomePage(TemplateView):
-    template_name = 'core/home_page.html'
+class HomePage(RedirectView):
+    pattern_name = 'radio:radios_list'
+

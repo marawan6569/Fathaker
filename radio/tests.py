@@ -1,5 +1,7 @@
-from django.test import TestCase
+from django.test import TestCase, Client
+from django.urls import reverse
 from django.utils.safestring import mark_safe
+from core.models import NavLink
 from .models import Category, Radio
 
 
@@ -78,3 +80,15 @@ class RadioModelTest(TestCase):
         radio2 = Radio.objects.get(name="Radio #2")
         self.assertEqual(radio1.__str__(), "Radio #1")
         self.assertEqual(radio2.__str__(), "Radio #2")
+
+
+class RadiosListViewTest(TestCase):
+    def setUp(self) -> None:
+        self.client = Client()
+        link = NavLink.objects.create(name="radios_list", display_name="radios_list")
+
+    def test_radios_list_page(self):
+        url = reverse("radio:radios_list")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'radio/radios_list.html')
