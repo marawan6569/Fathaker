@@ -18,6 +18,6 @@ class RadiosList(TemplateView):
                 "radios_count": category.radios_count(),
                 "radios": category.radios
             }
-            for category in Category.objects.all()
+            for category in Category.objects.prefetch_related().all()
         ]
         return data

@@ -5,8 +5,10 @@ from .models import Radio, Category
 
 
 @admin.register(Category)
-class RadioAdmin(admin.ModelAdmin):
-    list_display = ['name', 'radios_count', ]
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ['name', 'rank', 'radios_count', ]
+    list_editable = ['rank']
+    ordering = ['rank']
 
 
 @admin.register(Radio)

@@ -5,11 +5,13 @@ from django.utils.translation import gettext as _
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=30)
+    name = models.CharField(max_length=30, verbose_name=_("Category Name"))
+    rank = models.IntegerField(unique=True, db_index=True, verbose_name=_("Category Rank"))
 
     class Meta:
         verbose_name = "Category"
         verbose_name_plural = "Categories"
+        ordering = ['rank']
 
     def radios_count(self):
         return self.radios.count()
