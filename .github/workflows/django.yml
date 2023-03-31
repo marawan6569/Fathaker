@@ -3,6 +3,13 @@ name: Django CI
 on:
   push:
   pull_request:
+
+env:
+  SECRETKEY: ${{secrets.SECRET_KEY}}
+  DEBUG: 1
+  ALLOWEDHOSTS: 127.0.0.1;
+  DEBLOYED: 0
+
 jobs:
   build:
 
@@ -26,10 +33,5 @@ jobs:
       run: |
         python manage.py migrate
     - name: Run Tests
-      env:
-        SECRETKEY: ${{secrets.SECRET_KEY}}  
-        DEBUG: 1
-        ALLOWEDHOSTS: 127.0.0.1;
-        DEBLOYED: 0
       run: |
         python manage.py test
