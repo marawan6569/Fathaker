@@ -11,8 +11,8 @@ from .models import Category, Radio
 class CategoryModelTest(TestCase):
 
     def setUp(self) -> None:
-        cat1 = Category.objects.create(name="CAT #1")
-        cat2 = Category.objects.create(name="CAT #2")
+        cat1 = Category.objects.create(name="CAT #1", rank=1)
+        cat2 = Category.objects.create(name="CAT #2", rank=2)
         radio1 = Radio.objects.create(name="Radio #1", stream_url="https://fake.radio1.test")
         radio2 = Radio.objects.create(name="Radio #2", stream_url="https://fake.radio2.test")
         radio3 = Radio.objects.create(name="Radio #3", stream_url="https://fake.radio3.test")
