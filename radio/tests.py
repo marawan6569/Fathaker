@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from django.contrib.auth.models import User
 from core.models import NavLink
 from .models import Category, Radio
 
@@ -92,3 +93,38 @@ class RadiosListViewTest(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'radio/radios_list.html')
+
+
+class CategoryRankingViewsTest(TestCase):
+    def setUp(self) -> None:
+        self.client = Client()
+        cat1 = Category.objects.create(name="CAT #1", rank=1)
+        cat2 = Category.objects.create(name="CAT #2", rank=2)
+        cat3 = Category.objects.create(name="CAT #3", rank=3)
+        self.username = "staff_user"
+        self.password = "123"
+        staff_user = User.objects.create(username="staff_user", is_staff=True, is_superuser=True)
+        staff_user.set_password(self.password)
+        staff_user.save()
+
+    def test_category_rank_up(self):
+        cat3 = Category.objects.get(rank=3)
+        url = reverse("radio:category_rank_up", args=[cat3.id])
+
+        request = self.client
+        request.login(username=self.username, password=self.password)
+        response = request.get(url, follow=True)
+
+        self.assertRedirects(response, "/admin/radio/category/", status_code=302,
+                             target_status_code=200, fetch_redirect_response=True)
+
+    def test_category_rank_down(self):
+        cat1 = Category.objects.get(rank=1)
+        url = reverse("radio:category_rank_down", args=[cat1.id])
+
+        request = self.client
+        request.login(username=self.username, password=self.password)
+        response = request.get(url, follow=True)
+
+        self.assertRedirects(response, "/admin/radio/category/", status_code=302,
+                             target_status_code=200, fetch_redirect_response=True)
