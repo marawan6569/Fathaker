@@ -1,0 +1,2 @@
+[run]
+omit = */tests/*, */migrations/*, */urls.py,  */wsgi.py, manage.py, fathaker/settings.py
