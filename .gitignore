@@ -1,35 +1,3 @@
-Skip to content
-Search or jump to…
-Pull requests
-Issues
-Codespaces
-Marketplace
-Explore
-
-@marawan6569
-marawan6569
-/
-fathaker-0
-Public
-Cannot fork because you own this repository and are not a member of any organizations.
-Code
-Issues
-Pull requests
-Actions
-Projects
-Wiki
-Security
-Insights
-Settings
-Beta Try the new code view
-fathaker-0/.gitignore
-@marawan6569
-marawan6569 add backup.py
-Latest commit 7790720 14 hours ago
- History
- 1 contributor
-175 lines (143 sloc)  3.5 KB
-
 # Created by https://www.toptal.com/developers/gitignore/api/django
 # Edit at https://www.toptal.com/developers/gitignore?templates=django
 
