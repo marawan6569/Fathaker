@@ -26,7 +26,10 @@ class Radio(models.Model):
     description = models.TextField(null=True, blank=True, verbose_name=_("Radio Description"))
     image = models.ImageField(upload_to="radio/", null=True, blank=True, verbose_name=_("Radio Image"))
 
-    categories = models.ManyToManyField(Category, blank=True, related_name="radios", verbose_name=_("Radio Categories"))
+    categories = models.ManyToManyField(
+        Category, through='RadioCategoriesM2M',
+        blank=True, related_name="radios", verbose_name=_("Radio Categories")
+    )
 
     def stream_link(self):
         return mark_safe(f"<a href='{self.stream_url}' target='_blank'>{self.stream_url}</a>")
@@ -36,3 +39,16 @@ class Radio(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class RadioCategoriesM2M(models.Model):
+    radio = models.ForeignKey(Radio, on_delete=models.CASCADE, verbose_name=_("Radio"))
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name=_("Category"))
+    rank = models.IntegerField(db_index=True, verbose_name=_("Radio Rank in Category"))
+
+    class Meta:
+        unique_together = [['category', 'rank', ], ['radio', 'category', ]]
+        ordering = ['category', 'rank', ]
+
+    def __str__(self):
+        return self.radio.name

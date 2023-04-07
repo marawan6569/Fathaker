@@ -18,16 +18,11 @@ class CategoryModelTest(TestCase):
         radio2 = Radio.objects.create(name="Radio #2", stream_url="https://fake.radio2.test")
         radio3 = Radio.objects.create(name="Radio #3", stream_url="https://fake.radio3.test")
 
-        radio1.categories.add(cat1)
-        radio1.categories.add(cat2)
-        radio1.save()
-
-        radio2.categories.add(cat1)
-        radio2.save()
-
-        radio3.categories.add(cat1)
-        radio3.categories.add(cat2)
-        radio3.save()
+        radio1.categories.add(cat1, through_defaults={'rank': 1})
+        radio1.categories.add(cat2, through_defaults={'rank': 1})
+        radio2.categories.add(cat1, through_defaults={'rank': 2})
+        radio3.categories.add(cat1, through_defaults={'rank': 3})
+        radio3.categories.add(cat2, through_defaults={'rank': 2})
 
     def test_radios_count(self):
         cat1 = Category.objects.get(name="CAT #1")
@@ -50,13 +45,9 @@ class RadioModelTest(TestCase):
         cat3 = Category.objects.create(name="CAT #3", rank=3)
         radio1 = Radio.objects.create(name="Radio #1", stream_url="https://fake.radio1.test")
         radio2 = Radio.objects.create(name="Radio #2", stream_url="https://fake.radio2.test")
-
-        radio1.categories.add(cat1)
-        radio1.categories.add(cat2)
-        radio1.save()
-
-        radio2.categories.add(cat3)
-        radio2.save()
+        radio1.categories.add(cat1, through_defaults={'rank': 1})
+        radio1.categories.add(cat2, through_defaults={'rank': 2})
+        radio2.categories.add(cat3, through_defaults={'rank': 1})
 
     def test_radio_stream_link(self):
         radio1 = Radio.objects.get(name="Radio #1")

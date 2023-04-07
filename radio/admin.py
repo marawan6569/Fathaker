@@ -2,16 +2,24 @@ from django.contrib import admin
 from django.db.models import Max
 from django.utils.safestring import mark_safe
 from django.urls import reverse
-from .models import Radio, Category
+from .models import Radio, Category, RadioCategoriesM2M
 
 
 # Register your models here.
+
+@admin.register(RadioCategoriesM2M)
+class RadioCategoriesM2MAdmin(admin.ModelAdmin):
+    list_display = ['__str__', 'category', 'rank', ]
+    list_filter = ['category', ]
+
+
+class RadioCategoriesM2MInline(admin.TabularInline):
+    model = RadioCategoriesM2M
 
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'radios_count', 'rank', "category_rank_up_link", "category_rank_down_link", ]
-    ordering = ['rank']
 
     def category_rank_up_link(self, obj):
         if obj.rank == 1:
@@ -45,3 +53,4 @@ class CategoryAdmin(admin.ModelAdmin):
 @admin.register(Radio)
 class RadioAdmin(admin.ModelAdmin):
     list_display = ['name', 'stream_link', 'categories_list', ]
+    inlines = [RadioCategoriesM2MInline]
