@@ -3,7 +3,7 @@ from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.contrib.auth.models import User
 from core.models import NavLink
-from .models import Category, Radio
+from .models import Category, Radio, RadioCategoriesM2M
 
 
 # Create your tests here.
@@ -74,6 +74,19 @@ class RadioModelTest(TestCase):
         self.assertEqual(radio2.__str__(), "Radio #2")
 
 
+class RadioCategoriesM2MModelTest(TestCase):
+
+    def setUp(self) -> None:
+        cat1 = Category.objects.create(name="CAT #1", rank=1)
+        radio1 = Radio.objects.create(name="Radio #1", stream_url="https://fake.radio1.test")
+        radio1.categories.add(cat1, through_defaults={'rank': 1})
+
+    def test_radio_categories_m2m__str__(self):
+        cat1 = Category.objects.get(name="CAT #1")
+        rel = RadioCategoriesM2M.objects.get(category=cat1)
+        self.assertEqual(rel.__str__(), "Radio #1")
+
+
 class RadiosListViewTest(TestCase):
     def setUp(self) -> None:
         self.client = Client()
@@ -118,4 +131,44 @@ class CategoryRankingViewsTest(TestCase):
         response = request.get(url, follow=True)
 
         self.assertRedirects(response, "/admin/radio/category/", status_code=302,
+                             target_status_code=200, fetch_redirect_response=True)
+
+
+class RadioRankingInCategoryViewsTest(TestCase):
+
+    def setUp(self) -> None:
+        self.client = Client()
+        cat1 = Category.objects.create(name="CAT #1", rank=1)
+        radio1 = Radio.objects.create(name="Radio #1", stream_url="https://fake.radio1.test")
+        radio1.categories.add(cat1, through_defaults={'rank': 1})
+        radio2 = Radio.objects.create(name="Radio #1", stream_url="https://fake.radio1.test")
+        radio2.categories.add(cat1, through_defaults={'rank': 2})
+        radio3 = Radio.objects.create(name="Radio #1", stream_url="https://fake.radio1.test")
+        radio3.categories.add(cat1, through_defaults={'rank': 3})
+        self.username = "staff_user"
+        self.password = "123"
+        staff_user = User.objects.create(username="staff_user", is_staff=True, is_superuser=True)
+        staff_user.set_password(self.password)
+        staff_user.save()
+
+    def test_radio_rank_in_category_up(self):
+        rel = RadioCategoriesM2M.objects.get(rank=2)
+        url = reverse("radio:radio_rank_in_category_up", args=[rel.id])
+
+        request = self.client
+        request.login(username=self.username, password=self.password)
+        response = request.get(url, follow=True)
+
+        self.assertRedirects(response, "/admin/radio/radiocategoriesm2m/", status_code=302,
+                             target_status_code=200, fetch_redirect_response=True)
+
+    def test_radio_rank_in_category_down(self):
+        rel = RadioCategoriesM2M.objects.get(rank=2)
+        url = reverse("radio:radio_rank_in_category_down", args=[rel.id])
+
+        request = self.client
+        request.login(username=self.username, password=self.password)
+        response = request.get(url, follow=True)
+
+        self.assertRedirects(response, "/admin/radio/radiocategoriesm2m/", status_code=302,
                              target_status_code=200, fetch_redirect_response=True)
