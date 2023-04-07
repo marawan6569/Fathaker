@@ -1,2 +1,2 @@
 [run]
-omit = */tests/*, */migrations/*, */urls.py,  */wsgi.py, manage.py, fathaker/settings.py
+omit = */tests.py, */migrations/*, */urls.py,  */wsgi.py, manage.py, fathaker/settings.py

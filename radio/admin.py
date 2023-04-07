@@ -9,12 +9,42 @@ from .models import Radio, Category, RadioCategoriesM2M
 
 @admin.register(RadioCategoriesM2M)
 class RadioCategoriesM2MAdmin(admin.ModelAdmin):
-    list_display = ['__str__', 'category', 'rank', ]
+    list_display = ['__str__', 'category', 'rank', 'radio_rank_in_category_up_link', 'radio_rank_in_category_down_link']
     list_filter = ['category', ]
+
+    def radio_rank_in_category_up_link(self, obj):
+        if obj.rank == 1:
+            return ""
+        else:
+            return mark_safe(
+                f"""
+                <a href="{reverse("radio:radio_rank_in_category_up", args=[obj.id])}"> <img src="data:image/svg+xml,%3Csvg 
+                xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath 
+                fill='currentColor' d='m13 5.586l-4.707 4.707a.999.999 0 1 0 1.414 1.414L12 9.414V17a1 1 0 1 0 2 
+                0V9.414l2.293 2.293a.997.997 0 0 0 1.414 0a.999.999 0 0 0 0-1.414L13 5.586z'/%3E%3C/svg%3E%0A"/> </a>"""
+            )
+
+    def radio_rank_in_category_down_link(self, obj):
+        max_rank = RadioCategoriesM2M.objects.filter(category=obj.category).aggregate(Max('rank'))
+        if obj.rank == max_rank["rank__max"]:
+            return ""
+        else:
+            return mark_safe(
+                f"""
+                <a href="{reverse("radio:radio_rank_in_category_down", args=[obj.id])}"> <img src="data:image/svg+xml,%3Csvg 
+                xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath 
+                fill='currentColor' d='M16.707 13.293a.999.999 0 0 0-1.414 0L13 15.586V8a1 1 0 1 0-2 
+                0v7.586l-2.293-2.293a.999.999 0 1 0-1.414 1.414L12 19.414l4.707-4.707a.999.999 0 0 0 
+                0-1.414z'/%3E%3C/svg%3E%0A"/> </a>"""
+            )
+
+    radio_rank_in_category_up_link.short_description = "UP"
+    radio_rank_in_category_down_link.short_description = "DOWN"
 
 
 class RadioCategoriesM2MInline(admin.TabularInline):
     model = RadioCategoriesM2M
+    readonly_fields = ['rank']
 
 
 @admin.register(Category)
@@ -27,10 +57,10 @@ class CategoryAdmin(admin.ModelAdmin):
         else:
             return mark_safe(
                 f"""
-                <a href="{reverse("radio:category_rank_up", args=[obj.id])}"> <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' 
-                height='24' viewBox='0 0 24 24'%3E%3Cpath fill='currentColor' d='m13 5.586l-4.707 4.707a.999.999 0 1 0 
-                1.414 1.414L12 9.414V17a1 1 0 1 0 2 0V9.414l2.293 2.293a.997.997 0 0 0 1.414 0a.999.999 0 0 0 0-1.414L13 
-                5.586z'/%3E%3C/svg%3E%0A"/> </a>"""
+                <a href="{reverse("radio:category_rank_up", args=[obj.id])}"> <img src="data:image/svg+xml,%3Csvg 
+                xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath 
+                fill='currentColor' d='m13 5.586l-4.707 4.707a.999.999 0 1 0 1.414 1.414L12 9.414V17a1 1 0 1 0 2 
+                0V9.414l2.293 2.293a.997.997 0 0 0 1.414 0a.999.999 0 0 0 0-1.414L13 5.586z'/%3E%3C/svg%3E%0A"/> </a>"""
             )
 
     def category_rank_down_link(self, obj):
@@ -40,9 +70,10 @@ class CategoryAdmin(admin.ModelAdmin):
         else:
             return mark_safe(
                 f"""
-                <a href="{reverse("radio:category_rank_down", args=[obj.id])}"> <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' 
-                height='24' viewBox='0 0 24 24'%3E%3Cpath fill='currentColor' d='M16.707 13.293a.999.999 0 0 0-1.414 0L13 
-                15.586V8a1 1 0 1 0-2 0v7.586l-2.293-2.293a.999.999 0 1 0-1.414 1.414L12 19.414l4.707-4.707a.999.999 0 0 0 
+                <a href="{reverse("radio:category_rank_down", args=[obj.id])}"> <img src="data:image/svg+xml,%3Csvg 
+                xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath 
+                fill='currentColor' d='M16.707 13.293a.999.999 0 0 0-1.414 0L13 15.586V8a1 1 0 1 0-2 
+                0v7.586l-2.293-2.293a.999.999 0 1 0-1.414 1.414L12 19.414l4.707-4.707a.999.999 0 0 0 
                 0-1.414z'/%3E%3C/svg%3E%0A"/> </a>"""
             )
 
