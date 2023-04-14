@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Max
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
 # Create your models here.
@@ -49,6 +50,12 @@ class RadioCategoriesM2M(models.Model):
     class Meta:
         unique_together = [['category', 'rank', ], ['radio', 'category', ]]
         ordering = ['category', 'rank', ]
+
+    def save(self, *args, **kwargs):
+        if self.rank is None:
+            max_rank = RadioCategoriesM2M.objects.filter(category=self.category).aggregate(Max('rank'))
+            self.rank = max_rank["rank__max"] + 1
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.radio.name
