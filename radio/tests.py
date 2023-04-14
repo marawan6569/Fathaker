@@ -1,3 +1,4 @@
+from django.db.models import Max
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.utils.safestring import mark_safe
@@ -136,15 +137,24 @@ class CategoryRankingViewsTest(TestCase):
 
 class RadioRankingInCategoryViewsTest(TestCase):
 
+    @staticmethod
+    def get_next_rank(category):
+        max_rank = RadioCategoriesM2M.objects.filter(category=category).aggregate(Max('rank'))
+        return max_rank['rank__max'] + 1 if max_rank['rank__max'] else 1
+
     def setUp(self) -> None:
         self.client = Client()
         cat1 = Category.objects.create(name="CAT #1", rank=1)
+
         radio1 = Radio.objects.create(name="Radio #1", stream_url="https://fake.radio1.test")
-        radio1.categories.add(cat1, through_defaults={'rank': 1})
+        radio1.categories.add(cat1, through_defaults={'rank': self.get_next_rank(cat1)})
+
         radio2 = Radio.objects.create(name="Radio #1", stream_url="https://fake.radio1.test")
-        radio2.categories.add(cat1, through_defaults={'rank': 2})
+        radio2.categories.add(cat1, through_defaults={'rank': self.get_next_rank(cat1)})
+
         radio3 = Radio.objects.create(name="Radio #1", stream_url="https://fake.radio1.test")
-        radio3.categories.add(cat1, through_defaults={'rank': 3})
+        radio3.categories.add(cat1, through_defaults={'rank': self.get_next_rank(cat1)})
+
         self.username = "staff_user"
         self.password = "123"
         staff_user = User.objects.create(username="staff_user", is_staff=True, is_superuser=True)
