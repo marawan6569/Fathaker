@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     # Third Party apps
     'rest_framework',
+    'taggit',
 
     # Fathaker Apps
     'core',
@@ -144,3 +145,5 @@ else:
     STATICFILES_DIRS = [
         BASE_DIR / "static",
     ]
+
+TAGGIT_CASE_INSENSITIVE = True
