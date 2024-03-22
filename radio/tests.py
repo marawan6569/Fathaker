@@ -12,8 +12,8 @@ from .models import Radio
 class RadioModelTest(TestCase):
 
     def setUp(self) -> None:
-        radio1 = Radio.objects.create(name="Radio #1", stream_url="https://fake.radio1.test")
-        radio2 = Radio.objects.create(name="Radio #2", stream_url="https://fake.radio2.test")
+        radio1 = Radio.objects.create(name="Radio #1", stream_url="https://fake.radio1.test", rank=1)
+        radio2 = Radio.objects.create(name="Radio #2", stream_url="https://fake.radio2.test", rank=2)
 
     def test_radio_stream_link(self):
         radio1 = Radio.objects.get(name="Radio #1")
