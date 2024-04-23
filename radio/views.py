@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAdminUser
 from core.models import NavLink
 from .models import Radio
 
@@ -13,6 +14,7 @@ from .models import Radio
 
 class RadioRankDown(APIView):
     allowed_methods = ['get']
+    permission_classes = [IsAdminUser]
 
     def get(self, request, *args, **kwargs):
         try:
@@ -43,6 +45,7 @@ class RadioRankDown(APIView):
 
 class RadioRankUp(APIView):
     allowed_methods = ['get']
+    permission_classes = [IsAdminUser]
 
     def get(self, request, *args, **kwargs):
         try:
