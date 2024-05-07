@@ -12,6 +12,7 @@ RUN pip install -r requirements.txt
 COPY . /home/user/fathaker/
 
 #setup environment variables
+ENV PYTHONUNBUFFERED=1
 COPY deployment/.env /home/user/fathaker/fathaker/.env
 
 # collect statics
