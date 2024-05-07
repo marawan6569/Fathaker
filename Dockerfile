@@ -11,6 +11,9 @@ RUN pip install -r requirements.txt
 # copy project files
 COPY . /home/user/fathaker/
 
+#setup environment variables
+COPY deployment/.env /home/user/fathaker/fathaker/.env
+
 # collect statics
 RUN python manage.py collectstatic --noinput
 

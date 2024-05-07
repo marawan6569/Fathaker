@@ -1,0 +1,8 @@
+services:
+  web:
+    build: .
+    container_name: fathaker
+    ports:
+      - "4000:8000"
+    volumes:
+      - ./media/:/home/user/fathaker/media/
