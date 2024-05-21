@@ -244,3 +244,55 @@
 
 
 /* end search bar */
+
+/* Start small screens */
+@media (max-width: 768px) {
+    #radios-container { padding: 0 1rem !important; }
+    .radio-img
+    {
+        width: 75px;
+        height: 75px;
+    }
+
+    .radio-info .info .name
+    {
+       font-size: 16px;
+        font-weight: 700;
+    }
+
+    .radio-info .info .tags { gap: 5px }
+
+    .radio-info .info .tags .tag
+    {
+        font-size: 12px;
+        padding: 5px;
+        font-weight: 400;
+    }
+
+    .play-btn
+    {
+        width: 35px;
+        height: 35px;
+    }
+
+    .play-btn.play::after
+    {
+        border-top: 12px solid transparent;
+        border-bottom: 12px solid transparent;
+        border-left: 20px solid white;
+    }
+
+    .play-btn.pause::before
+    {
+        width: 4px;
+        height: 15px;
+    }
+
+    .play-btn.pause::after
+    {
+        width: 4px;
+        height: 15px;
+    }
+
+}
+/* End small screens */
