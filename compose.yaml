@@ -1,0 +1,21 @@
+services:
+  fathaker:
+    build: .
+    image: fathaker
+    container_name: fathaker
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./media/:/fathaker/media/
+      - ./static/:/fathaker/static/
+
+  nginx:
+    build: ./deployment/nginx
+    container_name: fathaker_nginx
+    volumes:
+      - ./media/:/fathaker/media/
+      - ./static/:/fathaker/static/
+    ports:
+      - "8081:80"
+    depends_on:
+      - fathaker
