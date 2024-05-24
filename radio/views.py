@@ -40,7 +40,8 @@ class RadioRankDown(APIView):
             messages.error(request, f'Failed to swap ranks.\n Errors: {e}')
 
         # return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('default-url')))
-        return redirect(reverse("admin:radio_radio_changelist"))
+        referer = request.META.get('HTTP_REFERER')
+        return redirect(referer if referer else reverse("admin:radio_radio_changelist"))
 
 
 class RadioRankUp(APIView):
@@ -71,7 +72,8 @@ class RadioRankUp(APIView):
             messages.error(request, f'Failed to swap ranks.\n Errors: {e}')
 
         # return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('default-url')))
-        return redirect(reverse("admin:radio_radio_changelist"))
+        referer = request.META.get('HTTP_REFERER')
+        return redirect(referer if referer else reverse("admin:radio_radio_changelist"))
 
 
 class RadiosList(TemplateView):
