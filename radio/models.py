@@ -13,7 +13,7 @@ class Radio(models.Model):
 
     rank = models.IntegerField(unique=True, null=False, blank=False, verbose_name=_("Radio Rank"))
 
-    tags = TaggableManager()
+    tags = TaggableManager(blank=True)
 
     class Meta:
         ordering = ["rank"]
