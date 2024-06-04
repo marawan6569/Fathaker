@@ -11,6 +11,9 @@ from .models import Radio
 class RadioAdmin(admin.ModelAdmin):
     list_display = ['radio_image', 'name', 'audio', 'tag_list', 'radio_rank_up_link', 'radio_rank_down_link']
 
+    list_filter = ['tags']
+
+
     def get_queryset(self, request):
         return super().get_queryset(request).prefetch_related('tags')
 
