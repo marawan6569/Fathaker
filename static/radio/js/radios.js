@@ -1,7 +1,9 @@
 
 // start render radios //
 const radiosContainer = document.getElementById("radios-container");
+const audio = new Audio();
 let playButtons = document.querySelectorAll('.play-btn');
+let activeCard = document.querySelector('.radio-card.active') || document.createElement('div');
 
 function tag(tag){ return `<li class="tag">${tag}</li>` }
 
@@ -10,9 +12,10 @@ function renderTags(tags) {
 }
 
 function renderRadio(radio) {
-
+    let is_active = audio.src.toLowerCase().trim() === radio.src.toLowerCase().trim()
+    let radio_class = is_active ? ' radio-card active' : ' radio-card'
     return `
-           <div class="col-12 p-3 my-2 radio-card">
+           <div class="col-12 p-3 my-2 ${radio_class}">
         
                 <div class="radio-info">
                     <img class="radio-img" src="${radio.img}" alt="radio image">
@@ -24,7 +27,7 @@ function renderRadio(radio) {
                     </div>
                 </div>
         
-                <div class="play-btn play" data-src="${radio.src}"></div>
+                <div class="play-btn ${!is_active? 'play' : audio.paused? 'play' : 'pause'}" data-src="${radio.src}"></div>
            </div>
 
     `
@@ -35,6 +38,8 @@ function renderRadiosList(radiosList) {
     if (radiosList.length > 0) {
         radiosContainer.innerHTML = radiosList.map(renderRadio).join("\n")
         playButtons = document.querySelectorAll('.play-btn');
+        activeCard = document.querySelector('.radio-card.active');
+        if (activeCard === null) {} else setTopToParentOffset(activeCard)
 
         // This block of code should be in audio control section
         playButtons.forEach(btn => {
@@ -94,9 +99,8 @@ searchBar.addEventListener("input", ()=> { renderRadiosList(search(searchBar.val
 // end search //
 
 // start audio controls //
-const audio = new Audio();
 let isPlaying = false;
-let activeCard = document.querySelector('.radio-card.active') || document.createElement('div');
+activeCard = document.querySelector('.radio-card.active') || document.createElement('div');
 
 
 function playAudio() {
@@ -120,7 +124,7 @@ function setAudioSource(src) {
 function setTopToParentOffset(element) {
     // Get the parent element
     const parent = element.parentElement.parentElement;
-    element.style.width = parent.offsetWidth + 'px';
+    element.style.width = window.innerWidth < 768? (parent.offsetWidth - 32) + 'px': parent.offsetWidth + 'px';
 
     // Get the parent's y-offset
     const parentY = parent.getBoundingClientRect().y;
