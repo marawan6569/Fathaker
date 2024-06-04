@@ -13,7 +13,6 @@ class RadioAdmin(admin.ModelAdmin):
 
     list_filter = ['tags']
 
-
     def get_queryset(self, request):
         return super().get_queryset(request).prefetch_related('tags')
 
