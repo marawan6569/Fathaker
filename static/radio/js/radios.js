@@ -38,8 +38,8 @@ function renderRadiosList(radiosList) {
     if (radiosList.length > 0) {
         radiosContainer.innerHTML = radiosList.map(renderRadio).join("\n")
         playButtons = document.querySelectorAll('.play-btn');
-        activeCard = document.querySelector('.radio-card.active');
-        if (activeCard === null) {} else setTopToParentOffset(activeCard)
+        let _activeCard = document.querySelector('.radio-card.active');
+        if (_activeCard === null) {} else setTopToParentOffset(_activeCard)
 
         // This block of code should be in audio control section
         playButtons.forEach(btn => {
