@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'core',
     'radio',
     'verses',
+    'tracker',
 ]
 
 MIDDLEWARE = [
