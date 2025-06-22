@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     # Third Party apps
     'rest_framework',
     'taggit',
+    'djongo',
 
     # Fathaker Apps
     'core',
@@ -61,6 +62,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'tracker.middleware.GetStatisticsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'fathaker.urls'
@@ -89,12 +92,23 @@ WSGI_APPLICATION = 'fathaker.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # },
+    'default':{
+        'ENGINE': 'djongo',
+        # 'NAME': 'statistics',
+        'CLINT': {
+            'host': 'localhost',
+            'port': 27017,
+            'username': 'root',
+            'password': 'root',
+        }
     }
 }
 
+# DATABASE_ROUTERS = ['tracker.db_routers.TrackerRouter',]
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
