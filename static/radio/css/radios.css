@@ -161,14 +161,14 @@
     box-shadow: 0 0 0 3px rgba(2, 89, 85, 0.18), 0 8px 24px rgba(2, 89, 85, 0.10);
 }
 
-/* Card Body (left side) */
+/* Card Body (left side in RTL) */
 .card-body-content {
     padding: 0.75rem 0.85rem;
     display: flex;
     flex-direction: column;
     flex: 1;
     min-width: 0;
-    order: 1;
+    order: 2;
 }
 
 .card-radio-name {
@@ -296,7 +296,7 @@
     color: #025955;
 }
 
-/* Card Image (right side) */
+/* Card Image (right side in RTL) */
 .card-img-wrapper {
     width: 80px;
     min-width: 80px;
@@ -304,8 +304,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.75rem 0.5rem 0.75rem 0;
-    order: 2;
+    padding: 0.75rem 0 0.75rem 0.5rem;
+    order: 1;
 }
 
 .card-img-wrapper img {
@@ -833,8 +833,8 @@
 
 @media (min-width: 992px) {
     .radio-col {
-        flex: 0 0 50%;
-        max-width: 50%;
+        flex: 0 0 33.333%;
+        max-width: 33.333%;
     }
 }
 

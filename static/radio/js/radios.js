@@ -79,7 +79,7 @@ function renderRadioCard(radio, index) {
     const descHtml = radio.description ? `<p class="card-description">${radio.description}</p>` : '';
 
     return `
-        <div class="col-lg-6 col-md-6 col-12 radio-col" style="animation-delay: ${index * 0.05}s">
+        <div class="col-lg-4 col-md-6 col-12 radio-col" style="animation-delay: ${index * 0.05}s">
             <div class="radio-card${isPlaying ? ' playing' : ''}" data-src="${radio.src}" data-slug="${radio.slug}">
                 <div class="card-body-content">
                     <a href="${getDetailUrl(radio.slug)}" class="card-radio-name" style="text-decoration:none;color:inherit;">${radio.name}</a>
