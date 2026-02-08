@@ -3,13 +3,13 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404
+from django.db.models import F
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, AllowAny
+from rest_framework.response import Response
+from rest_framework import status
 from core.models import NavLink
 from .models import Radio
-
-
-# Create your views here.
 
 
 class RadioRankDown(APIView):
@@ -39,7 +39,6 @@ class RadioRankDown(APIView):
         except Exception as e:
             messages.error(request, f'Failed to swap ranks.\n Errors: {e}')
 
-        # return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('default-url')))
         referer = request.META.get('HTTP_REFERER')
         return redirect(referer if referer else reverse("admin:radio_radio_changelist"))
 
@@ -71,7 +70,6 @@ class RadioRankUp(APIView):
         except Exception as e:
             messages.error(request, f'Failed to swap ranks.\n Errors: {e}')
 
-        # return HttpResponseRedirect(request.META.get('HTTP_REFERER', reverse('default-url')))
         referer = request.META.get('HTTP_REFERER')
         return redirect(referer if referer else reverse("admin:radio_radio_changelist"))
 
@@ -84,3 +82,26 @@ class RadiosList(TemplateView):
         data['radios'] = Radio.objects.all().prefetch_related("tags")
         data['current_page_link'] = get_object_or_404(NavLink, name="radios_list")
         return data
+
+
+class RadioDetail(TemplateView):
+    template_name = "radio/radio_detail.html"
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        radio = get_object_or_404(Radio, slug=self.kwargs['slug'])
+        Radio.objects.filter(pk=radio.pk).update(views_count=F('views_count') + 1)
+        radio.refresh_from_db()
+        data['radio'] = radio
+        data['current_page_link'] = get_object_or_404(NavLink, name="radios_list")
+        return data
+
+
+class RadioLike(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, slug):
+        radio = get_object_or_404(Radio, slug=slug)
+        Radio.objects.filter(pk=radio.pk).update(likes_count=F('likes_count') + 1)
+        radio.refresh_from_db()
+        return Response({'likes_count': radio.likes_count}, status=status.HTTP_200_OK)

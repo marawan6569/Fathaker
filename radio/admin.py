@@ -9,9 +9,11 @@ from .models import Radio
 # Register your models here.
 @admin.register(Radio)
 class RadioAdmin(admin.ModelAdmin):
-    list_display = ['radio_image', 'name', 'audio', 'tag_list', 'radio_rank_up_link', 'radio_rank_down_link']
-
+    list_display = ['radio_image', 'name', 'audio', 'tag_list', 'likes_count', 'views_count', 'radio_rank_up_link', 'radio_rank_down_link']
+    search_fields = ['name']
     list_filter = ['tags']
+    readonly_fields = ['likes_count', 'views_count']
+    prepopulated_fields = {'slug': ('name',)}
 
     def get_queryset(self, request):
         return super().get_queryset(request).prefetch_related('tags')

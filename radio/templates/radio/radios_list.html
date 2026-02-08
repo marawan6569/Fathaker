@@ -6,42 +6,134 @@
 {% block title %}فذكر | إذاعات مباشرة{% endblock title %}
 
 {% block content %}
-    <div class="container mt-5 overflow-hidden" style="min-height: 100vh;">
-    <div class="row">
+    <div class="container mt-4" style="min-height: 100vh;">
 
-
-
-        <div class="container mt-5 overflow-hidden" style="min-height: 100vh;">
-
-
-            <div class="row">
-                <label class="position-relative">
-                    <input type="text" class="col-12 my-3 search-input" id="search" placeholder="ابحث عن إذاعة">
-                    <i class="fa fa-search search-icon"></i>
-                    <i class="fas fa-times clear-search-icon"></i>
-                </label>
-            </div>
-
-            <div class="row" id="radios-container">
-
-            </div>
+        <!-- Search -->
+        <div class="search-wrapper position-relative mt-3">
+            <input type="text" class="search-input" id="search" placeholder="ابحث عن إذاعة...">
+            <i class="fa fa-search search-icon"></i>
+            <i class="fas fa-times clear-search-icon" id="clear-search"></i>
         </div>
 
+        <!-- Tag Pills -->
+        <div class="tags-filter" id="tags-filter"></div>
 
+        <!-- Sort Controls -->
+        <div class="sort-controls" id="sort-controls">
+            <span class="sort-label">ترتيب حسب:</span>
+            <button class="sort-pill active" data-sort="default">الافتراضي</button>
+            <button class="sort-pill" data-sort="likes">الأكثر إعجاباً</button>
+            <button class="sort-pill" data-sort="views">الأكثر مشاهدة</button>
+            <button class="sort-pill" data-sort="name">الاسم</button>
+        </div>
+
+        <!-- Radio Grid -->
+        <div class="row g-3" id="radios-container"></div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="empty-state" style="display:none;">
+            <i class="fas fa-search"></i>
+            <p>لم نستطع العثور على نتائج مطابقة لبحثك</p>
+        </div>
 
     </div>
-</div>
+
+    <!-- Sticky Bottom Player -->
+    <div class="bottom-player" id="bottom-player">
+        <div class="player-inner">
+            <img class="player-art" id="player-art" src="" alt="">
+            <div class="player-info">
+                <p class="player-name" id="player-name"></p>
+                <p class="player-desc" id="player-desc"></p>
+            </div>
+            <button class="player-play-btn" id="player-play-btn" aria-label="تشغيل/إيقاف">
+                <i class="fas fa-play"></i>
+            </button>
+            <div class="player-volume" id="player-volume">
+                <button class="volume-btn" id="volume-btn" aria-label="كتم الصوت">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+                <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="80">
+            </div>
+            <div class="wave-bars paused" id="wave-bars">
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+            </div>
+            <button class="player-expand-btn" id="player-expand-btn" aria-label="توسيع">
+                <i class="fas fa-expand"></i>
+            </button>
+            <button class="player-close-btn" id="player-close-btn" aria-label="إغلاق">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Fullscreen Player Modal -->
+    <div class="fullscreen-modal" id="fullscreen-modal">
+        <div class="fullscreen-bg" id="fullscreen-bg"></div>
+        <div class="fullscreen-content">
+            <button class="fullscreen-close" id="fullscreen-close" aria-label="إغلاق">
+                <i class="fas fa-times"></i>
+            </button>
+            <img class="fullscreen-art" id="fullscreen-art" src="" alt="">
+            <div class="fullscreen-visualizer" id="fullscreen-visualizer">
+                <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
+                <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
+                <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
+                <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
+            </div>
+            <h2 class="fullscreen-name" id="fullscreen-name"></h2>
+            <p class="fullscreen-desc" id="fullscreen-desc"></p>
+            <div class="fullscreen-controls">
+                <button class="fullscreen-play-btn" id="fullscreen-play-btn" aria-label="تشغيل/إيقاف">
+                    <i class="fas fa-play"></i>
+                </button>
+            </div>
+            <div class="fullscreen-volume">
+                <button class="fullscreen-vol-btn" id="fullscreen-vol-btn" aria-label="كتم الصوت">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+                <input type="range" class="fullscreen-vol-slider" id="fullscreen-vol-slider" min="0" max="100" value="80">
+            </div>
+            <div class="fullscreen-actions">
+                <button class="fullscreen-like-btn" id="fullscreen-like-btn" aria-label="إعجاب">
+                    <i class="fas fa-heart"></i>
+                    <span id="fullscreen-like-count">0</span>
+                </button>
+                <button class="fullscreen-share-btn" id="fullscreen-share-btn" aria-label="مشاركة">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Toast -->
+    <div class="share-toast" id="share-toast">تم نسخ الرابط</div>
+
 {% endblock %}
 
 {% block script %}
     <script>
+        const CSRF_TOKEN = '{{ csrf_token }}';
+        const RADIO_LIKE_URL_TEMPLATE = '{% url "radio:radio_like" slug="__SLUG__" %}';
+        const RADIO_DETAIL_URL_TEMPLATE = '{% url "radio:radio_detail" slug="__SLUG__" %}';
+
         let radios = [
         {% for radio in radios %}
                 {
-                    name: "{{ radio.name }}",
+                    id: {{ radio.id }},
+                    name: "{{ radio.name|escapejs }}",
                     src: "{{ radio.stream_url }}",
-                    img: "{% if radio.image %}{{ radio.image.url }}{% else %}{% static 'radio/img/radio_img_not_available.png' %}{% endif %} ",
-                    tags: [{% for name in radio.tags.names %}"{{ name }}",{% endfor %}]
+                    img: "{% if radio.image %}{{ radio.image.url }}{% else %}{% static 'radio/img/radio_img_not_available.png' %}{% endif %}",
+                    description: "{{ radio.description|default:''|escapejs }}",
+                    tags: [{% for name in radio.tags.names %}"{{ name|escapejs }}",{% endfor %}],
+                    slug: "{{ radio.slug|escapejs }}",
+                    likes_count: {{ radio.likes_count }},
+                    views_count: {{ radio.views_count }},
+                    rank: {{ radio.rank }}
                 },
         {% endfor %}
         ]
