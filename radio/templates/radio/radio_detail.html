@@ -1,0 +1,91 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block style %}
+    <link href="{% static 'radio/css/radio_detail.css' %}" rel="stylesheet">
+{% endblock style %}
+{% block title %}فذكر | {{ radio.name }}{% endblock title %}
+
+{% block content %}
+    <div class="detail-hero">
+        <div class="hero-bg" style="background-image: url('{% if radio.image %}{{ radio.image.url }}{% else %}{% static 'radio/img/radio_img_not_available.png' %}{% endif %}')"></div>
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <a href="{% url 'radio:radios_list' %}" class="back-link">
+                <i class="fas fa-arrow-right"></i>
+                العودة للإذاعات
+            </a>
+            <div class="detail-art-wrapper">
+                <img class="detail-art" src="{% if radio.image %}{{ radio.image.url }}{% else %}{% static 'radio/img/radio_img_not_available.png' %}{% endif %}" alt="{{ radio.name }}">
+            </div>
+            <div class="detail-visualizer paused" id="detail-visualizer">
+                <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
+                <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
+                <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
+                <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
+            </div>
+            <h1 class="detail-title">{{ radio.name }}</h1>
+            <div class="detail-tags">
+                {% for tag in radio.tags.all %}
+                    <span class="detail-tag">{{ tag.name }}</span>
+                {% endfor %}
+            </div>
+            {% if radio.description %}
+                <p class="detail-description">{{ radio.description }}</p>
+            {% endif %}
+            <div class="detail-stats">
+                <span class="stat-item">
+                    <i class="fas fa-eye"></i>
+                    <span id="detail-views-count">{{ radio.views_count }}</span>
+                </span>
+                <span class="stat-item">
+                    <i class="fas fa-heart"></i>
+                    <span id="detail-likes-count">{{ radio.likes_count }}</span>
+                </span>
+            </div>
+            <div class="detail-controls">
+                <button class="detail-play-btn" id="detail-play-btn" aria-label="تشغيل/إيقاف">
+                    <i class="fas fa-play"></i>
+                </button>
+            </div>
+            <div class="detail-volume">
+                <button class="detail-vol-btn" id="detail-vol-btn" aria-label="كتم الصوت">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+                <input type="range" class="detail-vol-slider" id="detail-vol-slider" min="0" max="100" value="80">
+            </div>
+            <div class="detail-actions">
+                <button class="detail-like-btn" id="detail-like-btn" aria-label="إعجاب">
+                    <i class="fas fa-heart"></i>
+                    إعجاب
+                </button>
+                <button class="detail-share-btn" id="detail-share-btn" aria-label="مشاركة">
+                    <i class="fas fa-share-alt"></i>
+                    مشاركة
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share Toast -->
+    <div class="share-toast" id="share-toast">تم نسخ الرابط</div>
+
+{% endblock %}
+
+{% block script %}
+    <script>
+        const CSRF_TOKEN = '{{ csrf_token }}';
+        const RADIO_LIKE_URL = '{% url "radio:radio_like" slug=radio.slug %}';
+        const RADIO_DETAIL_URL = '{{ request.build_absolute_uri }}';
+        const RADIO_DATA = {
+            id: {{ radio.id }},
+            name: "{{ radio.name|escapejs }}",
+            src: "{{ radio.stream_url }}",
+            img: "{% if radio.image %}{{ radio.image.url }}{% else %}{% static 'radio/img/radio_img_not_available.png' %}{% endif %}",
+            description: "{{ radio.description|default:''|escapejs }}",
+            slug: "{{ radio.slug|escapejs }}",
+            likes_count: {{ radio.likes_count }},
+            views_count: {{ radio.views_count }}
+        };
+    </script>
+    <script src="{% static 'radio/js/radio_detail.js' %}"></script>
+{% endblock %}
