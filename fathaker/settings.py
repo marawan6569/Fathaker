@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     # Third Party apps
     'rest_framework',
+    'drf_spectacular',
     'taggit',
 
     # Fathaker Apps
@@ -147,3 +148,13 @@ else:
     ]
 
 TAGGIT_CASE_INSENSITIVE = True
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Fathaker API',
+    'DESCRIPTION': 'API for the Fathaker (فذكر) Islamic platform — Quranic verses and radio stations.',
+    'VERSION': '1.0.0',
+}

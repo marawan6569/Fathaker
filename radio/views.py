@@ -7,7 +7,8 @@ from django.db.models import F
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAdminUser, AllowAny
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, serializers
+from drf_spectacular.utils import extend_schema, OpenApiParameter, inline_serializer
 from core.models import NavLink
 from .models import Radio
 
@@ -16,6 +17,14 @@ class RadioRankDown(APIView):
     allowed_methods = ['get']
     permission_classes = [IsAdminUser]
 
+    @extend_schema(
+        summary='Move radio rank down',
+        description='Swap the radio with the one below it. Admin only. Redirects back to the referring page.',
+        parameters=[
+            OpenApiParameter(name='id', type=int, location=OpenApiParameter.PATH, description='Radio ID'),
+        ],
+        responses={302: None},
+    )
     def get(self, request, *args, **kwargs):
         try:
             radio_id = self.kwargs.get("id", None)
@@ -47,6 +56,14 @@ class RadioRankUp(APIView):
     allowed_methods = ['get']
     permission_classes = [IsAdminUser]
 
+    @extend_schema(
+        summary='Move radio rank up',
+        description='Swap the radio with the one above it. Admin only. Redirects back to the referring page.',
+        parameters=[
+            OpenApiParameter(name='id', type=int, location=OpenApiParameter.PATH, description='Radio ID'),
+        ],
+        responses={302: None},
+    )
     def get(self, request, *args, **kwargs):
         try:
             radio_id = self.kwargs.get("id", None)
@@ -100,6 +117,18 @@ class RadioDetail(TemplateView):
 class RadioLike(APIView):
     permission_classes = [AllowAny]
 
+    @extend_schema(
+        summary='Like a radio station',
+        description='Increment the like count for a radio station. Returns the updated like count.',
+        parameters=[
+            OpenApiParameter(name='slug', type=str, location=OpenApiParameter.PATH, description='Radio slug'),
+        ],
+        request=None,
+        responses=inline_serializer(
+            name='RadioLikeResponse',
+            fields={'likes_count': serializers.IntegerField()},
+        ),
+    )
     def post(self, request, slug):
         radio = get_object_or_404(Radio, slug=slug)
         Radio.objects.filter(pk=radio.pk).update(likes_count=F('likes_count') + 1)

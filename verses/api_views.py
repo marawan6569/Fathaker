@@ -3,11 +3,27 @@ from django.shortcuts import get_object_or_404
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
 from .models import Verse
 from .serializers import VerseSerializer
 
 
 # #1
+@extend_schema_view(
+    get=extend_schema(
+        summary='List all verses or filter by page',
+        parameters=[
+            OpenApiParameter(
+                name='page',
+                type=int,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description='Filter by Quran page number (1-604)',
+            ),
+        ],
+        responses=VerseSerializer(many=True),
+    ),
+)
 class VersesList(ListAPIView):
     """
         Endpoint To Get all verses
@@ -26,6 +42,20 @@ class VersesList(ListAPIView):
 
 
 # #2
+@extend_schema_view(
+    get=extend_schema(
+        summary='Search verses by keyword',
+        parameters=[
+            OpenApiParameter(
+                name='q',
+                type=str,
+                location=OpenApiParameter.QUERY,
+                required=True,
+                description='Search keyword (matches verse text with or without tashkeel)',
+            ),
+        ],
+    ),
+)
 class VersesSearch(ListAPIView):
     """Search verses by keyword using ?q=keyword"""
     serializer_class = VerseSerializer
@@ -40,6 +70,19 @@ class VersesSearch(ListAPIView):
 
 
 # #3
+@extend_schema_view(
+    get=extend_schema(
+        summary='Get all verses of a surah',
+        parameters=[
+            OpenApiParameter(
+                name='surah_id',
+                type=int,
+                location=OpenApiParameter.PATH,
+                description='Surah number (1-114)',
+            ),
+        ],
+    ),
+)
 class SurahVerses(ListAPIView):
     """Get all verses of a surah by surah id"""
     serializer_class = VerseSerializer
@@ -54,6 +97,24 @@ class SurahVerses(ListAPIView):
 class VerseDetail(APIView):
     """Get a specific verse by surah id and verse number"""
 
+    @extend_schema(
+        summary='Get a specific verse',
+        parameters=[
+            OpenApiParameter(
+                name='surah_id',
+                type=int,
+                location=OpenApiParameter.PATH,
+                description='Surah number (1-114)',
+            ),
+            OpenApiParameter(
+                name='verse_number',
+                type=int,
+                location=OpenApiParameter.PATH,
+                description='Verse number within the surah',
+            ),
+        ],
+        responses=VerseSerializer,
+    )
     def get(self, request, surah_id, verse_number):
         verse_pk = f'S{surah_id:03d}V{verse_number:03d}'
         verse = get_object_or_404(Verse, verse_pk=verse_pk)
@@ -61,6 +122,25 @@ class VerseDetail(APIView):
 
 
 # #5
+@extend_schema_view(
+    get=extend_schema(
+        summary='Get verses by range',
+        parameters=[
+            OpenApiParameter(
+                name='start',
+                type=int,
+                location=OpenApiParameter.PATH,
+                description='Start verse number in Quran (1-6236)',
+            ),
+            OpenApiParameter(
+                name='end',
+                type=int,
+                location=OpenApiParameter.PATH,
+                description='End verse number in Quran (1-6236)',
+            ),
+        ],
+    ),
+)
 class VersesRange(ListAPIView):
     """Get verses by number_in_quran range"""
     serializer_class = VerseSerializer
@@ -74,6 +154,20 @@ class VersesRange(ListAPIView):
 
 
 # #6
+@extend_schema_view(
+    get=extend_schema(
+        summary='Search verses that start with given text',
+        parameters=[
+            OpenApiParameter(
+                name='q',
+                type=str,
+                location=OpenApiParameter.QUERY,
+                required=True,
+                description='Letters the verse should start with (matches with or without tashkeel)',
+            ),
+        ],
+    ),
+)
 class VersesStartsWith(ListAPIView):
     """Search verses that start with given letters using ?q=letters"""
     serializer_class = VerseSerializer
@@ -88,6 +182,20 @@ class VersesStartsWith(ListAPIView):
 
 
 # #7
+@extend_schema_view(
+    get=extend_schema(
+        summary='Search verses that end with given text',
+        parameters=[
+            OpenApiParameter(
+                name='q',
+                type=str,
+                location=OpenApiParameter.QUERY,
+                required=True,
+                description='Letters the verse should end with (matches with or without tashkeel)',
+            ),
+        ],
+    ),
+)
 class VersesEndsWith(ListAPIView):
     """Search verses that end with given letters using ?q=letters"""
     serializer_class = VerseSerializer
