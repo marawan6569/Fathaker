@@ -3,11 +3,15 @@ from .api_views import (
     VersesList, VersesSearch, SurahVerses, VerseDetail,
     VersesRange, VersesStartsWith, VersesEndsWith,
 )
+from .views import QuranSearch
 
 app_name = 'verses'
 
 
 urlpatterns = [
+
+    # --> Pages <--
+    path('search/', QuranSearch.as_view(), name='quran_search'),
 
     # --> API <--
     path('api/verses_list', VersesList.as_view(), name='verses_list_api'),

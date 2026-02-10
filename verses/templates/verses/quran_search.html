@@ -1,0 +1,100 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block style %}
+    <link href="{% static 'verses/css/quran_search.css' %}" rel="stylesheet">
+{% endblock style %}
+{% block title %}فذكر | البحث في القرآن الكريم{% endblock title %}
+
+{% block content %}
+    <div class="container mt-4" style="min-height: 100vh;">
+
+        <!-- Page Title -->
+        <h1 class="search-page-title">
+            <i class="fas fa-quran"></i>
+            البحث في القرآن الكريم
+        </h1>
+
+        <!-- Search Mode Pills -->
+        <div class="mode-controls">
+            <button class="mode-pill active" data-mode="search">بحث</button>
+            <button class="mode-pill" data-mode="starts-with">تبدأ بـ</button>
+            <button class="mode-pill" data-mode="ends-with">تنتهي بـ</button>
+            <button class="mode-pill" data-mode="surah">في سورة</button>
+            <button class="mode-pill" data-mode="page">صفحة</button>
+            <button class="mode-pill" data-mode="range">نطاق</button>
+        </div>
+
+        <!-- Search Inputs -->
+        <div class="search-form">
+            <!-- Text input (search, starts-with, ends-with) -->
+            <div class="input-group-wrapper" id="text-input-group">
+                <div class="search-wrapper position-relative">
+                    <input type="text" class="search-input" id="search-text" placeholder="اكتب كلمة أو جملة للبحث...">
+                    <i class="fa fa-search search-icon"></i>
+                </div>
+            </div>
+
+            <!-- Surah dropdown -->
+            <div class="input-group-wrapper" id="surah-input-group" style="display:none;">
+                <select class="search-select" id="surah-select">
+                    <option value="">اختر سورة...</option>
+                    {% for surah in surahs %}
+                        <option value="{{ surah.id }}">{{ surah.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Page number input -->
+            <div class="input-group-wrapper" id="page-input-group" style="display:none;">
+                <input type="number" class="search-input-num" id="page-number" placeholder="رقم الصفحة (1-604)" min="1" max="604">
+            </div>
+
+            <!-- Range inputs -->
+            <div class="input-group-wrapper" id="range-input-group" style="display:none;">
+                <div class="range-inputs">
+                    <input type="number" class="search-input-num" id="range-start" placeholder="من آية (1-6236)" min="1" max="6236">
+                    <span class="range-separator">إلى</span>
+                    <input type="number" class="search-input-num" id="range-end" placeholder="إلى آية (1-6236)" min="1" max="6236">
+                </div>
+            </div>
+
+            <button class="search-btn" id="search-btn">
+                <i class="fas fa-search"></i>
+                بحث
+            </button>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div class="loading-spinner" id="loading-spinner" style="display:none;">
+            <div class="spinner"></div>
+            <p>جاري البحث...</p>
+        </div>
+
+        <!-- Result Count -->
+        <div class="result-count" id="result-count" style="display:none;">
+            عدد النتائج: <span id="count-number">0</span>
+        </div>
+
+        <!-- Results Area -->
+        <div class="results-container" id="results-container"></div>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="empty-state" style="display:none;">
+            <i class="fas fa-search"></i>
+            <p>لم يتم العثور على نتائج</p>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        const SURAHS = [
+        {% for surah in surahs %}
+            { id: {{ surah.id }}, name: "{{ surah.name|escapejs }}" },
+        {% endfor %}
+        ];
+        const API_BASE = '/verses/api/';
+    </script>
+    <script src="{% static 'verses/js/quran_search.js' %}"></script>
+{% endblock %}
