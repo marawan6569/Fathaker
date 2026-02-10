@@ -34,6 +34,10 @@ body {
 .nav-link {
     color: #f7f7f7;
     font-size: 16px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
 }
 .nav-link.active {
     color: #c45e36 !important;
