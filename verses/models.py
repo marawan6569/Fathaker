@@ -16,6 +16,15 @@ class Surah(models.Model):
         return self.name
 
 
+class Audio(models.Model):
+    name = models.CharField(max_length=50, verbose_name=_('Audio File Name'), null=True, blank=True)
+    url = models.URLField(verbose_name=_('Audio File URL'))
+
+    def __str__(self):
+        if self.name:
+            return self.name
+        return super().__str__()
+
 class Verse(models.Model):
     verse_pk = models.CharField(max_length=8, unique=True, verbose_name=_('Verse Primary Key'))
     page = models.PositiveIntegerField(verbose_name=_('Page'))
@@ -27,6 +36,7 @@ class Verse(models.Model):
     number_in_surah = models.PositiveIntegerField(verbose_name=_('Verse Number In Surah'))
     number_in_quran = models.PositiveIntegerField(unique=True, verbose_name=_('Verse Number In Quran'))
     is_sajda = models.BooleanField(verbose_name=_('Is the verse a sajda?'))
+    audio = models.ManyToManyField(Audio, blank=True)
 
     class Meta:
         verbose_name = _('Verse')
