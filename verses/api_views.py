@@ -89,7 +89,8 @@ class SurahVerses(ListAPIView):
 
     def get_queryset(self):
         surah_id = self.kwargs['surah_id']
-        surah_prefix = f'S{surah_id:03d}'
+        surah_prefix = f'S{surah_id}V'
+        print(surah_prefix)
         return Verse.objects.filter(verse_pk__startswith=surah_prefix)
 
 
@@ -116,7 +117,7 @@ class VerseDetail(APIView):
         responses=VerseSerializer,
     )
     def get(self, request, surah_id, verse_number):
-        verse_pk = f'S{surah_id:03d}V{verse_number:03d}'
+        verse_pk = f'S{surah_id}V{verse_number}'
         verse = get_object_or_404(Verse, verse_pk=verse_pk)
         return Response(VerseSerializer(verse).data)
 
