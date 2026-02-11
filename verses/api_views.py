@@ -72,7 +72,7 @@ class VersesSearch(ListAPIView):
 # #3
 @extend_schema_view(
     get=extend_schema(
-        summary='Get all verses of a surah',
+        summary='Get all verses of a surah, optionally filtered by keyword',
         parameters=[
             OpenApiParameter(
                 name='surah_id',
@@ -80,18 +80,30 @@ class VersesSearch(ListAPIView):
                 location=OpenApiParameter.PATH,
                 description='Surah number (1-114)',
             ),
+            OpenApiParameter(
+                name='q',
+                type=str,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description='Optional search keyword to filter verses within the surah',
+            ),
         ],
     ),
 )
 class SurahVerses(ListAPIView):
-    """Get all verses of a surah by surah id"""
+    """Get all verses of a surah by surah id, optionally filtered by keyword using ?q=keyword"""
     serializer_class = VerseSerializer
 
     def get_queryset(self):
         surah_id = self.kwargs['surah_id']
         surah_prefix = f'S{surah_id}V'
-        print(surah_prefix)
-        return Verse.objects.filter(verse_pk__startswith=surah_prefix)
+        queryset = Verse.objects.filter(verse_pk__startswith=surah_prefix)
+        q = self.request.GET.get('q', '').strip()
+        if q:
+            queryset = queryset.filter(
+                Q(verse__icontains=q) | Q(verse_without_tashkeel__icontains=q)
+            )
+        return queryset
 
 
 # #4

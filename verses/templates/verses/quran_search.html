@@ -34,7 +34,7 @@
                 </div>
             </div>
 
-            <!-- Surah dropdown -->
+            <!-- Surah dropdown + optional search within surah -->
             <div class="input-group-wrapper" id="surah-input-group" style="display:none;">
                 <select class="search-select" id="surah-select">
                     <option value="">اختر سورة...</option>
@@ -42,6 +42,10 @@
                         <option value="{{ surah.id }}">{{ surah.name }}</option>
                     {% endfor %}
                 </select>
+                <div class="search-wrapper position-relative" style="margin-top: 10px;">
+                    <input type="text" class="search-input" id="surah-search-text" placeholder="بحث داخل السورة (اختياري)...">
+                    <i class="fa fa-search search-icon"></i>
+                </div>
             </div>
 
             <!-- Page number input -->

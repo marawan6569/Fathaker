@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const rangeGroup = document.getElementById('range-input-group');
     const searchText = document.getElementById('search-text');
     const surahSelect = document.getElementById('surah-select');
+    const surahSearchText = document.getElementById('surah-search-text');
     const pageNumber = document.getElementById('page-number');
     const rangeStart = document.getElementById('range-start');
     const rangeEnd = document.getElementById('range-end');
@@ -75,6 +76,11 @@ document.addEventListener('DOMContentLoaded', function () {
         if (e.key === 'Enter') doSearch();
     });
 
+    // Surah search text Enter key
+    surahSearchText.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') doSearch();
+    });
+
     // Surah select triggers search immediately
     surahSelect.addEventListener('change', function () {
         if (surahSelect.value) doSearch();
@@ -125,8 +131,13 @@ document.addEventListener('DOMContentLoaded', function () {
             case 'surah':
                 var surahId = surahSelect.value;
                 if (!surahId) return null;
-                currentQuery = '';
-                return API_BASE + 'surah/' + surahId + '/';
+                var surahQuery = surahSearchText.value.trim();
+                currentQuery = surahQuery;
+                var surahUrl = API_BASE + 'surah/' + surahId + '/';
+                if (surahQuery) {
+                    surahUrl += '?q=' + encodeURIComponent(surahQuery);
+                }
+                return surahUrl;
             case 'page':
                 var page = pageNumber.value.trim();
                 if (!page) return null;
@@ -166,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var verseDisplay = v.verse;
 
         // Highlight matching text for text search modes
-        if (currentQuery && (currentMode === 'search' || currentMode === 'starts-with' || currentMode === 'ends-with')) {
+        if (currentQuery && (currentMode === 'search' || currentMode === 'starts-with' || currentMode === 'ends-with' || currentMode === 'surah')) {
             verseDisplay = highlightText(verseDisplay, currentQuery);
         }
 
@@ -177,18 +188,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
         return '<div class="verse-card" style="animation-delay:' + delay + 's;">' +
             '<div class="verse-card-header">' +
-                '<span class="verse-surah-badge"><i class="fas fa-book-open"></i> ' + escapeHtml(v.surah) + '</span>' +
-                '<span class="verse-number-badge">آية ' + v.number_in_surah + '</span>' +
-                sajdaHtml +
+            '<span class="verse-surah-badge"><i class="fas fa-book-open"></i> ' + escapeHtml(v.surah) + '</span>' +
+            '<span class="verse-number-badge">آية ' + v.number_in_surah + '</span>' +
+            sajdaHtml +
             '</div>' +
             '<p class="verse-text">' + verseDisplay + '</p>' +
             '<div class="verse-meta">' +
-                '<span class="verse-meta-item"><i class="fas fa-bookmark"></i> جزء ' + v.juz + '</span>' +
-                '<span class="verse-meta-item"><i class="fas fa-file-alt"></i> صفحة ' + v.page + '</span>' +
-                '<span class="verse-meta-item"><i class="fas fa-layer-group"></i> ربع ' + v.the_quarter + '</span>' +
-                '<span class="verse-meta-item"><i class="fas fa-hashtag"></i> رقم ' + v.number_in_quran + '</span>' +
+            '<span class="verse-meta-item"><i class="fas fa-bookmark"></i> جزء ' + v.juz + '</span>' +
+            '<span class="verse-meta-item"><i class="fas fa-file-alt"></i> صفحة ' + v.page + '</span>' +
+            '<span class="verse-meta-item"><i class="fas fa-layer-group"></i> ربع ' + v.the_quarter + '</span>' +
+            '<span class="verse-meta-item"><i class="fas fa-hashtag"></i> رقم ' + v.number_in_quran + '</span>' +
             '</div>' +
-        '</div>';
+            '</div>';
     }
 
     function highlightText(text, query) {
