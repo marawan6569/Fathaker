@@ -263,6 +263,55 @@ document.addEventListener('DOMContentLoaded', function () {
             html += buildVerseCard(v, i);
         }
         resultsContainer.innerHTML = html;
+        bindAudioButtons();
+    }
+
+    // ===== Audio Player =====
+    var audioPlayer = null;
+    var currentAudioBtn = null;
+
+    function bindAudioButtons() {
+        var buttons = resultsContainer.querySelectorAll('.verse-audio-btn');
+        buttons.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var url = btn.getAttribute('data-audio-url');
+                if (!url) return;
+
+                // If clicking the same button that's playing, toggle pause/play
+                if (currentAudioBtn === btn && audioPlayer && !audioPlayer.paused) {
+                    audioPlayer.pause();
+                    btn.classList.remove('playing');
+                    btn.querySelector('i').className = 'fas fa-play';
+                    return;
+                }
+
+                // Stop any currently playing audio
+                if (audioPlayer) {
+                    audioPlayer.pause();
+                    if (currentAudioBtn) {
+                        currentAudioBtn.classList.remove('playing');
+                        currentAudioBtn.querySelector('i').className = 'fas fa-play';
+                    }
+                }
+
+                // Play new audio
+                audioPlayer = new Audio(url);
+                currentAudioBtn = btn;
+                btn.classList.add('playing');
+                btn.querySelector('i').className = 'fas fa-pause';
+
+                audioPlayer.play().catch(function () {
+                    btn.classList.remove('playing');
+                    btn.querySelector('i').className = 'fas fa-play';
+                });
+
+                audioPlayer.addEventListener('ended', function () {
+                    btn.classList.remove('playing');
+                    btn.querySelector('i').className = 'fas fa-play';
+                    currentAudioBtn = null;
+                });
+            });
+        });
     }
 
     function buildVerseCard(v, index) {
@@ -279,11 +328,20 @@ document.addEventListener('DOMContentLoaded', function () {
             sajdaHtml = '<span class="sajda-badge"><i class="fas fa-pray"></i> سجدة</span>';
         }
 
+        // Audio button
+        var audioHtml = '';
+        if (v.audio && v.audio.length > 0) {
+            audioHtml = '<button class="verse-audio-btn" data-audio-url="' + escapeHtml(v.audio[0].url) + '" title="تشغيل">' +
+                '<i class="fas fa-play"></i>' +
+                '</button>';
+        }
+
         return '<div class="verse-card" style="animation-delay:' + delay + 's;">' +
             '<div class="verse-card-header">' +
             '<span class="verse-surah-badge"><i class="fas fa-book-open"></i> ' + escapeHtml(v.surah) + '</span>' +
             '<span class="verse-number-badge">آية ' + v.number_in_surah + '</span>' +
             sajdaHtml +
+            audioHtml +
             '</div>' +
             '<p class="verse-text">' + verseDisplay + '</p>' +
             '<div class="verse-meta">' +
