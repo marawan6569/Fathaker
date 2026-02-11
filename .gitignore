@@ -172,3 +172,7 @@ cython_debug/
 .idea/
 db_backup/
 media/
+
+## VSCode
+.vscode/
+.vscode/settings.json
