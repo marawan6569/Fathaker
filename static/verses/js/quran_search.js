@@ -81,9 +81,102 @@ document.addEventListener('DOMContentLoaded', function () {
         if (e.key === 'Enter') doSearch();
     });
 
-    // Surah select triggers search immediately
-    surahSelect.addEventListener('change', function () {
-        if (surahSelect.value) doSearch();
+    // ===== Custom Surah Dropdown =====
+    var surahDropdown = document.getElementById('surah-dropdown');
+    var surahTrigger = document.getElementById('surah-dropdown-trigger');
+    var surahLabel = document.getElementById('surah-dropdown-label');
+    var surahPanel = document.getElementById('surah-dropdown-panel');
+    var surahFilter = document.getElementById('surah-dropdown-filter');
+    var surahList = document.getElementById('surah-dropdown-list');
+    var surahItems = surahList.querySelectorAll('.surah-dropdown-item');
+
+    // Toggle dropdown
+    surahTrigger.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var isOpen = surahDropdown.classList.contains('open');
+        if (isOpen) {
+            closeSurahDropdown();
+        } else {
+            surahDropdown.classList.add('open');
+            surahFilter.value = '';
+            filterSurahItems('');
+            setTimeout(function () { surahFilter.focus(); }, 100);
+        }
+    });
+
+    // Filter surahs as user types
+    surahFilter.addEventListener('input', function () {
+        filterSurahItems(surahFilter.value.trim());
+    });
+
+    // Prevent filter input clicks from closing dropdown
+    surahFilter.addEventListener('click', function (e) {
+        e.stopPropagation();
+    });
+
+    function filterSurahItems(query) {
+        var visibleCount = 0;
+        surahItems.forEach(function (item) {
+            var name = item.getAttribute('data-name');
+            var num = item.getAttribute('data-value');
+            if (!query || name.indexOf(query) !== -1 || num === query) {
+                item.style.display = '';
+                visibleCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        });
+        // Show empty message
+        var existingEmpty = surahList.querySelector('.surah-dropdown-empty');
+        if (visibleCount === 0) {
+            if (!existingEmpty) {
+                var emptyEl = document.createElement('li');
+                emptyEl.className = 'surah-dropdown-empty';
+                emptyEl.textContent = 'لا توجد نتائج';
+                surahList.appendChild(emptyEl);
+            }
+        } else if (existingEmpty) {
+            existingEmpty.remove();
+        }
+    }
+
+    // Select a surah item
+    surahItems.forEach(function (item) {
+        item.addEventListener('click', function (e) {
+            e.stopPropagation();
+            var value = item.getAttribute('data-value');
+            var name = item.getAttribute('data-name');
+
+            // Update hidden input & label
+            surahSelect.value = value;
+            surahLabel.textContent = name;
+            surahTrigger.classList.add('has-value');
+
+            // Mark selected
+            surahItems.forEach(function (i) { i.classList.remove('selected'); });
+            item.classList.add('selected');
+
+            closeSurahDropdown();
+            doSearch();
+        });
+    });
+
+    function closeSurahDropdown() {
+        surahDropdown.classList.remove('open');
+    }
+
+    // Close dropdown on outside click
+    document.addEventListener('click', function (e) {
+        if (!surahDropdown.contains(e.target)) {
+            closeSurahDropdown();
+        }
+    });
+
+    // Close dropdown when switching modes
+    modePills.forEach(function (pill) {
+        pill.addEventListener('click', function () {
+            closeSurahDropdown();
+        });
     });
 
     // Search button

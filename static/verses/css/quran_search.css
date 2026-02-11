@@ -129,6 +129,238 @@
     box-shadow: 0 0 0 3px rgba(2, 89, 85, 0.12);
 }
 
+/* Combined Surah Field */
+.surah-combined-field {
+    display: flex;
+    align-items: center;
+    border: 2px solid #e0e0e0;
+    border-radius: 2rem;
+    background: #fff;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    position: relative;
+}
+
+.surah-combined-field:focus-within {
+    border-color: #025955;
+    box-shadow: 0 0 0 3px rgba(2, 89, 85, 0.12);
+}
+
+/* Custom Dropdown */
+.surah-dropdown {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.surah-dropdown-trigger {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: none;
+    outline: none;
+    background: rgba(2, 89, 85, 0.06);
+    padding: 0.85rem 0.7rem 0.85rem 1.1rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #025955;
+    cursor: pointer;
+    min-width: 120px;
+    font-family: 'Cairo', Arial, serif;
+    border-radius: 0 2rem 2rem 0;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+.surah-dropdown-trigger:hover {
+    background: rgba(2, 89, 85, 0.12);
+}
+
+.surah-dropdown-trigger.has-value {
+    background: #025955;
+    color: #fff;
+}
+
+.surah-dropdown-arrow {
+    font-size: 0.65rem;
+    transition: transform 0.3s ease;
+}
+
+.surah-dropdown.open .surah-dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+/* Dropdown Panel */
+.surah-dropdown-panel {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    width: 280px;
+    max-height: 0;
+    overflow: hidden;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.08);
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.25s ease,
+        transform 0.25s ease;
+    pointer-events: none;
+}
+
+.surah-dropdown.open .surah-dropdown-panel {
+    max-height: 360px;
+    overflow: visible;
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* Filter Input */
+.surah-dropdown-filter-wrap {
+    position: sticky;
+    top: 0;
+    padding: 0.7rem;
+    background: #fff;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 1;
+}
+
+.surah-dropdown-filter-icon {
+    font-size: 0.75rem;
+    color: #aaa;
+}
+
+.surah-dropdown-filter {
+    border: 1.5px solid #e8e8e8;
+    border-radius: 8px;
+    padding: 0.45rem 0.7rem;
+    font-size: 0.88rem;
+    outline: none;
+    width: 100%;
+    font-family: 'Cairo', Arial, serif;
+    transition: border-color 0.2s;
+}
+
+.surah-dropdown-filter:focus {
+    border-color: #025955;
+}
+
+/* Surah List */
+.surah-dropdown-list {
+    list-style: none;
+    margin: 0;
+    padding: 0.35rem 0;
+    max-height: 280px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(2, 89, 85, 0.2) transparent;
+}
+
+.surah-dropdown-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.surah-dropdown-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.surah-dropdown-list::-webkit-scrollbar-thumb {
+    background: rgba(2, 89, 85, 0.2);
+    border-radius: 10px;
+}
+
+.surah-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.5rem 0.85rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    font-family: 'Cairo', Arial, serif;
+}
+
+.surah-dropdown-item:hover {
+    background: rgba(2, 89, 85, 0.07);
+}
+
+.surah-dropdown-item.selected {
+    background: rgba(2, 89, 85, 0.12);
+    font-weight: 700;
+}
+
+.surah-dropdown-item-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(2, 89, 85, 0.08);
+    color: #025955;
+    font-size: 0.72rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.surah-dropdown-item.selected .surah-dropdown-item-num {
+    background: #025955;
+    color: #fff;
+}
+
+.surah-dropdown-item-name {
+    font-size: 0.92rem;
+    color: #333;
+    font-weight: 500;
+}
+
+.surah-dropdown-item.selected .surah-dropdown-item-name {
+    color: #025955;
+}
+
+.surah-dropdown-empty {
+    padding: 1.2rem;
+    text-align: center;
+    color: #aaa;
+    font-size: 0.88rem;
+}
+
+/* Divider & Input */
+.surah-combined-divider {
+    width: 1.5px;
+    height: 28px;
+    background: #d0d0d0;
+    flex-shrink: 0;
+}
+
+.surah-combined-input {
+    border: none;
+    outline: none;
+    flex: 1;
+    padding: 0.85rem 2.5rem 0.85rem 1rem;
+    font-size: 1rem;
+    background: transparent;
+    min-width: 0;
+    font-family: 'Cairo', Arial, serif;
+}
+
+.surah-combined-input::placeholder {
+    color: #999;
+}
+
+.surah-combined-icon {
+    position: absolute;
+    left: 0.85rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    color: #025955;
+    pointer-events: none;
+}
+
 .search-input-num {
     width: 100%;
     padding: 0.85rem 1rem;
@@ -219,7 +451,9 @@
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* ===== Result Count ===== */
@@ -267,6 +501,7 @@
         opacity: 0;
         transform: translateY(30px) scale(0.97);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -415,6 +650,35 @@
 
     .range-separator {
         display: none;
+    }
+
+    .surah-combined-field {
+        flex-direction: column;
+        border-radius: 1rem;
+    }
+
+    .surah-dropdown-trigger {
+        width: 100%;
+        border-radius: 0;
+        justify-content: center;
+    }
+
+    .surah-dropdown {
+        width: 100%;
+    }
+
+    .surah-dropdown-panel {
+        width: 100%;
+    }
+
+    .surah-combined-divider {
+        width: 80%;
+        height: 1.5px;
+    }
+
+    .surah-combined-input {
+        width: 100%;
+        padding-left: 2.5rem;
     }
 
     .search-btn {
