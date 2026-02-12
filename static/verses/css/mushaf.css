@@ -210,7 +210,9 @@
 }
 
 @keyframes mushafSpin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* ===== Page Container ===== */
@@ -221,8 +223,15 @@
 }
 
 @keyframes mushafFadeIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* ===== Single Page ===== */
@@ -452,17 +461,47 @@
 }
 
 @keyframes turnNextPage {
-    0% { opacity: 1; transform: translateX(0); }
-    40% { opacity: 0; transform: translateX(30px); }
-    60% { opacity: 0; transform: translateX(-30px); }
-    100% { opacity: 1; transform: translateX(0); }
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    40% {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+
+    60% {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 @keyframes turnPrevPage {
-    0% { opacity: 1; transform: translateX(0); }
-    40% { opacity: 0; transform: translateX(-30px); }
-    60% { opacity: 0; transform: translateX(30px); }
-    100% { opacity: 1; transform: translateX(0); }
+    0% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    40% {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+
+    60% {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 /* ===== Responsive ===== */

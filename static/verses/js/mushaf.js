@@ -196,17 +196,17 @@ document.addEventListener('DOMContentLoaded', function () {
         loadPage(pageNum, direction);
     }
 
-    // Next page (in mushaf, next page is actually -1 since Arabic reads right-to-left)
+    // Right chevron = previous page (RTL: right side = going back)
     nextBtn.addEventListener('click', function () {
-        if (currentPage < totalPages) {
-            goToPage(currentPage + 1, 'next');
+        if (currentPage > 1) {
+            goToPage(currentPage - 1, 'prev');
         }
     });
 
-    // Previous page
+    // Left chevron = next page (RTL: left side = going forward)
     prevBtn.addEventListener('click', function () {
-        if (currentPage > 1) {
-            goToPage(currentPage - 1, 'prev');
+        if (currentPage < totalPages) {
+            goToPage(currentPage + 1, 'next');
         }
     });
 
@@ -265,16 +265,16 @@ document.addEventListener('DOMContentLoaded', function () {
         if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT') return;
 
         if (e.key === 'ArrowRight') {
-            // Right arrow = next page (RTL)
-            e.preventDefault();
-            if (currentPage < totalPages) {
-                goToPage(currentPage + 1, 'next');
-            }
-        } else if (e.key === 'ArrowLeft') {
-            // Left arrow = previous page (RTL)
+            // Right arrow = previous page (RTL: going back)
             e.preventDefault();
             if (currentPage > 1) {
                 goToPage(currentPage - 1, 'prev');
+            }
+        } else if (e.key === 'ArrowLeft') {
+            // Left arrow = next page (RTL: going forward)
+            e.preventDefault();
+            if (currentPage < totalPages) {
+                goToPage(currentPage + 1, 'next');
             }
         }
     });
