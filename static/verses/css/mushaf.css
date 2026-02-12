@@ -1,0 +1,563 @@
+@import url('https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;800&display=swap');
+
+/* ===== CSS Variables ===== */
+:root {
+    --mushaf-parchment: #faf6ef;
+    --mushaf-parchment-dark: #f0e6d3;
+    --mushaf-gold: #c8a45a;
+    --mushaf-gold-dark: #a07d3a;
+    --mushaf-green: #025955;
+    --mushaf-green-light: rgba(2, 89, 85, 0.08);
+    --mushaf-brown: #6b4226;
+    --mushaf-text: #1a1207;
+    --mushaf-border: #d4b896;
+    --mushaf-accent: #c45e36;
+    --mushaf-frame: #8b6914;
+}
+
+* {
+    font-family: 'Cairo', Arial, serif;
+}
+
+/* ===== Wrapper ===== */
+.mushaf-wrapper {
+    min-height: 100vh;
+    background: linear-gradient(145deg, #0f1a1a 0%, #1a2f2e 50%, #0d1919 100%);
+    padding-bottom: 2rem;
+}
+
+/* ===== Top Bar ===== */
+.mushaf-topbar {
+    background: rgba(2, 89, 85, 0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 2px solid var(--mushaf-gold);
+    padding: 0.6rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.mushaf-topbar-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* Info Badges */
+.mushaf-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.mushaf-info-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    padding: 0.3rem 0.85rem;
+    border-radius: 2rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+    border: 1px solid rgba(200, 164, 90, 0.3);
+}
+
+.mushaf-info-badge i {
+    color: var(--mushaf-gold);
+    font-size: 0.75rem;
+}
+
+.surah-badge-info {
+    background: rgba(200, 164, 90, 0.2);
+}
+
+/* Navigation */
+.mushaf-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.mushaf-nav-btn {
+    width: 36px;
+    height: 36px;
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+}
+
+.mushaf-nav-btn:hover {
+    background: rgba(200, 164, 90, 0.3);
+    border-color: var(--mushaf-gold);
+    transform: scale(1.08);
+}
+
+.mushaf-nav-btn:active {
+    transform: scale(0.95);
+}
+
+.mushaf-page-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border-radius: 2rem;
+    padding: 0.2rem 0.7rem;
+}
+
+.mushaf-page-input {
+    width: 50px;
+    border: none;
+    background: transparent;
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-align: center;
+    outline: none;
+    font-family: 'Cairo', Arial, serif;
+    -moz-appearance: textfield;
+}
+
+.mushaf-page-input::-webkit-outer-spin-button,
+.mushaf-page-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.mushaf-page-total {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* Surah Jump Select */
+.mushaf-jump {
+    display: flex;
+    align-items: center;
+}
+
+.mushaf-surah-select {
+    padding: 0.35rem 0.75rem;
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border-radius: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    font-family: 'Cairo', Arial, serif;
+    max-width: 180px;
+    transition: border-color 0.3s;
+}
+
+.mushaf-surah-select:focus {
+    border-color: var(--mushaf-gold);
+}
+
+.mushaf-surah-select option {
+    background: #1a2f2e;
+    color: #fff;
+}
+
+/* ===== Mushaf Book ===== */
+.mushaf-book {
+    max-width: 900px;
+    margin: 1.5rem auto 0;
+    padding: 0 1rem;
+    perspective: 2000px;
+}
+
+/* Loading */
+.mushaf-loading {
+    text-align: center;
+    padding: 6rem 1rem;
+    color: var(--mushaf-gold);
+}
+
+.mushaf-loading p {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-top: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.mushaf-loading-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid rgba(200, 164, 90, 0.2);
+    border-top-color: var(--mushaf-gold);
+    border-radius: 50%;
+    margin: 0 auto;
+    animation: mushafSpin 0.8s linear infinite;
+}
+
+@keyframes mushafSpin {
+    to { transform: rotate(360deg); }
+}
+
+/* ===== Page Container ===== */
+.mushaf-page-container {
+    display: flex;
+    justify-content: center;
+    animation: mushafFadeIn 0.5s ease forwards;
+}
+
+@keyframes mushafFadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Single Page ===== */
+.mushaf-page {
+    width: 100%;
+    max-width: 700px;
+    background: var(--mushaf-parchment);
+    border-radius: 4px;
+    box-shadow:
+        0 0 0 1px var(--mushaf-border),
+        0 0 0 4px var(--mushaf-parchment-dark),
+        0 0 0 5px var(--mushaf-gold),
+        0 0 0 8px rgba(139, 105, 20, 0.3),
+        0 20px 60px rgba(0, 0, 0, 0.5),
+        inset 0 0 80px rgba(200, 164, 90, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Subtle paper texture overlay */
+.mushaf-page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 30% 20%, rgba(200, 164, 90, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 80%, rgba(200, 164, 90, 0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.mushaf-page-frame {
+    padding: 2rem 2rem 1.5rem;
+    position: relative;
+    border: 2px solid var(--mushaf-gold);
+    margin: 0.75rem;
+    border-radius: 2px;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Decorative corner elements */
+.mushaf-page-frame::before,
+.mushaf-page-frame::after {
+    content: '❊';
+    position: absolute;
+    color: var(--mushaf-gold);
+    font-size: 1.1rem;
+    line-height: 1;
+}
+
+.mushaf-page-frame::before {
+    top: -0.6rem;
+    right: 50%;
+    transform: translateX(50%);
+    background: var(--mushaf-parchment);
+    padding: 0 0.5rem;
+}
+
+.mushaf-page-frame::after {
+    bottom: -0.6rem;
+    right: 50%;
+    transform: translateX(50%);
+    background: var(--mushaf-parchment);
+    padding: 0 0.5rem;
+}
+
+/* ===== Page Inner Content ===== */
+.mushaf-page-inner {
+    flex: 1;
+    position: relative;
+    z-index: 2;
+}
+
+/* ===== Surah Header ===== */
+.mushaf-surah-header {
+    text-align: center;
+    margin: 1.2rem 0;
+    position: relative;
+}
+
+.mushaf-surah-header:first-child {
+    margin-top: 0;
+}
+
+.mushaf-surah-name-banner {
+    display: inline-block;
+    position: relative;
+    padding: 0.4rem 2.5rem;
+    background: linear-gradient(135deg, var(--mushaf-gold) 0%, var(--mushaf-gold-dark) 100%);
+    color: #fff;
+    font-family: 'Amiri', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    border-radius: 2rem;
+    box-shadow: 0 3px 12px rgba(200, 164, 90, 0.3);
+    letter-spacing: 1px;
+}
+
+/* Decorative lines around surah name */
+.mushaf-surah-name-banner::before,
+.mushaf-surah-name-banner::after {
+    content: '✦';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #fff;
+    font-size: 0.7rem;
+    opacity: 0.8;
+}
+
+.mushaf-surah-name-banner::before {
+    right: 0.75rem;
+}
+
+.mushaf-surah-name-banner::after {
+    left: 0.75rem;
+}
+
+/* Bismillah */
+.mushaf-bismillah {
+    text-align: center;
+    font-family: 'Amiri Quran', 'Amiri', serif;
+    font-size: 1.5rem;
+    color: var(--mushaf-brown);
+    margin: 0.8rem 0 1rem;
+    letter-spacing: 2px;
+    line-height: 2;
+}
+
+/* ===== Verse Text Area ===== */
+.mushaf-verse-block {
+    text-align: justify;
+    direction: rtl;
+    line-height: 2.8;
+    padding: 0.5rem 0;
+}
+
+.mushaf-verse-text {
+    font-family: 'Amiri Quran', 'Amiri', serif;
+    font-size: 1.55rem;
+    color: var(--mushaf-text);
+    word-spacing: 4px;
+    letter-spacing: 0.5px;
+}
+
+/* Ayah number marker */
+.mushaf-ayah-marker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    margin: 0 3px;
+    vertical-align: middle;
+    position: relative;
+    font-family: 'Cairo', Arial, serif;
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--mushaf-gold-dark);
+}
+
+.mushaf-ayah-marker::before {
+    content: '۝';
+    position: absolute;
+    font-size: 1.8rem;
+    color: var(--mushaf-gold);
+    font-family: 'Amiri', serif;
+    line-height: 1;
+}
+
+.mushaf-ayah-marker span {
+    position: relative;
+    z-index: 1;
+    font-size: 0.55rem;
+    margin-top: 1px;
+}
+
+/* ===== Page Number ===== */
+.mushaf-page-number {
+    text-align: center;
+    font-family: 'Amiri', serif;
+    font-size: 1rem;
+    color: var(--mushaf-gold-dark);
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(200, 164, 90, 0.3);
+    font-weight: 700;
+    letter-spacing: 2px;
+}
+
+/* ===== Keyboard Shortcut Hint ===== */
+.mushaf-shortcut-hint {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 0.8rem;
+}
+
+.mushaf-shortcut-hint i {
+    margin-left: 0.3rem;
+    font-size: 0.75rem;
+}
+
+/* ===== Sajda Indicator ===== */
+.mushaf-sajda-marker {
+    display: inline-block;
+    background: rgba(196, 94, 54, 0.15);
+    color: var(--mushaf-accent);
+    font-family: 'Cairo', Arial, serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.1rem 0.45rem;
+    border-radius: 1rem;
+    margin: 0 2px;
+    vertical-align: middle;
+}
+
+/* ===== Page Turn Animation ===== */
+.mushaf-page-container.turning-next {
+    animation: turnNextPage 0.4s ease-out;
+}
+
+.mushaf-page-container.turning-prev {
+    animation: turnPrevPage 0.4s ease-out;
+}
+
+@keyframes turnNextPage {
+    0% { opacity: 1; transform: translateX(0); }
+    40% { opacity: 0; transform: translateX(30px); }
+    60% { opacity: 0; transform: translateX(-30px); }
+    100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes turnPrevPage {
+    0% { opacity: 1; transform: translateX(0); }
+    40% { opacity: 0; transform: translateX(-30px); }
+    60% { opacity: 0; transform: translateX(30px); }
+    100% { opacity: 1; transform: translateX(0); }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 767.98px) {
+    .mushaf-topbar-inner {
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .mushaf-info {
+        order: 1;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .mushaf-nav {
+        order: 2;
+    }
+
+    .mushaf-jump {
+        order: 3;
+    }
+
+    .mushaf-book {
+        margin-top: 1rem;
+        padding: 0 0.5rem;
+    }
+
+    .mushaf-page-frame {
+        padding: 1.25rem 1rem 1rem;
+        margin: 0.5rem;
+        min-height: 400px;
+    }
+
+    .mushaf-verse-text {
+        font-size: 1.25rem;
+        word-spacing: 2px;
+    }
+
+    .mushaf-verse-block {
+        line-height: 2.5;
+    }
+
+    .mushaf-ayah-marker {
+        width: 26px;
+        height: 26px;
+    }
+
+    .mushaf-ayah-marker::before {
+        font-size: 1.5rem;
+    }
+
+    .mushaf-ayah-marker span {
+        font-size: 0.48rem;
+    }
+
+    .mushaf-surah-name-banner {
+        font-size: 1.1rem;
+        padding: 0.35rem 1.8rem;
+    }
+
+    .mushaf-bismillah {
+        font-size: 1.2rem;
+    }
+
+    .mushaf-shortcut-hint {
+        display: none;
+    }
+
+    .mushaf-surah-select {
+        max-width: 150px;
+        font-size: 0.78rem;
+    }
+}
+
+@media (max-width: 479px) {
+    .mushaf-page-frame {
+        padding: 1rem 0.75rem 0.75rem;
+        margin: 0.35rem;
+    }
+
+    .mushaf-verse-text {
+        font-size: 1.1rem;
+    }
+
+    .mushaf-verse-block {
+        line-height: 2.3;
+    }
+
+    .mushaf-surah-name-banner {
+        font-size: 0.95rem;
+        padding: 0.3rem 1.5rem;
+    }
+
+    .mushaf-bismillah {
+        font-size: 1rem;
+    }
+}

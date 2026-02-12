@@ -1,4 +1,4 @@
-from django.db.models import Q
+from django.db.models import Q, Min
 from django.shortcuts import get_object_or_404
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
@@ -222,3 +222,72 @@ class VersesEndsWith(ListAPIView):
         )
 
 
+# #8 Mushaf Page API
+@extend_schema_view(
+    get=extend_schema(
+        summary='Get mushaf page data for the Quran reader',
+        parameters=[
+            OpenApiParameter(
+                name='page',
+                type=int,
+                location=OpenApiParameter.QUERY,
+                required=False,
+                description='Mushaf page number (1-604), defaults to 1',
+            ),
+        ],
+    ),
+)
+class MushafPageAPI(APIView):
+    """Get enriched data for a mushaf page, including verses and surah headers."""
+
+    def get(self, request):
+        page_num = request.GET.get('page', 1)
+        try:
+            page_num = int(page_num)
+        except (ValueError, TypeError):
+            page_num = 1
+        page_num = max(1, min(604, page_num))
+
+        total_pages = 604
+
+        verses = Verse.objects.filter(page=page_num).select_related('surah').order_by('number_in_quran')
+
+        # Build enriched verse data with surah-start flags
+        verses_data = []
+        seen_surahs = set()
+        surahs_on_page = []
+
+        for v in verses:
+            is_first_in_surah = v.number_in_surah == 1
+            surah_id = v.surah_id
+
+            if surah_id not in seen_surahs:
+                seen_surahs.add(surah_id)
+                surahs_on_page.append({
+                    'id': surah_id,
+                    'name': v.surah.name,
+                })
+
+            verses_data.append({
+                'verse_pk': v.verse_pk,
+                'verse': v.verse,
+                'number_in_surah': v.number_in_surah,
+                'number_in_quran': v.number_in_quran,
+                'surah_id': surah_id,
+                'surah_name': v.surah.name,
+                'juz': v.juz,
+                'the_quarter': v.the_quarter,
+                'is_sajda': v.is_sajda,
+                'is_first_in_surah': is_first_in_surah,
+            })
+
+        # Determine juz for this page
+        juz = verses_data[0]['juz'] if verses_data else 1
+
+        return Response({
+            'page': page_num,
+            'total_pages': total_pages,
+            'juz': juz,
+            'surahs_on_page': surahs_on_page,
+            'verses': verses_data,
+        })

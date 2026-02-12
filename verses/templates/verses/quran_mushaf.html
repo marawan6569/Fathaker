@@ -1,0 +1,91 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block style %}
+    <link href="{% static 'verses/css/mushaf.css' %}" rel="stylesheet">
+{% endblock style %}
+{% block title %}فذكر | المصحف الشريف{% endblock title %}
+
+{% block content %}
+    <div class="mushaf-wrapper">
+
+        <!-- Top Navigation Bar -->
+        <div class="mushaf-topbar">
+            <div class="mushaf-topbar-inner">
+                <!-- Page Info -->
+                <div class="mushaf-info">
+                    <span class="mushaf-info-badge" id="juz-badge">
+                        <i class="fas fa-bookmark"></i>
+                        <span id="juz-label">الجزء ١</span>
+                    </span>
+                    <span class="mushaf-info-badge surah-badge-info" id="surah-badge">
+                        <i class="fas fa-book-open"></i>
+                        <span id="surah-label">الفاتحة</span>
+                    </span>
+                </div>
+
+                <!-- Page Navigation -->
+                <div class="mushaf-nav">
+                    <button class="mushaf-nav-btn" id="next-page-btn" title="الصفحة التالية">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <div class="mushaf-page-input-wrap">
+                        <input type="number" class="mushaf-page-input" id="page-input" min="1" max="604" value="1">
+                        <span class="mushaf-page-total">/ ٦٠٤</span>
+                    </div>
+                    <button class="mushaf-nav-btn" id="prev-page-btn" title="الصفحة السابقة">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                </div>
+
+                <!-- Surah Quick Jump -->
+                <div class="mushaf-jump">
+                    <select class="mushaf-surah-select" id="surah-jump">
+                        <option value="">انتقل إلى سورة...</option>
+                        {% for surah in surahs %}
+                            <option value="{{ surah.id }}">{{ surah.id }}. {{ surah.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mushaf Display Area -->
+        <div class="mushaf-book" id="mushaf-book">
+            <!-- Loading State -->
+            <div class="mushaf-loading" id="mushaf-loading">
+                <div class="mushaf-loading-spinner"></div>
+                <p>جاري تحميل الصفحة...</p>
+            </div>
+
+            <!-- Page Content -->
+            <div class="mushaf-page-container" id="mushaf-page-container" style="display:none;">
+                <div class="mushaf-page" id="mushaf-page">
+                    <div class="mushaf-page-frame">
+                        <div class="mushaf-page-inner" id="mushaf-page-content">
+                            <!-- Verses rendered here by JS -->
+                        </div>
+                        <div class="mushaf-page-number" id="mushaf-page-number">١</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Keyboard Shortcut Hint -->
+        <div class="mushaf-shortcut-hint">
+            <span><i class="fas fa-keyboard"></i> استخدم ← → للتنقل بين الصفحات</span>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        const SURAHS = [
+        {% for surah in surahs %}
+            { id: {{ surah.id }}, name: "{{ surah.name|escapejs }}" },
+        {% endfor %}
+        ];
+        const MUSHAF_API = '/verses/api/mushaf-page/';
+    </script>
+    <script src="{% static 'verses/js/mushaf.js' %}"></script>
+{% endblock %}

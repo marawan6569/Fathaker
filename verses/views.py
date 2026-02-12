@@ -15,3 +15,17 @@ class QuranSearch(TemplateView):
         except NavLink.DoesNotExist:
             pass
         return data
+
+
+class QuranMushaf(TemplateView):
+    template_name = "verses/quran_mushaf.html"
+
+    def get_context_data(self, **kwargs):
+        data = super().get_context_data(**kwargs)
+        data['surahs'] = Surah.objects.all()
+        try:
+            data['current_page_link'] = NavLink.objects.get(name="quran_mushaf")
+        except NavLink.DoesNotExist:
+            pass
+        return data
+

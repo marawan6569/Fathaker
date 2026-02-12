@@ -2,8 +2,9 @@ from django.urls import path
 from .api_views import (
     VersesList, VersesSearch, SurahVerses, VerseDetail,
     VersesRange, VersesStartsWith, VersesEndsWith,
+    MushafPageAPI,
 )
-from .views import QuranSearch
+from .views import QuranSearch, QuranMushaf
 
 app_name = 'verses'
 
@@ -12,6 +13,7 @@ urlpatterns = [
 
     # --> Pages <--
     path('search/', QuranSearch.as_view(), name='quran_search'),
+    path('mushaf/', QuranMushaf.as_view(), name='quran_mushaf'),
 
     # --> API <--
     path('api/verses_list', VersesList.as_view(), name='verses_list_api'),
@@ -21,4 +23,6 @@ urlpatterns = [
     path('api/range/<int:start>/<int:end>/', VersesRange.as_view(), name='verses_range_api'),
     path('api/starts-with/', VersesStartsWith.as_view(), name='verses_starts_with_api'),
     path('api/ends-with/', VersesEndsWith.as_view(), name='verses_ends_with_api'),
+    path('api/mushaf-page/', MushafPageAPI.as_view(), name='mushaf_page_api'),
 ]
+
