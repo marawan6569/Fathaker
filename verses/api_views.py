@@ -250,7 +250,7 @@ class MushafPageAPI(APIView):
 
         total_pages = 604
 
-        verses = Verse.objects.filter(page=page_num).select_related('surah').order_by('number_in_quran')
+        verses = Verse.objects.filter(page=page_num).select_related('surah').prefetch_related('audio').order_by('number_in_quran')
 
         # Build enriched verse data with surah-start flags
         verses_data = []
@@ -268,6 +268,12 @@ class MushafPageAPI(APIView):
                     'name': v.surah.name,
                 })
 
+            # Get first audio URL if available
+            audio_url = None
+            audios = v.audio.all()
+            if audios:
+                audio_url = audios[0].url
+
             verses_data.append({
                 'verse_pk': v.verse_pk,
                 'verse': v.verse,
@@ -279,6 +285,7 @@ class MushafPageAPI(APIView):
                 'the_quarter': v.the_quarter,
                 'is_sajda': v.is_sajda,
                 'is_first_in_surah': is_first_in_surah,
+                'audio_url': audio_url,
             })
 
         # Determine juz for this page

@@ -377,6 +377,109 @@
     color: var(--mushaf-text);
     word-spacing: 4px;
     letter-spacing: 0.5px;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.mushaf-verse-text:hover {
+    background-color: rgba(200, 164, 90, 0.15);
+}
+
+.mushaf-verse-text.verse-selected {
+    background-color: rgba(200, 164, 90, 0.25);
+    color: var(--mushaf-brown);
+}
+
+.mushaf-verse-text.verse-playing {
+    background-color: rgba(2, 89, 85, 0.12);
+    color: var(--mushaf-green);
+    animation: versePulse 2s ease-in-out infinite;
+}
+
+@keyframes versePulse {
+
+    0%,
+    100% {
+        background-color: rgba(2, 89, 85, 0.12);
+    }
+
+    50% {
+        background-color: rgba(2, 89, 85, 0.22);
+    }
+}
+
+/* Audio play icon on hover */
+.mushaf-verse-text .verse-play-icon {
+    display: none;
+    font-size: 0.7rem;
+    margin-right: 4px;
+    color: var(--mushaf-green);
+    vertical-align: middle;
+}
+
+.mushaf-verse-text:hover .verse-play-icon {
+    display: inline;
+}
+
+.mushaf-verse-text.verse-playing .verse-play-icon {
+    display: inline;
+    color: var(--mushaf-green);
+}
+
+/* Audio controls bar */
+.mushaf-audio-bar {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(2, 89, 85, 0.95);
+    backdrop-filter: blur(12px);
+    border-top: 2px solid var(--mushaf-gold);
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    z-index: 100;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease;
+}
+
+.mushaf-audio-bar.hidden {
+    transform: translateY(100%);
+    pointer-events: none;
+}
+
+.mushaf-audio-bar-btn {
+    width: 34px;
+    height: 34px;
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+}
+
+.mushaf-audio-bar-btn:hover {
+    background: rgba(200, 164, 90, 0.3);
+    border-color: var(--mushaf-gold);
+}
+
+.mushaf-audio-bar-info {
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Ayah number marker */
