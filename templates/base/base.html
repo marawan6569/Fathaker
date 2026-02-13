@@ -2,6 +2,15 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
     <head>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-6NHQ4PT7XH"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-6NHQ4PT7XH');
+        </script>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="{% static 'base/css/bootstrap.rtl.min.css' %}">
@@ -10,6 +19,7 @@
         <link rel="stylesheet" href="{% static 'base/css/footer.css' %}">
         {% block style %}{% endblock style %}
         <title>{% block title %}Fathaker{% endblock title %}</title>
+        
     </head>
     <body>
 
