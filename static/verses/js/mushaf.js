@@ -124,6 +124,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
         updateHash(currentPage);
 
+        // Initialize Mutashabihat Modal
+        if (typeof MutashabihatModal !== 'undefined') {
+            MutashabihatModal.init();
+        }
+
         // Build page HTML
         var html = '';
         var currentSurahId = null;
@@ -153,6 +158,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             html += '<span class="' + verseClasses + '"'
                 + ' data-verse-num="' + v.number_in_quran + '"'
+                + ' data-verse-pk="' + v.verse_pk + '"'
                 + ' data-surah-id="' + v.surah_id + '"'
                 + ' data-surah-name="' + escapeAttr(v.surah_name) + '"'
                 + ' data-number-in-surah="' + v.number_in_surah + '"'
@@ -160,7 +166,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 + ' data-page="' + currentPage + '"'
                 + '>';
             html += '<i class="fas fa-play verse-play-icon"></i>';
-            html += escapeHtml(v.verse);
+            // Render verse with highlighted mutashabihat
+            html += renderVerseWithMutashabihat(v.verse, v.mutashabihat);
             html += '</span>';
 
             if (v.is_sajda) {
@@ -216,6 +223,18 @@ document.addEventListener('DOMContentLoaded', function () {
         return html;
     }
 
+    // Mutashabihat State
+    var isMutashabihatEnabled = false;
+    var mutashabihatToggleBtn = document.getElementById('mutashabihat-toggle-btn');
+
+    if (mutashabihatToggleBtn) {
+        mutashabihatToggleBtn.addEventListener('click', function() {
+            isMutashabihatEnabled = !isMutashabihatEnabled;
+            mutashabihatToggleBtn.classList.toggle('active', isMutashabihatEnabled);
+            pageContent.classList.toggle('mutashabihat-enabled', isMutashabihatEnabled);
+        });
+    }
+
     // ===== Verse Click Handling =====
     function attachVerseListeners() {
         var verseEls = pageContent.querySelectorAll('.mushaf-verse-text');
@@ -225,6 +244,22 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function onVerseClick(e) {
+        // Check if clicked on a mutashabihat highlight
+        if (isMutashabihatEnabled && e.target.classList.contains('mutashabihat-highlight')) {
+            e.stopPropagation();
+            var phraseId = e.target.getAttribute('data-phrase-id');
+            if (typeof MutashabihatModal !== 'undefined' && phraseId) {
+                if (MutashabihatModal.openPhrase) {
+                    MutashabihatModal.openPhrase(phraseId);
+                } else {
+                    // Fallback if openPhrase not available (shouldn't happen with new abstract)
+                    var versePk = e.currentTarget.getAttribute('data-verse-pk');
+                    MutashabihatModal.open(versePk);
+                }
+            }
+            return;
+        }
+
         var el = e.currentTarget;
         var verseNum = parseInt(el.getAttribute('data-verse-num'));
 
@@ -241,6 +276,104 @@ document.addEventListener('DOMContentLoaded', function () {
 
         playVerse(verseNum);
     }
+
+    // ... (rest of audio playback functions) ...
+
+    function renderVerseWithMutashabihat(text, mutashabihat) {
+        if (!mutashabihat || mutashabihat.length === 0) {
+            return escapeHtml(text);
+        }
+
+        var words = text.split(' ');
+        var result = '';
+        
+        // Map each word index (1-based) to a phrase ID
+        // Strategy: Last phrase wins (or we could start with Longest wins)
+        // Let's sort mutashabihat by length (descending) to prioritize longer matches
+        mutashabihat.sort(function(a, b) {
+            var lenA = a.word_to - a.word_from;
+            var lenB = b.word_to - b.word_from;
+            return lenB - lenA; 
+        });
+
+        var wordPhraseMap = new Array(words.length + 1).fill(null);
+        mutashabihat.forEach(function(m) {
+            for (var i = m.word_from; i <= m.word_to; i++) {
+                // Only assign if not already assigned (longer phrases took precedence due to sort)
+                if (wordPhraseMap[i] === null) {
+                    wordPhraseMap[i] = m.phrase_id;
+                }
+            }
+        });
+
+        // Render words, grouping by consecutive phrase ID
+        var currentPhraseId = null;
+
+        for (var i = 0; i < words.length; i++) {
+            var wordNum = i + 1;
+            var phraseId = wordPhraseMap[wordNum];
+
+            // Check if phrase ID changed
+            if (phraseId !== currentPhraseId) {
+                // Close previous span if open
+                if (currentPhraseId !== null) {
+                    result += '</span>';
+                }
+                
+                // Open new span if new phrase
+                if (phraseId !== null) {
+                    result += '<span class="mutashabihat-highlight" data-phrase-id="' + phraseId + '">';
+                }
+                
+                currentPhraseId = phraseId;
+            }
+
+            result += escapeHtml(words[i]);
+
+            // Add space
+            if (i < words.length - 1) {
+                // If next word has same phrase ID, space is inside span
+                var nextPhraseId = wordPhraseMap[wordNum + 1];
+                
+                // Logic:
+                // If current and next are same phrase -> space inside.
+                // If different -> close span (if needed) then space then open (if needed)?
+                // Actually, my loop above handles opening/closing based on CHANGE.
+                // So if I append space now, it will be inside the current span (or no span).
+                
+                // BUT if the phrase ends at this word, we want to close the span BEFORE the space?
+                // Or does it matter?
+                // "Word1 Word2" in one span looks like "Word1 Word2".
+                // "Word1" in span, space outside, "Word2" in span... visual spacing might be same.
+                // But generally better to include space for selection.
+                
+                // However, strictly:
+                // If next word does NOT belong to current phrase, we should close.
+                // My CHANGE logic is at the START of the iteration.
+                // So if I add space here, it is added to the *current* state.
+                
+                // If phraseId == A, nextPhraseId == B.
+                // Add "Word". Add " ".
+                // Next iter: Close A (span ends after space), Open B.
+                // Result: <span A>Word </span><span B>Word...
+                // This is fine.
+                // What if phraseId == A, nextPhraseId == null.
+                // <span A>Word </span>Word...
+                // Space included in highlight. This looks good visually for blocks.
+                
+                result += ' ';
+            }
+        }
+
+        // Close final span if needed
+        if (currentPhraseId !== null) {
+            result += '</span>';
+        }
+
+        return result;
+    }
+
+
 
     // ===== Audio Playback =====
     function playVerse(verseNum) {

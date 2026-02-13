@@ -251,7 +251,11 @@ class MushafPageAPI(APIView):
 
         total_pages = 604
 
-        verses = Verse.objects.filter(page=page_num).select_related('surah').prefetch_related('audio').order_by('number_in_quran')
+        verses = Verse.objects.filter(page=page_num).select_related('surah').prefetch_related(
+            'audio',
+            'phrase_occurrences',
+            'phrase_occurrences__phrase'
+        ).order_by('number_in_quran')
 
         # Build enriched verse data with surah-start flags
         verses_data = []
@@ -274,6 +278,15 @@ class MushafPageAPI(APIView):
             audios = v.audio.all()
             if audios:
                 audio_url = audios[0].url
+            
+            # Get mutashabihat occurrences
+            mutashabihat_data = []
+            for occ in v.phrase_occurrences.all():
+                mutashabihat_data.append({
+                    'phrase_id': occ.phrase.phrase_id,
+                    'word_from': occ.word_from,
+                    'word_to': occ.word_to,
+                })
 
             verses_data.append({
                 'verse_pk': v.verse_pk,
@@ -287,6 +300,7 @@ class MushafPageAPI(APIView):
                 'is_sajda': v.is_sajda,
                 'is_first_in_surah': is_first_in_surah,
                 'audio_url': audio_url,
+                'mutashabihat': mutashabihat_data,
             })
 
         # Determine juz for this page
@@ -369,6 +383,20 @@ class MutashabihatSearch(APIView):
         )
 
         return Response(PhraseSerializer(phrases, many=True).data)
+
+
+class MutashabihatPhraseDetail(APIView):
+    """Get details of a specific phrase by ID"""
+
+    def get(self, request, phrase_id):
+        try:
+            phrase = Phrase.objects.select_related('source_verse').prefetch_related(
+                'occurrences__verse'
+            ).get(phrase_id=phrase_id)
+        except Phrase.DoesNotExist:
+            return Response({'error': 'Phrase not found'}, status=404)
+
+        return Response(PhraseSerializer(phrase).data)
 
 
 # #11 Mutashabihat Phrase Detail

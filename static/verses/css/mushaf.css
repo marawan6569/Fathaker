@@ -263,6 +263,60 @@
     z-index: 1;
 }
 
+/* Mutashabihat Toggle */
+.mushaf-toggle-btn {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    color: #025955;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-right: 0.5rem;
+    font-size: 1rem;
+}
+
+.mushaf-toggle-btn:hover {
+    background: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+.mushaf-toggle-btn.active {
+    background: linear-gradient(135deg, #c45e36, #b5441e);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 10px rgba(196, 94, 54, 0.3);
+}
+
+/* Mutashabihat Highlights */
+.mutashabihat-highlight {
+    border-radius: 4px;
+    transition: background-color 0.2s, color 0.1s;
+    font-family: inherit;
+    /* Ensure it uses the verse font */
+    font-size: inherit;
+}
+
+/* Only show highlight when enabled */
+.mutashabihat-enabled .mutashabihat-highlight {
+    background-color: rgba(196, 94, 54, 0.15);
+    color: #b5441e;
+    cursor: pointer;
+    position: relative;
+    border-bottom: 2px solid rgba(196, 94, 54, 0.3);
+}
+
+.mutashabihat-enabled .mutashabihat-highlight:hover {
+    background-color: rgba(196, 94, 54, 0.25);
+    border-bottom-color: #c45e36;
+    z-index: 10;
+}
+
 .mushaf-page-frame {
     padding: 2rem 2rem 1.5rem;
     position: relative;
