@@ -264,6 +264,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         resultsContainer.innerHTML = html;
         bindAudioButtons();
+        bindMutashabihatButtons();
     }
 
     // ===== Audio Player =====
@@ -336,12 +337,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 '</button>';
         }
 
+        // Mutashabihat button
+        var mutashabihatHtml = '<button class="verse-mutashabihat-btn" data-verse-pk="' + escapeHtml(v.verse_pk) + '" title="المتشابهات">' +
+            '<i class="fas fa-clone"></i>' +
+            '<span>متشابهات</span>' +
+            '</button>';
+
         return '<div class="verse-card" style="animation-delay:' + delay + 's;">' +
             '<div class="verse-card-header">' +
             '<span class="verse-surah-badge"><i class="fas fa-book-open"></i> ' + escapeHtml(v.surah) + '</span>' +
             '<span class="verse-number-badge">آية ' + v.number_in_surah + '</span>' +
             sajdaHtml +
             audioHtml +
+            mutashabihatHtml +
             '</div>' +
             '<p class="verse-text">' + verseDisplay + '</p>' +
             '<div class="verse-meta">' +
@@ -376,5 +384,117 @@ document.addEventListener('DOMContentLoaded', function () {
         var div = document.createElement('div');
         div.appendChild(document.createTextNode(str));
         return div.innerHTML;
+    }
+
+    // ===== Mutashabihat Modal =====
+    var mutashabihatModal = document.getElementById('mutashabihat-modal');
+    var mutashabihatOverlay = document.getElementById('mutashabihat-overlay');
+    var mutashabihatClose = document.getElementById('mutashabihat-close');
+    var mutashabihatBody = document.getElementById('mutashabihat-body');
+    var mutashabihatTitle = document.getElementById('mutashabihat-title');
+
+    function bindMutashabihatButtons() {
+        var buttons = resultsContainer.querySelectorAll('.verse-mutashabihat-btn');
+        buttons.forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                var versePk = btn.getAttribute('data-verse-pk');
+                openMutashabihatModal(versePk);
+            });
+        });
+    }
+
+    function openMutashabihatModal(versePk) {
+        mutashabihatTitle.textContent = 'متشابهات الآية ' + versePk;
+        mutashabihatBody.innerHTML = '<div class="mutashabihat-loading"><div class="spinner"></div><p>جاري التحميل...</p></div>';
+        mutashabihatModal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+
+        fetch(API_BASE + 'mutashabihat/by-ayah/?ayah=' + encodeURIComponent(versePk))
+            .then(function (res) {
+                if (!res.ok) throw new Error('خطأ في الاتصال');
+                return res.json();
+            })
+            .then(function (phrases) {
+                renderMutashabihatModal(phrases, versePk);
+            })
+            .catch(function (err) {
+                mutashabihatBody.innerHTML = '<div class="mutashabihat-empty"><i class="fas fa-exclamation-triangle"></i><p>' + err.message + '</p></div>';
+            });
+    }
+
+    function closeMutashabihatModal() {
+        mutashabihatModal.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    mutashabihatClose.addEventListener('click', closeMutashabihatModal);
+    mutashabihatOverlay.addEventListener('click', closeMutashabihatModal);
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && mutashabihatModal.classList.contains('open')) {
+            closeMutashabihatModal();
+        }
+    });
+
+    function highlightWords(verseText, wordFrom, wordTo) {
+        var words = verseText.split(' ');
+        var result = '';
+        for (var i = 0; i < words.length; i++) {
+            var wordNum = i + 1;
+            if (wordNum >= wordFrom && wordNum <= wordTo) {
+                result += '<mark>' + escapeHtml(words[i]) + '</mark>';
+            } else {
+                result += escapeHtml(words[i]);
+            }
+            if (i < words.length - 1) result += ' ';
+        }
+        return result;
+    }
+
+    function renderMutashabihatModal(phrases, currentVersePk) {
+        if (!phrases || phrases.length === 0) {
+            mutashabihatBody.innerHTML = '<div class="mutashabihat-empty"><i class="fas fa-check-circle"></i><p>لا توجد متشابهات لهذه الآية</p></div>';
+            return;
+        }
+
+        var html = '<div class="mutashabihat-count">' + phrases.length + ' عبارة متشابهة</div>';
+
+        for (var i = 0; i < phrases.length; i++) {
+            var phrase = phrases[i];
+            html += '<div class="mutashabihat-phrase">';
+            html += '<div class="mutashabihat-phrase-header">';
+            html += '<span class="mutashabihat-phrase-id">عبارة #' + phrase.phrase_id + '</span>';
+            html += '<span class="mutashabihat-phrase-stats">' + phrase.occurrences_count + ' تكرار في ' + phrase.surahs_count + ' سورة</span>';
+            html += '</div>';
+
+            // Source verse
+            html += '<div class="mutashabihat-source">';
+            html += '<div class="mutashabihat-source-label"><i class="fas fa-star"></i> المصدر</div>';
+            html += '<div class="mutashabihat-verse-text">' + highlightWords(phrase.source_verse.verse, phrase.source_word_from, phrase.source_word_to) + '</div>';
+            html += '<div class="mutashabihat-verse-ref">' + escapeHtml(phrase.source_verse.surah) + ' - آية ' + phrase.source_verse.number_in_surah;
+            html += ' <span class="mutashabihat-word-range">(كلمات ' + phrase.source_word_from + '-' + phrase.source_word_to + ')</span>';
+            html += '</div>';
+            html += '</div>';
+
+            // Occurrences
+            html += '<div class="mutashabihat-occurrences-label"><i class="fas fa-clone"></i> المواضع (' + phrase.occurrences.length + ')</div>';
+            html += '<div class="mutashabihat-occurrences">';
+            for (var j = 0; j < phrase.occurrences.length; j++) {
+                var occ = phrase.occurrences[j];
+                var isCurrentVerse = occ.verse.verse_pk === currentVersePk;
+                html += '<div class="mutashabihat-occ' + (isCurrentVerse ? ' current' : '') + '">';
+                html += '<div class="mutashabihat-occ-text">' + highlightWords(occ.verse.verse, occ.word_from, occ.word_to) + '</div>';
+                html += '<div class="mutashabihat-occ-ref">';
+                html += '<span class="mutashabihat-occ-surah">' + escapeHtml(occ.verse.surah) + '</span>';
+                html += '<span class="mutashabihat-occ-ayah">آية ' + occ.verse.number_in_surah + '</span>';
+                html += '<span class="mutashabihat-word-range">كلمات ' + occ.word_from + '-' + occ.word_to + '</span>';
+                if (isCurrentVerse) html += '<span class="mutashabihat-current-tag">الآية الحالية</span>';
+                html += '</div>';
+                html += '</div>';
+            }
+            html += '</div>';
+            html += '</div>';
+        }
+
+        mutashabihatBody.innerHTML = html;
     }
 });

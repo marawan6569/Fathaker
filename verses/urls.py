@@ -3,6 +3,7 @@ from .api_views import (
     VersesList, VersesSearch, SurahVerses, VerseDetail,
     VersesRange, VersesStartsWith, VersesEndsWith,
     MushafPageAPI,
+    MutashabihatByAyah, MutashabihatSearch, MutashabihatPhraseDetail,
 )
 from .views import QuranSearch, QuranMushaf
 
@@ -24,5 +25,10 @@ urlpatterns = [
     path('api/starts-with/', VersesStartsWith.as_view(), name='verses_starts_with_api'),
     path('api/ends-with/', VersesEndsWith.as_view(), name='verses_ends_with_api'),
     path('api/mushaf-page/', MushafPageAPI.as_view(), name='mushaf_page_api'),
+
+    # --> Mutashabihat API <--
+    path('api/mutashabihat/by-ayah/', MutashabihatByAyah.as_view(), name='mutashabihat_by_ayah_api'),
+    path('api/mutashabihat/search/', MutashabihatSearch.as_view(), name='mutashabihat_search_api'),
+    path('api/mutashabihat/phrase/<int:phrase_id>/', MutashabihatPhraseDetail.as_view(), name='mutashabihat_phrase_detail_api'),
 ]
 

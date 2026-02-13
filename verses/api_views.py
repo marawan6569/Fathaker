@@ -1,11 +1,12 @@
 from django.db.models import Q, Min
 from django.shortcuts import get_object_or_404
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
 from .models import Verse
-from .serializers import VerseSerializer
+from .mutashabihat import Phrase, PhraseOccurrence
+from .serializers import VerseSerializer, PhraseSerializer
 
 
 # #1
@@ -298,3 +299,87 @@ class MushafPageAPI(APIView):
             'surahs_on_page': surahs_on_page,
             'verses': verses_data,
         })
+
+
+# #9 Mutashabihat by Ayah
+@extend_schema_view(
+    get=extend_schema(
+        summary='Get all similar phrases for a given verse',
+        parameters=[
+            OpenApiParameter(
+                name='ayah',
+                type=str,
+                location=OpenApiParameter.QUERY,
+                required=True,
+                description='Verse key in format S{surah}V{verse}, e.g. S2V23',
+            ),
+        ],
+    ),
+)
+class MutashabihatByAyah(APIView):
+    """Get all mutashabihat phrases for a given verse using ?ayah=S2V23"""
+
+    def get(self, request):
+        ayah = request.GET.get('ayah', '').strip()
+        if not ayah:
+            return Response({'error': 'ayah parameter is required'}, status=400)
+
+        phrases = Phrase.objects.filter(
+            occurrences__verse__verse_pk=ayah
+        ).distinct().prefetch_related(
+            'occurrences__verse', 'source_verse'
+        )
+
+        return Response(PhraseSerializer(phrases, many=True).data)
+
+
+# #10 Mutashabihat Search
+@extend_schema_view(
+    get=extend_schema(
+        summary='Search mutashabihat phrases by verse text',
+        parameters=[
+            OpenApiParameter(
+                name='q',
+                type=str,
+                location=OpenApiParameter.QUERY,
+                required=True,
+                description='Search keyword (matches verse text with or without tashkeel)',
+            ),
+        ],
+    ),
+)
+class MutashabihatSearch(APIView):
+    """Search mutashabihat phrases by verse text using ?q=keyword"""
+
+    def get(self, request):
+        q = request.GET.get('q', '').strip()
+        if not q:
+            return Response({'error': 'q parameter is required'}, status=400)
+
+        # Find verses matching the search
+        matching_verse_pks = Verse.objects.filter(
+            Q(verse__icontains=q) | Q(verse_without_tashkeel__icontains=q)
+        ).values_list('verse_pk', flat=True)
+
+        # Find phrases that have occurrences in those verses
+        phrases = Phrase.objects.filter(
+            occurrences__verse__verse_pk__in=matching_verse_pks
+        ).distinct().prefetch_related(
+            'occurrences__verse', 'source_verse'
+        )
+
+        return Response(PhraseSerializer(phrases, many=True).data)
+
+
+# #11 Mutashabihat Phrase Detail
+@extend_schema_view(
+    get=extend_schema(
+        summary='Get details for a specific phrase',
+    ),
+)
+class MutashabihatPhraseDetail(RetrieveAPIView):
+    """Get full details for a specific mutashabihat phrase by phrase_id"""
+    serializer_class = PhraseSerializer
+    queryset = Phrase.objects.prefetch_related('occurrences__verse', 'source_verse')
+    lookup_field = 'phrase_id'
+
