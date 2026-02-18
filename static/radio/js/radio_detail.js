@@ -103,15 +103,15 @@ detailLikeBtn.addEventListener('click', () => {
             'Content-Type': 'application/json',
         },
     })
-    .then(res => res.json())
-    .then(data => {
-        const liked = getLikedRadios();
-        liked.push(RADIO_DATA.slug);
-        setLikedRadios(liked);
-        detailLikesCount.textContent = data.likes_count;
-        updateLikeUI();
-    })
-    .catch(() => {});
+        .then(res => res.json())
+        .then(data => {
+            const liked = getLikedRadios();
+            liked.push(RADIO_DATA.slug);
+            setLikedRadios(liked);
+            detailLikesCount.textContent = data.likes_count;
+            updateLikeUI();
+        })
+        .catch(() => { });
 });
 
 // ===== Share =====
@@ -119,11 +119,11 @@ detailShareBtn.addEventListener('click', () => {
     const name = RADIO_DATA.name;
     const desc = RADIO_DATA.description || '';
     const imgUrl = window.location.origin + RADIO_DATA.img;
-    const pageUrl = RADIO_DETAIL_URL;
-    const text = name + (desc ? '\n' + desc : '') + '\n' + pageUrl;
+    const pageUrl = decodeURI(RADIO_DETAIL_URL);
+    const text = name + '\n' + (desc ? '\n' + desc : '') + '\n' + pageUrl;
 
     if (navigator.share) {
-        navigator.share({ title: name + ' - فذكر', text: text, url: pageUrl }).catch(() => {});
+        navigator.share({ title: name + ' - فذكر', text: text, url: pageUrl }).catch(() => { });
     } else {
         copyToClipboard(text);
         showShareToast('تم نسخ الرابط');
