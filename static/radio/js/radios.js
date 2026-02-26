@@ -248,6 +248,25 @@ function playAudio() {
     updatePlayerUI();
     updateCardStates();
     updateFullscreenUI();
+
+    // Media Session API
+    if ('mediaSession' in navigator && currentRadio) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: currentRadio.name,
+            artist: 'فذكر',
+            artwork: [
+                { src: currentRadio.img, sizes: '512x512', type: 'image/jpeg' }
+            ]
+        });
+
+        navigator.mediaSession.setActionHandler('play', () => togglePlay());
+        navigator.mediaSession.setActionHandler('pause', () => togglePlay());
+    }
+
+    // Dynamic Page Title
+    if (currentRadio) {
+        document.title = 'فذكر | ' + currentRadio.name;
+    }
 }
 
 function pauseAudio() {
@@ -271,6 +290,12 @@ function stopAndReset() {
     currentRadio = null;
     hidePlayer();
     updateCardStates();
+
+    // Clear Media Session and Title
+    if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = null;
+    }
+    document.title = 'فذكر | إذاعات مباشرة';
 }
 
 function showPlayer() {
@@ -384,19 +409,19 @@ function likeRadio(slug) {
             'Content-Type': 'application/json',
         },
     })
-    .then(res => res.json())
-    .then(data => {
-        const liked = getLikedRadios();
-        liked.push(slug);
-        setLikedRadios(liked);
+        .then(res => res.json())
+        .then(data => {
+            const liked = getLikedRadios();
+            liked.push(slug);
+            setLikedRadios(liked);
 
-        const radio = radios.find(r => r.slug === slug);
-        if (radio) radio.likes_count = data.likes_count;
+            const radio = radios.find(r => r.slug === slug);
+            if (radio) radio.likes_count = data.likes_count;
 
-        applyFilters();
-        updateFullscreenLike();
-    })
-    .catch(() => {});
+            applyFilters();
+            updateFullscreenLike();
+        })
+        .catch(() => { });
 }
 
 // ===== Share =====
@@ -407,7 +432,7 @@ function shareRadio(slug, name) {
     const text = name + (desc ? '\n' + desc : '') + '\n' + url;
 
     if (navigator.share) {
-        navigator.share({ title: name + ' - فذكر', text: text, url: url }).catch(() => {});
+        navigator.share({ title: name + ' - فذكر', text: text, url: url }).catch(() => { });
     } else {
         copyToClipboard(text);
         showShareToast('تم نسخ الرابط');

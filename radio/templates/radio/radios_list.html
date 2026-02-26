@@ -3,7 +3,14 @@
 {% block style %}
     <link href="{% static 'radio/css/radios.css' %}" rel="stylesheet">
 {% endblock style %}
+
 {% block title %}فذكر | إذاعات مباشرة{% endblock title %}
+{% block meta_description %}استمع إلى باقة متنوعة من الإذاعات الإسلامية المباشرة على موقع فذكر.{% endblock meta_description %}
+{% block og_title %}فذكر | إذاعات مباشرة{% endblock og_title %}
+{% block og_description %}استمع إلى باقة متنوعة من الإذاعات الإسلامية المباشرة على موقع فذكر.{% endblock og_description %}
+{% block extra_meta %}
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'base/img/logo-transparent-bg.svg' %}">
+{% endblock extra_meta %}
 
 {% block content %}
     <div class="container mt-4" style="min-height: 100vh;">

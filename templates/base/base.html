@@ -18,7 +18,17 @@
         <link rel="stylesheet" href="{% static 'base/css/header.css' %}">
         <link rel="stylesheet" href="{% static 'base/css/footer.css' %}">
         {% block style %}{% endblock style %}
+        
         <title>{% block title %}Fathaker{% endblock title %}</title>
+        
+        <!-- Default SEO & Open Graph Meta Tags -->
+        <meta name="description" content="{% block meta_description %}موقع فذكر هو موقع عربي يقدم محتوى إسلامي شامل في شتى المجالات، نسعى لنشر الفائدة والمعرفة للجميع.{% endblock meta_description %}">
+        <meta property="og:site_name" content="فذكر">
+        <meta property="og:type" content="{% block og_type %}website{% endblock og_type %}">
+        <meta property="og:title" content="{% block og_title %}فذكر{% endblock og_title %}">
+        <meta property="og:description" content="{% block og_description %}موقع فذكر هو موقع عربي يقدم محتوى إسلامي شامل في شتى المجالات.{% endblock og_description %}">
+        <meta property="og:url" content="{{ request.build_absolute_uri }}">
+        {% block extra_meta %}{% endblock extra_meta %}
         
     </head>
     <body>

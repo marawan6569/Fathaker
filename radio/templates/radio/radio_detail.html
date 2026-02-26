@@ -3,7 +3,18 @@
 {% block style %}
     <link href="{% static 'radio/css/radio_detail.css' %}" rel="stylesheet">
 {% endblock style %}
+
 {% block title %}فذكر | {{ radio.name }}{% endblock title %}
+{% block meta_description %}{{ radio.description|default:"استمع إلى إذاعة "|add:radio.name|add:" مباشرة على موقع فذكر." }}{% endblock meta_description %}
+{% block og_title %}فذكر | {{ radio.name }}{% endblock og_title %}
+{% block og_description %}{{ radio.description|default:"استمع إلى إذاعة "|add:radio.name|add:" مباشرة على موقع فذكر." }}{% endblock og_description %}
+{% block extra_meta %}
+    <meta property="og:image" content="{% if radio.image %}{{ request.scheme }}://{{ request.get_host }}{{ radio.image.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'radio/img/radio_img_not_available.png' %}{% endif %}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="فذكر | {{ radio.name }}">
+    <meta name="twitter:description" content="{{ radio.description|default:"استمع إلى إذاعة "|add:radio.name|add:" مباشرة على موقع فذكر." }}">
+    <meta name="twitter:image" content="{% if radio.image %}{{ request.scheme }}://{{ request.get_host }}{{ radio.image.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'radio/img/radio_img_not_available.png' %}{% endif %}">
+{% endblock extra_meta %}
 
 {% block content %}
     <div class="detail-hero">

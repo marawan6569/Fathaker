@@ -35,6 +35,20 @@ function togglePlay() {
         audio.src = RADIO_DATA.src;
         audio.play();
         isPlaying = true;
+
+        // Media Session API
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: RADIO_DATA.name,
+                artist: 'فذكر',
+                artwork: [
+                    { src: RADIO_DATA.img, sizes: '512x512', type: 'image/jpeg' }
+                ]
+            });
+
+            navigator.mediaSession.setActionHandler('play', () => togglePlay());
+            navigator.mediaSession.setActionHandler('pause', () => togglePlay());
+        }
     } else {
         audio.pause();
         isPlaying = false;
