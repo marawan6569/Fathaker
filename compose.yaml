@@ -8,6 +8,7 @@ services:
     volumes:
       - ./media/:/fathaker/media/
       - ./static/:/fathaker/static/
+      - ./db.sqlite3:/fathaker/db.sqlite3
 
   nginx:
     build: ./deployment/nginx
