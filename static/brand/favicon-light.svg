@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" width="554" height="554" viewBox="350 54 554 554" role="img" aria-labelledby="title description">
+  <title id="title">Fathaker — favicon — light</title>
+  <desc id="description">Editable vector paths. No website URL. Default teal artwork for light backgrounds.</desc>
+  <defs>
+    <linearGradient id="teal-gradient" gradientUnits="userSpaceOnUse" x1="419" y1="256" x2="851" y2="548">
+      <stop offset="0" stop-color="#12594B" />
+      <stop offset="0.48" stop-color="#0B7368" />
+      <stop offset="1" stop-color="#00958F" />
+    </linearGradient>
+    <linearGradient id="wordmark-gradient" gradientUnits="userSpaceOnUse" x1="395" y1="690" x2="875" y2="760">
+      <stop offset="0" stop-color="#12594B" />
+      <stop offset="1" stop-color="#00958F" />
+    </linearGradient>
+  </defs>
+  <g id="symbol" fill="#086E65">
+    <path id="symbol-left" d="M 555,155  C 589,170 611,205 611,240  C 611,275 594,300 568,322  L 493,385  C 474,401 462,418 464,442  C 465,412 490,397 525,367  L 573,408  C 598,430 611,455 611,483  L 611,573  L 429,417  C 406,397 395,378 395,355  C 395,331 406,311 428,291  L 521,210  C 543,190 554,173 555,155 Z" />
+    <path id="symbol-right" d="M 699,155  C 665,170 643,205 643,240  C 643,275 660,300 686,322  L 761,385  C 780,401 792,418 790,442  C 789,412 764,397 729,367  L 681,408  C 656,430 643,455 643,483  L 643,573  L 825,417  C 848,397 859,378 859,355  C 859,331 848,311 826,291  L 733,210  C 711,190 700,173 699,155 Z" />
+    <path id="orange-diamond" fill="#C45627" d="M 618,96 Q 627,88 636,96  L 662,122 Q 670,131 662,140  L 636,166 Q 627,174 618,166  L 592,140 Q 584,131 592,122 Z" />
+  </g>
+</svg>

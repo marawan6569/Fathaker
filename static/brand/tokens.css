@@ -1,0 +1,87 @@
+/* Fathaker foundations. Shared with design-tokens.json. */
+@font-face { font-family: 'Noto Sans Arabic'; src: url('./fonts/NotoSansArabic.ttf') format('truetype'); font-style: normal; font-weight: 100 900; font-display: swap; }
+@font-face { font-family: 'Amiri Quran'; src: url('./fonts/AmiriQuran-Regular.ttf') format('truetype'); font-style: normal; font-weight: 400; font-display: swap; }
+:root {
+  --color-canvas: #F7F8F5;
+  --color-surface: #FFFFFF;
+  --color-raised: #EEF5F2;
+  --color-ink: #173F39;
+  --color-muted: #526B64;
+  --color-border: #D5E1DB;
+  --color-control: #7D938A;
+  --color-primary: #086E65;
+  --color-hover: #065A52;
+  --color-pressed: #044840;
+  --color-on-primary: #FFFFFF;
+  --color-focus: #086E65;
+  --color-accent: #C45627;
+  --color-accent-ink: #9C401A;
+  --color-accent-soft: #FCEDE4;
+  --color-success: #176B46;
+  --color-warning: #855E00;
+  --color-error: #B33A3A;
+  --color-info: #285F95;
+  --color-reading: #FFFCF3;
+  --color-reading-ink: #263D35;
+  color-scheme: light;
+  --font-ui: 'Noto Sans Arabic', 'Segoe UI', Arial, sans-serif;
+  --font-quran: 'Amiri Quran', serif;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+  --space-12: 48px; --space-16: 64px;
+  --radius-small: 8px; --radius-control: 12px; --radius-card: 16px;
+  --radius-panel: 24px; --radius-pill: 999px;
+  --container: 1200px; --reader-max: 760px; --touch-target: 48px;
+  --motion-fast: 120ms; --motion-standard: 180ms; --motion-panel: 240ms;
+  --ease: cubic-bezier(.2,0,0,1);
+}
+@media (prefers-color-scheme: dark) {
+ :root:not([data-theme='light']) {
+  --color-canvas: #0E201D;
+  --color-surface: #16322D;
+  --color-raised: #20443D;
+  --color-ink: #F1F7F3;
+  --color-muted: #AEC5BC;
+  --color-border: #35564D;
+  --color-control: #6D9184;
+  --color-primary: #65D6C1;
+  --color-hover: #82E2CE;
+  --color-pressed: #4BBDA8;
+  --color-on-primary: #0E201D;
+  --color-focus: #65D6C1;
+  --color-accent: #F1A06F;
+  --color-accent-ink: #F1A06F;
+  --color-accent-soft: #3A2A22;
+  --color-success: #8DDBAA;
+  --color-warning: #F0CF76;
+  --color-error: #FFAAA4;
+  --color-info: #9FCBFA;
+  --color-reading: #162821;
+  --color-reading-ink: #E9E4D3;
+  color-scheme: dark;
+ }
+}
+:root[data-theme='dark'] {
+  --color-canvas: #0E201D;
+  --color-surface: #16322D;
+  --color-raised: #20443D;
+  --color-ink: #F1F7F3;
+  --color-muted: #AEC5BC;
+  --color-border: #35564D;
+  --color-control: #6D9184;
+  --color-primary: #65D6C1;
+  --color-hover: #82E2CE;
+  --color-pressed: #4BBDA8;
+  --color-on-primary: #0E201D;
+  --color-focus: #65D6C1;
+  --color-accent: #F1A06F;
+  --color-accent-ink: #F1A06F;
+  --color-accent-soft: #3A2A22;
+  --color-success: #8DDBAA;
+  --color-warning: #F0CF76;
+  --color-error: #FFAAA4;
+  --color-info: #9FCBFA;
+  --color-reading: #162821;
+  --color-reading-ink: #E9E4D3;
+  color-scheme: dark;
+}

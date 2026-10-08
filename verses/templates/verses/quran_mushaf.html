@@ -4,6 +4,7 @@
 {% endblock style %} {% block title %}فذكر | المصحف الشريف{% endblock title %}
 {% block content %}
 <div class="mushaf-wrapper">
+<div class="container"><div class="page-intro"><p class="eyebrow">وردك اليومي، في مساحة هادئة</p><h1>المصحف الشريف</h1><p class="page-description">اقرأ بتأنٍّ، وتنقل بين السور والآيات.</p></div></div>
   <!-- Top Navigation Bar -->
   <div class="mushaf-topbar">
     <div class="mushaf-topbar-inner">
@@ -24,7 +25,7 @@
         <button
           class="mushaf-nav-btn"
           id="next-page-btn"
-          title="الصفحة التالية"
+          title="الصفحة السابقة" aria-label="الصفحة السابقة"
         >
           <i class="fas fa-chevron-right"></i>
         </button>
@@ -32,7 +33,7 @@
           <input
             type="number"
             class="mushaf-page-input"
-            id="page-input"
+            id="page-input" aria-label="رقم صفحة المصحف"
             min="1"
             max="604"
             value="1"
@@ -42,7 +43,7 @@
         <button
           class="mushaf-nav-btn"
           id="prev-page-btn"
-          title="الصفحة السابقة"
+          title="الصفحة التالية" aria-label="الصفحة التالية"
         >
           <i class="fas fa-chevron-left"></i>
         </button>
@@ -50,7 +51,7 @@
 
       <!-- Surah Quick Jump -->
       <div class="mushaf-jump">
-        <select class="mushaf-surah-select" id="surah-jump">
+        <select class="mushaf-surah-select" id="surah-jump" aria-label="انتقل إلى سورة">
           <option value="">انتقل إلى سورة...</option>
           {% for surah in surahs %}
           <option value="{{ surah.id }}">

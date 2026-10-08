@@ -1,7 +1,8 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" data-theme="light">
     <head>
+        <script src="{% static 'brand/theme.js' %}"></script>
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-6NHQ4PT7XH"></script>
         <script>
@@ -15,9 +16,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="{% static 'base/css/bootstrap.rtl.min.css' %}">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-        <link rel="stylesheet" href="{% static 'base/css/header.css' %}">
-        <link rel="stylesheet" href="{% static 'base/css/footer.css' %}">
+
+
         {% block style %}{% endblock style %}
+        <link rel="stylesheet" href="{% static 'brand/tokens.css' %}">
+        <link rel="stylesheet" href="{% static 'brand/system.css' %}">
+        <link rel="icon" type="image/svg+xml" href="{% static 'brand/favicon-light.svg' %}">
+        <link rel="apple-touch-icon" href="{% static 'brand/apple-touch-icon.png' %}">
+        <meta name="theme-color" content="#F7F8F5">
         
         <title>{% block title %}Fathaker{% endblock title %}</title>
         
@@ -31,40 +37,35 @@
         {% block extra_meta %}{% endblock extra_meta %}
         
     </head>
-    <body>
+    <body data-radio-fallback="{% static 'brand/radio-placeholder.png' %}">
 
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="/">
-                    <img src="{% static 'base/img/logo-transparent-bg.svg' %}" alt="فذكر" width="167" height="100">
+        <a class="skip-link" href="#main-content">انتقل إلى المحتوى</a>
+        <header class="site-header">
+            <div class="brand-container header-inner">
+                <a class="brand-logo" href="/" aria-label="فذكر — الرئيسية">
+                    <img class="logo-light" src="{% static 'brand/logo-light.svg' %}" alt="فذكر" width="164" height="64">
+                    <img class="logo-dark" src="{% static 'brand/logo-dark.svg' %}" alt="فذكر" width="164" height="64">
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                    <ul class="navbar-nav">
-                        {% for link in navbar_links %}
-                            <li class="nav-item">
-                                <a class="nav-link {% if link.get_link == current_page_link.get_link %}active{% endif %}" href="{{ link.get_link }}" >
-                                    <i class="{{ link.icon }}"></i>{{link.display_name }}
-                                </a>
-                            </li>
-                        {% endfor %}
-                    </ul>
+                <nav class="primary-navigation" aria-label="التنقل الرئيسي">{% include 'base/primary_links.html' %}</nav>
+                <div class="header-actions">
+                    {% if navbar_links %}<details class="extra-navigation"><summary aria-label="روابط إضافية"><i class="fas fa-ellipsis-h" aria-hidden="true"></i></summary><div class="extra-navigation-panel">{% for link in navbar_links %}<a href="{{ link.get_link }}">{{ link.display_name }}</a>{% endfor %}</div></details>{% endif %}
+                    <button class="theme-toggle" type="button" aria-label="تفعيل الوضع الداكن" aria-pressed="false"><svg class="theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 13.1A8.6 8.6 0 0 1 10.9 3.5a8.6 8.6 0 1 0 9.6 9.6Z"/></svg><svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg></button>
                 </div>
             </div>
-        </nav>
-
+        </header>
+        <main id="main-content" tabindex="-1">
         {% block content %}
             <div style="height: 55vh;"></div>
         {% endblock %}
 
+        </main>
+        <nav class="mobile-navigation" aria-label="التنقل الرئيسي للجوال">{% include 'base/primary_links.html' %}</nav>
         <footer class="footer">
             <div class="container">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="footer-logo">
-                            <img src="{% static 'base/img/logo-transparent-bg.svg' %}" alt="فذكر" width="167" height="100">
+                            <img class="logo-light" src="{% static 'brand/logo-light.svg' %}" alt="فذكر" width="144" height="56"><img class="logo-dark" src="{% static 'brand/logo-dark.svg' %}" alt="فذكر" width="144" height="56">
                         </div>
                         <div class="footer-text">
                             <p>موقع فذكر هو موقع عربي يقدم محتوى إسلامي شامل في شتى المجالات، نسعى لنشر الفائدة والمعرفة للجميع.</p>

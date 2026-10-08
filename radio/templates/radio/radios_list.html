@@ -13,11 +13,12 @@
 {% endblock extra_meta %}
 
 {% block content %}
-    <div class="container mt-4" style="min-height: 100vh;">
+    <div class="container brand-page radio-page">
+<div class="page-intro"><p class="eyebrow">القرآن معك، أينما كنت</p><h1>إذاعات القرآن الكريم</h1><p class="page-description">استمع إلى تلاوات عطرة، على مدار الساعة.</p></div>
 
         <!-- Search -->
         <div class="search-wrapper position-relative mt-3">
-            <input type="text" class="search-input" id="search" placeholder="ابحث عن إذاعة...">
+            <input type="text" class="search-input" id="search" aria-label="ابحث عن إذاعة أو قارئ" placeholder="ابحث عن إذاعة...">
             <i class="fa fa-search search-icon"></i>
             <i class="fas fa-times clear-search-icon" id="clear-search"></i>
         </div>
@@ -34,6 +35,7 @@
             <button class="sort-pill" data-sort="name">الاسم</button>
         </div>
 
+        <h2 class="section-title">استكشف الإذاعات</h2>
         <!-- Radio Grid -->
         <div class="row g-3" id="radios-container"></div>
 
@@ -134,7 +136,7 @@
                     id: {{ radio.id }},
                     name: "{{ radio.name|escapejs }}",
                     src: "{{ radio.stream_url }}",
-                    img: "{% if radio.image %}{{ radio.image.url }}{% else %}{% static 'radio/img/radio_img_not_available.png' %}{% endif %}",
+                    img: "{% if radio.image %}{{ radio.image.url }}{% else %}{% static 'brand/radio-placeholder.png' %}{% endif %}",
                     description: "{{ radio.description|default:''|escapejs }}",
                     tags: [{% for name in radio.tags.names %}"{{ name|escapejs }}",{% endfor %}],
                     slug: "{{ radio.slug|escapejs }}",

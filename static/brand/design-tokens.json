@@ -1,0 +1,153 @@
+{
+  "meta": {
+    "name": "Fathaker",
+    "version": "1.0",
+    "date": "2026-10-08",
+    "status": "Proposed rebrand system"
+  },
+  "color": {
+    "light": {
+      "canvas": "#F7F8F5",
+      "surface": "#FFFFFF",
+      "raised": "#EEF5F2",
+      "ink": "#173F39",
+      "muted": "#526B64",
+      "border": "#D5E1DB",
+      "control": "#7D938A",
+      "primary": "#086E65",
+      "hover": "#065A52",
+      "pressed": "#044840",
+      "onPrimary": "#FFFFFF",
+      "focus": "#086E65",
+      "accent": "#C45627",
+      "accentInk": "#9C401A",
+      "accentSoft": "#FCEDE4",
+      "success": "#176B46",
+      "warning": "#855E00",
+      "error": "#B33A3A",
+      "info": "#285F95",
+      "reading": "#FFFCF3",
+      "readingInk": "#263D35"
+    },
+    "dark": {
+      "canvas": "#0E201D",
+      "surface": "#16322D",
+      "raised": "#20443D",
+      "ink": "#F1F7F3",
+      "muted": "#AEC5BC",
+      "border": "#35564D",
+      "control": "#6D9184",
+      "primary": "#65D6C1",
+      "hover": "#82E2CE",
+      "pressed": "#4BBDA8",
+      "onPrimary": "#0E201D",
+      "focus": "#65D6C1",
+      "accent": "#F1A06F",
+      "accentInk": "#F1A06F",
+      "accentSoft": "#3A2A22",
+      "success": "#8DDBAA",
+      "warning": "#F0CF76",
+      "error": "#FFAAA4",
+      "info": "#9FCBFA",
+      "reading": "#162821",
+      "readingInk": "#E9E4D3"
+    }
+  },
+  "brand": {
+    "teal": "#086E65",
+    "deep": "#12594B",
+    "bright": "#00958F",
+    "orange": "#C45627"
+  },
+  "space": {
+    "1": 4,
+    "2": 8,
+    "3": 12,
+    "4": 16,
+    "5": 20,
+    "6": 24,
+    "8": 32,
+    "10": 40,
+    "12": 48,
+    "16": 64
+  },
+  "radius": {
+    "small": 8,
+    "control": 12,
+    "card": 16,
+    "panel": 24,
+    "pill": 999
+  },
+  "font": {
+    "ui": "Noto Sans Arabic",
+    "quran": "Amiri Quran",
+    "fallback": "Segoe UI, Arial, sans-serif"
+  },
+  "type": {
+    "display": [
+      40,
+      56,
+      700
+    ],
+    "heading": [
+      32,
+      48,
+      700
+    ],
+    "section": [
+      24,
+      36,
+      600
+    ],
+    "body": [
+      16,
+      28,
+      400
+    ],
+    "label": [
+      14,
+      24,
+      600
+    ],
+    "caption": [
+      12,
+      20,
+      400
+    ],
+    "quranDesktop": [
+      32,
+      72,
+      400
+    ],
+    "quranMobile": [
+      28,
+      63,
+      400
+    ]
+  },
+  "layout": {
+    "container": 1200,
+    "readerMax": 760,
+    "mobileGutter": 16,
+    "tabletGutter": 24,
+    "desktopGutter": 32,
+    "breakpoints": {
+      "tablet": 768,
+      "desktop": 1024
+    },
+    "touchTarget": 48
+  },
+  "motion": {
+    "fast": 120,
+    "standard": 180,
+    "panel": 240,
+    "easing": "cubic-bezier(.2,0,0,1)"
+  },
+  "zIndex": {
+    "header": 20,
+    "player": 30,
+    "scrim": 40,
+    "dialog": 50,
+    "toast": 60
+  }
+}

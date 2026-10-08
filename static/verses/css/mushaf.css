@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;800&display=swap');
-
 /* ===== CSS Variables ===== */
 :root {
     --mushaf-parchment: #faf6ef;
@@ -13,10 +11,6 @@
     --mushaf-border: #d4b896;
     --mushaf-accent: #c45e36;
     --mushaf-frame: #8b6914;
-}
-
-* {
-    font-family: 'Cairo', Arial, serif;
 }
 
 /* ===== Wrapper ===== */
@@ -131,7 +125,7 @@
     font-weight: 700;
     text-align: center;
     outline: none;
-    font-family: 'Cairo', Arial, serif;
+    font-family: var(--font-ui);
     -moz-appearance: textfield;
 }
 
@@ -163,7 +157,7 @@
     font-weight: 600;
     cursor: pointer;
     outline: none;
-    font-family: 'Cairo', Arial, serif;
+    font-family: var(--font-ui);
     max-width: 180px;
     transition: border-color 0.3s;
 }
@@ -546,7 +540,7 @@
     margin: 0 3px;
     vertical-align: middle;
     position: relative;
-    font-family: 'Cairo', Arial, serif;
+    font-family: var(--font-ui);
     font-size: 0.65rem;
     font-weight: 800;
     color: var(--mushaf-gold-dark);
@@ -599,7 +593,7 @@
     display: inline-block;
     background: rgba(196, 94, 54, 0.15);
     color: var(--mushaf-accent);
-    font-family: 'Cairo', Arial, serif;
+    font-family: var(--font-ui);
     font-size: 0.65rem;
     font-weight: 700;
     padding: 0.1rem 0.45rem;

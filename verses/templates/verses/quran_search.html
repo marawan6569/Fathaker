@@ -2,12 +2,8 @@
 <link href="{% static 'verses/css/quran_search.css' %}" rel="stylesheet" />
 {% endblock style %} {% block title %}فذكر | البحث في القرآن الكريم{% endblock title %}
 {% block content %}
-<div class="container mt-4" style="min-height: 100vh">
-  <!-- Page Title -->
-  <h1 class="search-page-title">
-    <i class="fas fa-quran"></i>
-    البحث في القرآن الكريم
-  </h1>
+<div class="container brand-page search-page">
+<div class="page-intro"><p class="eyebrow">تأمل الآيات، واكتشف معانيها</p><h1>البحث في القرآن الكريم</h1><p class="page-description">ابحث بالكلمة، أو انتقل إلى سورة أو آية.</p></div>
 
   <!-- Search Mode Pills -->
   <div class="mode-controls">
@@ -27,7 +23,7 @@
         <input
           type="text"
           class="search-input"
-          id="search-text"
+          id="search-text" aria-label="نص البحث في القرآن الكريم"
           placeholder="اكتب كلمة أو جملة للبحث..."
         />
         <i class="fa fa-search search-icon"></i>
@@ -152,7 +148,7 @@
   </div>
 
   <!-- Results Area -->
-  <div class="results-container" id="results-container"></div>
+  <div class="results-container" id="results-container" aria-live="polite"></div>
 
   <!-- Empty State -->
   <div class="empty-state" id="empty-state" style="display: none">
