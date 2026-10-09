@@ -1,0 +1,143 @@
+/* Figma component implementation: Button, IconButton, Chip, Input,
+   RadioCard, VerseResult and Player. Native controls supply keyboard behavior. */
+[hidden] { display:none!important; }
+.ds-button,.ds-chip,.ds-icon-button { display:inline-flex; align-items:center; justify-content:center; gap:8px; font:600 14px/24px var(--font-ui); cursor:pointer; text-decoration:none; transition:background 180ms,color 180ms,border-color 180ms; box-shadow:none; transform:none; }
+.ds-button { min-height:48px; padding:11px 24px; border:1px solid transparent; border-radius:12px; }
+.ds-primary { background:var(--color-primary); color:var(--color-on-primary); border-color:transparent; }
+.ds-primary:hover { background:var(--color-hover); color:var(--color-on-primary); }
+.ds-primary:active { background:var(--color-pressed); }
+.ds-secondary { background:var(--color-surface); color:var(--color-ink); border-color:var(--color-control); }
+.ds-secondary:hover { background:var(--color-raised); color:var(--color-ink); }
+.ds-quiet { background:transparent; color:var(--color-muted); border:0; padding-inline:8px; }
+.ds-icon-button { width:48px; height:48px; min-width:48px; min-height:48px; padding:12px; border:0; border-radius:50%; color:var(--color-muted); background:transparent; }
+.ds-icon-button:hover { background:var(--color-raised); transform:none; color:var(--color-primary); }
+.ds-icon-button.ds-primary { background:var(--color-primary); color:var(--color-on-primary); }
+.ds-icon-button.ds-primary:hover { background:var(--color-hover); }
+.ds-chip { min-height:40px; min-width:144px; padding:7px 20px; margin:0; border:1px solid var(--color-control); border-radius:999px; color:var(--color-muted); background:var(--color-surface); }
+.ds-chip:hover,.ds-chip.active { color:var(--color-primary); background:var(--color-raised); border-color:var(--color-primary); box-shadow:none; transform:none; }
+.ds-filter-row { display:flex; gap:8px; align-items:center; margin-block:24px; flex-wrap:wrap; }
+.ds-field { display:flex; align-items:center; gap:12px; width:100%; min-height:56px; padding:8px 16px; border:1px solid var(--color-control); border-radius:12px; background:var(--color-surface); color:var(--color-muted); }
+.ds-field:focus-within { border-color:var(--color-focus); outline:2px solid var(--color-focus); outline-offset:-2px; }
+.ds-field input { width:100%; min-width:0; flex:1; border:0; background:transparent; padding:0; min-height:38px; color:var(--color-ink); outline:none; font:400 16px/28px var(--font-ui); }
+.ds-field input::placeholder { color:var(--color-muted); }
+.ds-field .ds-icon-button { width:32px; min-width:32px; height:32px; min-height:32px; padding:4px; }
+.ds-field #clear-search { display:none; }
+.ds-field:focus-within #clear-search { display:inline-flex; }
+.ds-section-header { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-block:32px 24px; }
+.ds-section-header h2 { font-size:24px; font-weight:600; margin:0; line-height:36px; }
+.ds-sort { display:flex; align-items:center; gap:8px; color:var(--color-muted); }
+.ds-sort select { appearance:none; border:0; background:transparent; padding:8px 0; color:inherit; min-height:48px; font-size:14px; cursor:pointer; }
+.ds-sort option { color:var(--color-ink); background:var(--color-surface); }
+.ds-sort i { width:16px; height:16px; mask-size:16px; }
+.ds-category,.ds-reader-surah,.ds-reader-settings,.ds-player-options,.ds-volume { position:relative; }
+summary.ds-chip,summary.ds-icon-button,.ds-advanced summary { list-style:none; }
+summary::-webkit-details-marker { display:none; }
+.ds-popover { position:absolute; z-index:45; inset-inline-start:0; top:calc(100% + 8px); min-width:260px; max-width:calc(100vw - 32px); padding:16px; background:var(--color-surface); border:1px solid var(--color-border); border-radius:16px; box-shadow:0 8px 28px #0002; }
+.ds-popover .ds-button { width:100%; margin-block:4px; }
+.ds-tag-options { display:flex; gap:8px; flex-wrap:wrap; }
+.ds-tag-options .ds-chip { min-width:0; }
+.station-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px; }
+.station-card.radio-card { display:flex; flex-direction:column; min-height:180px; padding:24px; gap:24px; border:1px solid var(--color-border); border-radius:16px; background:var(--color-surface); box-shadow:none; cursor:default; }
+.station-card.radio-card.playing { border:2px solid var(--color-primary); padding:23px; }
+.station-identity { display:flex; gap:16px; align-items:flex-start; }
+.station-symbol { display:grid; place-items:center; width:56px; height:56px; flex:0 0 56px; background:var(--color-raised); border-radius:12px; color:var(--color-primary); }
+.station-symbol { position:relative; overflow:hidden; }
+.station-artwork { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; border-radius:inherit; background:var(--color-raised); }
+.station-label { min-width:0; flex:1; }
+.station-title.card-radio-name { display:block; font-size:20px; font-weight:600; line-height:32px; margin:0; text-decoration:none; min-height:0; }
+.station-label p { color:var(--color-muted); font-size:14px; line-height:24px; margin:0; }
+.station-actions { display:flex; align-items:center; gap:8px; margin-top:auto; }
+.station-status { flex:1; color:var(--color-primary); font-size:14px; }
+.station-actions .card-play-btn { order:initial; margin:0; }
+.station-actions .card-like-btn.liked { color:var(--color-accent-ink); }
+.station-actions .card-like-btn.liked i { animation:none; }
+.liked .fa-heart { mask-image:url('icons/heart-filled.svg'); }
+.ds-more { display:flex; width:max-content; min-width:240px; margin:24px auto 0; }
+.bottom-player.ds-player { position:fixed; display:flex; gap:16px; align-items:center; width:calc(100% - 64px); max-width:1200px; inset-inline:0; margin:auto; bottom:24px; border:1px solid var(--color-control); border-radius:24px; padding:20px; background:var(--color-surface); box-shadow:0 8px 32px #0001; transform:none; }
+.bottom-player.ds-player:not(.visible) { display:none; }
+.ds-player-label { flex:1; min-width:0; }
+.ds-player-label #player-name { font-size:20px; font-weight:600; line-height:32px; color:var(--color-ink); margin:0; }
+.ds-live { color:var(--color-primary); font-size:12px; line-height:20px; margin:0; }
+.ds-player-label #player-desc { font-size:12px; color:var(--color-primary); }
+.ds-player .ds-popover { top:auto; bottom:60px; inset-inline-start:auto; inset-inline-end:0; }
+.ds-volume-panel { position:absolute; bottom:60px; inset-inline-end:0; width:240px; padding:12px; display:flex; align-items:center; background:var(--color-surface); border:1px solid var(--color-border); border-radius:16px; }
+.ds-volume-panel input { min-width:0; width:100%; accent-color:var(--color-primary); }
+.ds-search-row { display:flex; gap:12px; align-items:center; }
+.ds-search-row .ds-button { min-width:132px; }
+.ds-advanced { margin-block:24px 32px; }
+.ds-advanced summary { display:flex; align-items:center; gap:12px; color:var(--color-primary); cursor:pointer; min-height:48px; font-size:14px; }
+.ds-advanced summary span { color:var(--color-muted); }
+.ds-advanced-panel { background:var(--color-surface); border:1px solid var(--color-border); border-radius:16px; padding:24px; margin-top:8px; display:grid; gap:16px; }
+.ds-advanced-panel .ds-filter-row { margin:0; }
+.ds-advanced-panel>.ds-button { justify-self:start; }
+.ds-label { display:block; font-size:14px; margin-block:8px; color:var(--color-muted); }
+.ds-input,.ds-select { min-height:48px; width:100%; border:1px solid var(--color-control); border-radius:12px; padding:8px 16px; color:var(--color-ink); background:var(--color-surface); }
+.ds-range { display:flex; gap:16px; }
+.ds-range label { flex:1; min-width:0; }
+.search-page .result-count { display:flex!important; align-items:center; justify-content:space-between; border:0; background:none; padding:0; margin:32px 0 24px; }
+.search-page .result-count[style*="none"] { display:none!important; }
+.result-count h2 { font-size:24px; line-height:36px; font-weight:600; color:var(--color-ink); margin:0; }
+.result-count>span { font-size:12px; font-weight:400; }
+.verse-card.ds-result { padding:24px; border:1px solid var(--color-border); border-radius:16px; margin-bottom:24px; }
+.ds-result-header { display:flex; align-items:center; justify-content:space-between; gap:12px; color:var(--color-primary); font-size:14px; line-height:24px; }
+.ds-result-header .verse-audio-btn { border:0; margin:0; background:transparent; color:var(--color-muted); }
+.ds-result-header .verse-audio-btn:hover { background:var(--color-raised); }
+.ds-result .verse-text { font:400 32px/2.25 var(--font-quran); padding:0; margin:16px 0; text-align:right; }
+.ds-result-meta { font:400 12px/20px var(--font-ui); color:var(--color-muted); margin:16px 0; }
+.ds-result-actions { display:flex; justify-content:flex-end; gap:12px; }
+.ds-result-actions .ds-button { min-width:154px; border-radius:12px; font-size:14px; padding:11px 24px; }
+.ds-reader-toolbar { display:flex; align-items:center; gap:8px; margin-bottom:32px; flex-wrap:wrap; }
+.ds-reader-toolbar .ds-chip { margin:0; }
+.ds-page-field input { border:0; border-radius:0; width:42px; min-width:0; background:transparent; color:inherit; text-align:center; appearance:textfield; }
+.ds-page-field input::-webkit-inner-spin-button { appearance:none; }
+.ds-reader-settings { margin-inline-start:auto; }
+.ds-reader-settings .ds-popover { inset-inline-start:auto; inset-inline-end:0; }
+.ds-reader-actions { display:flex; justify-content:center; flex-wrap:wrap; gap:12px; margin-top:24px; }
+.ds-reader-actions>.ds-button { min-width:200px; }
+.ds-reading-message { min-height:24px; text-align:center; color:var(--color-primary); font-size:14px; margin:12px 16px; }
+.ds-page-navigation { display:flex; align-items:center; justify-content:center; gap:32px; padding-bottom:24px; color:var(--color-muted); font-size:12px; }
+.ds-page-navigation .ds-button { font-size:12px; }
+.mushaf-shortcut-hint { display:none; }
+.mushaf-audio-bar { position:fixed; border-radius:24px; bottom:24px; width:max-content; max-width:calc(100% - 32px); margin-inline:auto; padding:12px 24px; }
+.mushaf-audio-bar.hidden { display:none; }
+@media(max-width:1023px) { .station-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:767px) {
+ .ds-filter-row { flex-wrap:nowrap; }
+ .ds-filter-row>.ds-chip,.ds-filter-row>.ds-category { flex:1; min-width:0; }
+ .ds-filter-row .ds-chip { min-width:0; width:100%; padding-inline:12px; }
+ .ds-filter-row .ds-chip i { width:16px; height:16px; flex-basis:16px; mask-size:16px; }
+ .ds-popover { min-width:240px; }
+ .ds-category .ds-popover { inset-inline-start:50%; transform:translateX(50%); }
+ .ds-section-header h2 { font-size:22px; }
+ .ds-sort select { width:125px; text-overflow:ellipsis; font-size:12px; }
+ .station-grid { grid-template-columns:1fr; }
+ .station-title.card-radio-name { font-size:20px; }
+ .ds-more { width:100%; }
+ .bottom-player.ds-player { width:calc(100% - 32px); padding:12px; gap:8px; bottom:calc(92px + env(safe-area-inset-bottom)); border-radius:24px; }
+ .ds-player-label #player-name { font-size:14px; line-height:24px; }
+ .ds-player-live,.ds-player .ds-volume { display:none; }
+ .ds-player-options .ds-icon-button { width:32px; min-width:32px; padding:4px; }
+ .ds-player-label .ds-live { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+ .ds-search-row .ds-button { min-width:72px; padding-inline:12px; }
+ .ds-field { min-width:0; padding-inline:16px; }
+ .ds-advanced summary { flex-wrap:wrap; gap:6px; }
+ .ds-advanced summary span { font-size:12px; }
+ .ds-advanced-panel { padding:16px; }
+ .ds-result .verse-text { font-size:28px; }
+ .verse-card.ds-result { padding:20px; }
+ .ds-result-actions .ds-button { flex:1; min-width:0; padding-inline:16px; }
+ .ds-result-actions { gap:12px; }
+ .result-count h2 { font-size:22px; }
+ .ds-reader-toolbar { gap:8px; }
+ .ds-reader-toolbar .ds-chip { min-width:0; padding-inline:12px; font-size:12px; }
+ .ds-reader-surah { max-width:calc(100% - 180px); }
+ .ds-reader-surah summary { overflow:hidden; }
+ .ds-reader-surah summary span { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+ .ds-reader-settings { margin:0; }
+ .ds-reader-settings>summary { width:32px; min-width:32px; padding:4px; }
+ .ds-reader-actions>.ds-button { min-width:0; flex:1; padding-inline:12px; }
+ .ds-reader-actions #restore-reading { flex-basis:100%; }
+ .ds-page-navigation { gap:12px; }
+ .ds-page-navigation .ds-button { gap:4px; }
+ .mushaf-audio-bar { bottom:calc(92px + env(safe-area-inset-bottom)); }
+}

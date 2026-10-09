@@ -16,29 +16,14 @@
     <div class="container brand-page radio-page">
 <div class="page-intro"><p class="eyebrow">القرآن معك، أينما كنت</p><h1>إذاعات القرآن الكريم</h1><p class="page-description">استمع إلى تلاوات عطرة، على مدار الساعة.</p></div>
 
-        <!-- Search -->
-        <div class="search-wrapper position-relative mt-3">
-            <input type="text" class="search-input" id="search" aria-label="ابحث عن إذاعة أو قارئ" placeholder="ابحث عن إذاعة...">
-            <i class="fa fa-search search-icon"></i>
-            <i class="fas fa-times clear-search-icon" id="clear-search"></i>
+        <div class="ds-field"><i class="ds-icon ds-icon-search" aria-hidden="true"></i><input id="search" aria-label="ابحث عن إذاعة أو قارئ" placeholder="ابحث عن إذاعة أو قارئ"><button id="clear-search" class="ds-icon-button" aria-label="مسح البحث" type="button"><i class="ds-icon ds-icon-close" aria-hidden="true"></i></button></div>
+        <div class="ds-filter-row" aria-label="تصفية الإذاعات">
+            <button class="ds-chip active" data-radio-view="all" aria-pressed="true">الكل</button>
+            <details class="ds-category"><summary class="ds-chip">التصنيفات <i class="fa-chevron-down" aria-hidden="true"></i></summary><div class="ds-popover"><div id="tags-filter" class="ds-tag-options"></div></div></details>
+            <button class="ds-chip" data-radio-view="favorites" aria-pressed="false">المفضلة</button>
         </div>
-
-        <!-- Tag Pills -->
-        <div class="tags-filter" id="tags-filter"></div>
-
-        <!-- Sort Controls -->
-        <div class="sort-controls" id="sort-controls">
-            <span class="sort-label">ترتيب حسب:</span>
-            <button class="sort-pill active" data-sort="default">الافتراضي</button>
-            <button class="sort-pill" data-sort="likes">الأكثر إعجاباً</button>
-            <button class="sort-pill" data-sort="views">الأكثر مشاهدة</button>
-            <button class="sort-pill" data-sort="name">الاسم</button>
-        </div>
-
-        <h2 class="section-title">استكشف الإذاعات</h2>
-        <!-- Radio Grid -->
-        <div class="row g-3" id="radios-container"></div>
-
+        <div class="ds-section-header"><h2>إذاعات مختارة</h2><label class="ds-sort"><span class="visually-hidden">ترتيب الإذاعات</span><select id="radio-sort"><option value="default">الترتيب الافتراضي</option><option value="views">الأكثر مشاهدة</option><option value="likes">الأكثر إعجابًا</option><option value="name">الاسم</option></select><i class="fa-chevron-down" aria-hidden="true"></i></label></div>
+        <div class="station-grid" id="radios-container"></div>
         <!-- Empty State -->
         <div class="empty-state" id="empty-state" style="display:none;">
             <i class="fas fa-search"></i>
@@ -47,38 +32,15 @@
 
     </div>
 
-    <!-- Sticky Bottom Player -->
-    <div class="bottom-player" id="bottom-player">
-        <div class="player-inner">
-            <img class="player-art" id="player-art" src="" alt="">
-            <div class="player-info">
-                <p class="player-name" id="player-name"></p>
-                <p class="player-desc" id="player-desc"></p>
-            </div>
-            <button class="player-play-btn" id="player-play-btn" aria-label="تشغيل/إيقاف">
-                <i class="fas fa-play"></i>
-            </button>
-            <div class="player-volume" id="player-volume">
-                <button class="volume-btn" id="volume-btn" aria-label="كتم الصوت">
-                    <i class="fas fa-volume-up"></i>
-                </button>
-                <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="80">
-            </div>
-            <div class="wave-bars paused" id="wave-bars">
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-            </div>
-            <button class="player-expand-btn" id="player-expand-btn" aria-label="توسيع">
-                <i class="fas fa-expand"></i>
-            </button>
-            <button class="player-close-btn" id="player-close-btn" aria-label="إغلاق">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-    </div>
+    <aside class="bottom-player ds-player" id="bottom-player" aria-label="مشغل الإذاعة">
+        <div class="ds-player-label"><p id="player-name"></p><p class="ds-live">بث مباشر <span aria-hidden="true">·</span> <span id="player-desc">تلاوات مختارة</span></p></div>
+        <img id="player-art" class="player-art" hidden alt="">
+        <span class="ds-live ds-player-live">LIVE</span>
+        <details class="ds-volume"><summary class="ds-icon-button" aria-label="مستوى الصوت"><i class="fa-volume-up" aria-hidden="true"></i></summary><div id="player-volume" class="ds-volume-panel"><button id="volume-btn" class="ds-icon-button" aria-label="كتم الصوت"><i class="fa-volume-up" aria-hidden="true"></i></button><input type="range" id="volume-slider" aria-label="مستوى الصوت" min="0" max="100" value="80"></div></details>
+        <button id="player-play-btn" class="ds-icon-button ds-primary" aria-label="تشغيل أو إيقاف مؤقت"><i class="fa-play" aria-hidden="true"></i></button>
+        <details class="ds-player-options"><summary class="ds-icon-button" aria-label="خيارات المشغل"><i class="ds-icon ds-icon-settings" aria-hidden="true"></i></summary><div class="ds-popover"><button id="player-expand-btn" class="ds-button ds-secondary">توسيع المشغل</button><button id="player-close-btn" class="ds-button ds-secondary">إغلاق المشغل</button></div></details>
+        <div id="wave-bars" hidden></div>
+    </aside>
 
     <!-- Fullscreen Player Modal -->
     <div class="fullscreen-modal" id="fullscreen-modal">
@@ -137,6 +99,7 @@
                     name: "{{ radio.name|escapejs }}",
                     src: "{{ radio.stream_url }}",
                     img: "{% if radio.image %}{{ radio.image.url }}{% else %}{% static 'brand/radio-placeholder.png' %}{% endif %}",
+                    has_image: {% if radio.image %}true{% else %}false{% endif %},
                     description: "{{ radio.description|default:''|escapejs }}",
                     tags: [{% for name in radio.tags.names %}"{{ name|escapejs }}",{% endfor %}],
                     slug: "{{ radio.slug|escapejs }}",

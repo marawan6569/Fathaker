@@ -43,6 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
         pill.addEventListener('click', function () {
             modePills.forEach(function (p) { p.classList.remove('active'); });
             pill.classList.add('active');
+            modePills.forEach(p => p.setAttribute('aria-pressed', String(p === pill)));
             currentMode = pill.dataset.mode;
             switchInputGroup(currentMode);
         });
@@ -81,108 +82,24 @@ document.addEventListener('DOMContentLoaded', function () {
         if (e.key === 'Enter') doSearch();
     });
 
-    // ===== Custom Surah Dropdown =====
-    var surahDropdown = document.getElementById('surah-dropdown');
-    var surahTrigger = document.getElementById('surah-dropdown-trigger');
-    var surahLabel = document.getElementById('surah-dropdown-label');
-    var surahPanel = document.getElementById('surah-dropdown-panel');
-    var surahFilter = document.getElementById('surah-dropdown-filter');
-    var surahList = document.getElementById('surah-dropdown-list');
-    var surahItems = surahList.querySelectorAll('.surah-dropdown-item');
-
-    // Toggle dropdown
-    surahTrigger.addEventListener('click', function (e) {
-        e.stopPropagation();
-        var isOpen = surahDropdown.classList.contains('open');
-        if (isOpen) {
-            closeSurahDropdown();
-        } else {
-            surahDropdown.classList.add('open');
-            surahFilter.value = '';
-            filterSurahItems('');
-            setTimeout(function () { surahFilter.focus(); }, 100);
-        }
+    document.getElementById('advanced-search-btn').addEventListener('click', doSearch);
+    document.getElementById('advanced-search').addEventListener('toggle', function () {
+        if (this.open && ['search','starts-with','ends-with'].includes(currentMode)) document.querySelector('[data-mode="surah"]').click();
+        if (!this.open && ['surah','page','range'].includes(currentMode)) document.querySelector('[data-mode="search"]').click();
     });
-
-    // Filter surahs as user types
-    surahFilter.addEventListener('input', function () {
-        filterSurahItems(surahFilter.value.trim());
-    });
-
-    // Prevent filter input clicks from closing dropdown
-    surahFilter.addEventListener('click', function (e) {
-        e.stopPropagation();
-    });
-
-    function filterSurahItems(query) {
-        var visibleCount = 0;
-        surahItems.forEach(function (item) {
-            var name = item.getAttribute('data-name');
-            var num = item.getAttribute('data-value');
-            if (!query || name.indexOf(query) !== -1 || num === query) {
-                item.style.display = '';
-                visibleCount++;
-            } else {
-                item.style.display = 'none';
-            }
-        });
-        // Show empty message
-        var existingEmpty = surahList.querySelector('.surah-dropdown-empty');
-        if (visibleCount === 0) {
-            if (!existingEmpty) {
-                var emptyEl = document.createElement('li');
-                emptyEl.className = 'surah-dropdown-empty';
-                emptyEl.textContent = 'لا توجد نتائج';
-                surahList.appendChild(emptyEl);
-            }
-        } else if (existingEmpty) {
-            existingEmpty.remove();
-        }
+    let resultVerses = [], shownResults = 6;
+    const moreResults = document.getElementById('search-load-more');
+    moreResults.addEventListener('click', () => { shownResults += 6; paintResults(); });
+    function paintResults() {
+        resultsContainer.innerHTML = resultVerses.slice(0, shownResults).map(buildVerseCard).join('');
+        moreResults.hidden = shownResults >= resultVerses.length;
+        bindAudioButtons(); bindMutashabihatButtons();
     }
-
-    // Select a surah item
-    surahItems.forEach(function (item) {
-        item.addEventListener('click', function (e) {
-            e.stopPropagation();
-            var value = item.getAttribute('data-value');
-            var name = item.getAttribute('data-name');
-
-            // Update hidden input & label
-            surahSelect.value = value;
-            surahLabel.textContent = name;
-            surahTrigger.classList.add('has-value');
-
-            // Mark selected
-            surahItems.forEach(function (i) { i.classList.remove('selected'); });
-            item.classList.add('selected');
-
-            closeSurahDropdown();
-            doSearch();
-        });
-    });
-
-    function closeSurahDropdown() {
-        surahDropdown.classList.remove('open');
-    }
-
-    // Close dropdown on outside click
-    document.addEventListener('click', function (e) {
-        if (!surahDropdown.contains(e.target)) {
-            closeSurahDropdown();
-        }
-    });
-
-    // Close dropdown when switching modes
-    modePills.forEach(function (pill) {
-        pill.addEventListener('click', function () {
-            closeSurahDropdown();
-        });
-    });
-
     // Search button
     searchBtn.addEventListener('click', doSearch);
 
     function doSearch() {
+        moreResults.hidden = true;
         var url = buildUrl();
         if (!url) return;
 
@@ -257,14 +174,8 @@ document.addEventListener('DOMContentLoaded', function () {
         countNumber.textContent = verses.length;
         resultCount.style.display = 'block';
 
-        var html = '';
-        for (var i = 0; i < verses.length; i++) {
-            var v = verses[i];
-            html += buildVerseCard(v, i);
-        }
-        resultsContainer.innerHTML = html;
-        bindAudioButtons();
-        bindMutashabihatButtons();
+        document.getElementById('results-heading').textContent = currentQuery ? 'نتائج البحث عن «' + currentQuery + '»' : 'نتائج البحث';
+        resultVerses = verses; shownResults = 6; paintResults();
     }
 
     // ===== Audio Player =====
@@ -315,50 +226,15 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function buildVerseCard(v, index) {
-        var delay = Math.min(index * 0.05, 1);
-        var verseDisplay = v.verse;
-
-        // Highlight matching text for text search modes
-        if (currentQuery && (currentMode === 'search' || currentMode === 'starts-with' || currentMode === 'ends-with' || currentMode === 'surah')) {
-            verseDisplay = highlightText(verseDisplay, currentQuery);
-        }
-
-        var sajdaHtml = '';
-        if (v.is_sajda) {
-            sajdaHtml = '<span class="sajda-badge"><i class="fas fa-pray"></i> سجدة</span>';
-        }
-
-        // Audio button
-        var audioHtml = '';
-        if (v.audio && v.audio.length > 0) {
-            audioHtml = '<button class="verse-audio-btn" data-audio-url="' + escapeHtml(v.audio[0].url) + '" title="تشغيل">' +
-                '<i class="fas fa-play"></i>' +
-                '</button>';
-        }
-
-        // Mutashabihat button
-        var mutashabihatHtml = '<button class="verse-mutashabihat-btn" data-verse-pk="' + escapeHtml(v.verse_pk) + '" title="المتشابهات">' +
-            '<i class="fas fa-clone"></i>' +
-            '<span>متشابهات</span>' +
-            '</button>';
-
-        return '<div class="verse-card" style="animation-delay:' + delay + 's;">' +
-            '<div class="verse-card-header">' +
-            '<span class="verse-surah-badge"><i class="fas fa-book-open"></i> ' + escapeHtml(v.surah) + '</span>' +
-            '<span class="verse-number-badge">آية ' + v.number_in_surah + '</span>' +
-            sajdaHtml +
-            audioHtml +
-            mutashabihatHtml +
-            '</div>' +
-            '<p class="verse-text">' + verseDisplay + '</p>' +
-            '<div class="verse-meta">' +
-            '<span class="verse-meta-item"><i class="fas fa-bookmark"></i> جزء ' + v.juz + '</span>' +
-            '<span class="verse-meta-item"><i class="fas fa-file-alt"></i> صفحة ' + v.page + '</span>' +
-            '<span class="verse-meta-item"><i class="fas fa-layer-group"></i> ربع ' + v.the_quarter + '</span>' +
-            '<span class="verse-meta-item"><i class="fas fa-hashtag"></i> رقم ' + v.number_in_quran + '</span>' +
-            '</div>' +
-            '</div>';
+    function buildVerseCard(v) {
+        const verseDisplay = currentQuery ? highlightText(v.verse, currentQuery) : escapeHtml(v.verse);
+        const audio = v.audio?.length ? `<button class="verse-audio-btn ds-icon-button" data-audio-url="${escapeHtml(v.audio[0].url)}" aria-label="استماع للآية"><i class="fa-play" aria-hidden="true"></i></button>` : '';
+        return `<article class="verse-card ds-result">
+            <div class="ds-result-header"><span>سورة ${escapeHtml(v.surah)} · الآية ${v.number_in_surah}</span>${audio}</div>
+            <p class="verse-text">${verseDisplay}</p>
+            <p class="ds-result-meta">الجزء ${v.juz} · الصفحة ${v.page}${v.is_sajda ? ' · سجدة' : ''}</p>
+            <div class="ds-result-actions"><button class="verse-mutashabihat-btn ds-button ds-secondary" data-verse-pk="${escapeHtml(v.verse_pk)}">متشابهات</button><a class="ds-button ds-secondary" href="/verses/mushaf/#page=${v.page}">في المصحف</a></div>
+        </article>`;
     }
 
     function highlightText(text, query) {

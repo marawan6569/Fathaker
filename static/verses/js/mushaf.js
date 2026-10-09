@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var currentPageVerses = []; // Array of verse data for the current page
     var isPlaying = false;
     var autoPlayNext = true;
+    var recitationEnd = null;
 
     // Arabic numerals
     var arabicNumerals = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
@@ -41,6 +42,29 @@ document.addEventListener('DOMContentLoaded', function () {
             return arabicNumerals[parseInt(d)] || d;
         }).join('');
     }
+
+    const readingMessage = document.getElementById('reading-message');
+    const restoreReading = document.getElementById('restore-reading');
+    function savedPage() { try { const value = Number(localStorage.getItem('fathaker-reading-page')); return Number.isInteger(value) && value >= 1 && value <= 604 ? value : null; } catch (_) { return null; } }
+    restoreReading.hidden = !savedPage();
+    document.getElementById('save-reading').addEventListener('click', () => {
+        try { localStorage.setItem('fathaker-reading-page', String(currentPage)); restoreReading.hidden = false; readingMessage.textContent = 'تم حفظ الصفحة ' + toArabicNum(currentPage); }
+        catch (_) { readingMessage.textContent = 'تعذر حفظ الموضع في هذا المتصفح.'; }
+    });
+    restoreReading.addEventListener('click', () => { const page = savedPage(); if (page) goToPage(page); });
+    document.getElementById('listen-surah').addEventListener('click', async function () {
+        const first = currentPageVerses[0]; if (!first) return;
+        this.disabled = true; readingMessage.textContent = 'جارٍ تجهيز التلاوة…';
+        try {
+            const response = await fetch('/verses/api/surah/' + first.surah_id + '/');
+            if (!response.ok) throw new Error('Recitation unavailable');
+            const verses = await response.json(); if (!verses.length) throw new Error('Empty surah');
+            recitationEnd = verses[verses.length - 1].number_in_quran;
+            goToPage(verses[0].page, null, verses[0].number_in_quran);
+            readingMessage.textContent = 'استماع للسورة · يمكنك الإيقاف من المشغل';
+        } catch (_) { readingMessage.textContent = 'تعذر تحميل التلاوة. حاول مرة أخرى.'; }
+        finally { this.disabled = false; }
+    });
 
     // ===== Initialization =====
     var hashPage = getPageFromHash();
@@ -105,6 +129,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // ===== Rendering =====
     function renderPage(data, direction, thenPlayVerse) {
         currentPage = data.page;
+        document.getElementById('reader-page-count').textContent = toArabicNum(currentPage) + ' / ٦٠٤';
+        nextBtn.disabled = currentPage === 1;
+        prevBtn.disabled = currentPage === totalPages;
         pageInput.value = currentPage;
         currentPageVerses = data.verses;
 
@@ -203,7 +230,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Auto-play first verse on new page if triggered by auto-advance
         if (thenPlayVerse) {
             setTimeout(function () {
-                var firstVerseOnPage = data.verses[0];
+                var firstVerseOnPage = typeof thenPlayVerse === 'number' ? data.verses.find(v => v.number_in_quran === thenPlayVerse) : data.verses[0];
                 if (firstVerseOnPage) {
                     playVerse(firstVerseOnPage.number_in_quran);
                 }
@@ -231,6 +258,7 @@ document.addEventListener('DOMContentLoaded', function () {
         mutashabihatToggleBtn.addEventListener('click', function() {
             isMutashabihatEnabled = !isMutashabihatEnabled;
             mutashabihatToggleBtn.classList.toggle('active', isMutashabihatEnabled);
+            mutashabihatToggleBtn.setAttribute('aria-pressed', String(isMutashabihatEnabled));
             pageContent.classList.toggle('mutashabihat-enabled', isMutashabihatEnabled);
         });
     }
@@ -260,6 +288,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
+        recitationEnd = null;
         var el = e.currentTarget;
         var verseNum = parseInt(el.getAttribute('data-verse-num'));
 
@@ -450,6 +479,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function playNextVerse(currentVerseNum) {
+        if (recitationEnd !== null && currentVerseNum >= recitationEnd) { stopAudio(); return; }
         var nextVerseNum = currentVerseNum + 1;
 
         // Check if next verse is on the current page

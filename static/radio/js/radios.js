@@ -69,45 +69,31 @@ function getDetailUrl(slug) {
 }
 
 // ===== Rendering =====
-function renderRadioCard(radio, index) {
-    const isPlaying = currentRadio && currentRadio.src === radio.src;
-    const isPaused = isPlaying && audio.paused;
-    const playIcon = isPlaying && !isPaused ? 'fa-pause' : 'fa-play';
+function escapeRadio(value) { return String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function renderRadioCard(radio) {
+    const playing = currentRadio && currentRadio.src === radio.src && !audio.paused;
     const liked = isLiked(radio.slug);
-
-    const tagsHtml = radio.tags.map(t => `<span class="card-tag">${t}</span>`).join('');
-    const descHtml = radio.description ? `<p class="card-description">${radio.description}</p>` : '';
-
-    return `
-        <div class="col-lg-4 col-md-6 col-12 radio-col" style="animation-delay: ${index * 0.05}s">
-            <div class="radio-card${isPlaying ? ' playing' : ''}" data-src="${radio.src}" data-slug="${radio.slug}">
-                <div class="card-body-content">
-                    <a href="${getDetailUrl(radio.slug)}" class="card-radio-name" style="text-decoration:none;color:inherit;">${radio.name}</a>
-                    <div class="card-tags">${tagsHtml}</div>
-                    ${descHtml}
-                    <div class="card-stats-row">
-                        <button class="card-play-btn" data-src="${radio.src}" aria-label="تشغيل">
-                            <i class="fas ${playIcon}"></i>
-                        </button>
-                        <button class="card-like-btn${liked ? ' liked' : ''}" data-slug="${radio.slug}" aria-label="إعجاب">
-                            <i class="fas fa-heart"></i>
-                            <span>${radio.likes_count}</span>
-                        </button>
-                        <span class="card-stat">
-                            <i class="fas fa-eye"></i>
-                            <span>${radio.views_count}</span>
-                        </span>
-                        <button class="share-btn" data-slug="${radio.slug}" data-name="${radio.name}" aria-label="مشاركة">
-                            <i class="fas fa-share-alt"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-img-wrapper">
-                    <img src="${radio.img}" alt="${radio.name}" loading="lazy">
-                </div>
-            </div>
-        </div>`;
+    const artwork = radio.has_image
+        ? `<img class="station-artwork" src="${escapeRadio(radio.img)}" alt="" width="56" height="56" loading="lazy">`
+        : '';
+    return `<article class="station-card radio-card${playing ? ' playing' : ''}" data-src="${escapeRadio(radio.src)}" data-slug="${escapeRadio(radio.slug)}">
+        <div class="station-identity"><div class="station-symbol"><i class="ds-icon ds-icon-radio" aria-hidden="true"></i>${artwork}</div><div class="station-label"><a href="${escapeRadio(getDetailUrl(radio.slug))}" class="station-title card-radio-name">${escapeRadio(radio.name)}</a><p>${escapeRadio(radio.tags.join(' · ') || 'تلاوات القرآن الكريم')}</p></div></div>
+        <div class="station-actions"><span class="station-status">${playing ? 'يُبث الآن' : 'بث مباشر'}</span><button class="ds-icon-button share-btn" data-slug="${escapeRadio(radio.slug)}" data-name="${escapeRadio(radio.name)}" aria-label="مشاركة ${escapeRadio(radio.name)}"><i class="fa-share-alt" aria-hidden="true"></i></button><button class="ds-icon-button card-like-btn${liked?' liked':''}" data-slug="${escapeRadio(radio.slug)}" aria-label="إعجاب بـ ${escapeRadio(radio.name)}" aria-pressed="${liked}"><i class="fa-heart" aria-hidden="true"></i></button><button class="ds-icon-button ds-primary card-play-btn" data-src="${escapeRadio(radio.src)}" aria-label="${playing?'إيقاف مؤقت':'تشغيل'}"><i class="${playing?'fa-pause':'fa-play'}" aria-hidden="true"></i></button></div>
+    </article>`;
 }
+let radioView = 'all';
+// Keep the symbol underneath artwork so failed or unavailable images fall back cleanly.
+radiosContainer.addEventListener('error', event => {
+    if (event.target instanceof HTMLImageElement && event.target.classList.contains('station-artwork')) {
+        event.target.hidden = true;
+    }
+}, true);
+document.getElementById('radio-sort').addEventListener('change', event => { currentSort = event.target.value; applyFilters(); });
+document.querySelectorAll('[data-radio-view]').forEach(button => button.addEventListener('click', () => {
+    radioView = button.dataset.radioView; activeTag = null;
+    document.querySelectorAll('[data-radio-view]').forEach(item => { const selected = item === button; item.classList.toggle('active', selected); item.setAttribute('aria-pressed', selected); });
+    renderTagPills(); applyFilters();
+}));
 
 function renderRadiosList(filtered) {
     if (filtered.length === 0) {
@@ -159,9 +145,9 @@ function renderTagPills() {
     const allTags = new Set();
     radios.forEach(r => r.tags.forEach(t => allTags.add(t)));
 
-    let html = `<button class="tag-pill active" data-tag="">الكل</button>`;
+    let html = `<button class="tag-pill ds-chip active" data-tag="">الكل</button>`;
     allTags.forEach(tag => {
-        html += `<button class="tag-pill" data-tag="${tag}">${tag}</button>`;
+        html += `<button class="tag-pill ds-chip" data-tag="${tag}">${tag}</button>`;
     });
     tagsFilter.innerHTML = html;
 
@@ -207,7 +193,7 @@ document.querySelectorAll('.sort-pill').forEach(pill => {
 
 // ===== Filtering =====
 function applyFilters() {
-    let filtered = radios;
+    let filtered = radioView === 'favorites' ? radios.filter(r => isLiked(r.slug)) : radios;
 
     if (activeTag) {
         filtered = filtered.filter(r => r.tags.some(t => t === activeTag));
@@ -333,7 +319,8 @@ function updateCardStates() {
         const isThis = currentRadio && currentRadio.src === src;
         const playIcon = card.querySelector('.card-play-btn i');
 
-        card.classList.toggle('playing', isThis);
+        card.classList.toggle('playing', isThis && !audio.paused);
+        card.querySelector('.station-status').textContent = isThis && !audio.paused ? 'يُبث الآن' : 'بث مباشر';
 
         if (playIcon) {
             if (isThis && !audio.paused) {

@@ -5,137 +5,16 @@
 <div class="container brand-page search-page">
 <div class="page-intro"><p class="eyebrow">تأمل الآيات، واكتشف معانيها</p><h1>البحث في القرآن الكريم</h1><p class="page-description">ابحث بالكلمة، أو انتقل إلى سورة أو آية.</p></div>
 
-  <!-- Search Mode Pills -->
-  <div class="mode-controls">
-    <button class="mode-pill active" data-mode="search">بحث</button>
-    <button class="mode-pill" data-mode="starts-with">تبدأ بـ</button>
-    <button class="mode-pill" data-mode="ends-with">تنتهي بـ</button>
-    <button class="mode-pill" data-mode="surah">في سورة</button>
-    <button class="mode-pill" data-mode="page">صفحة</button>
-    <button class="mode-pill" data-mode="range">نطاق</button>
-  </div>
-
-  <!-- Search Inputs -->
-  <div class="search-form">
-    <!-- Text input (search, starts-with, ends-with) -->
-    <div class="input-group-wrapper" id="text-input-group">
-      <div class="search-wrapper position-relative">
-        <input
-          type="text"
-          class="search-input"
-          id="search-text" aria-label="نص البحث في القرآن الكريم"
-          placeholder="اكتب كلمة أو جملة للبحث..."
-        />
-        <i class="fa fa-search search-icon"></i>
-      </div>
-    </div>
-
-    <!-- Surah dropdown + optional search (combined field) -->
-    <div
-      class="input-group-wrapper"
-      id="surah-input-group"
-      style="display: none"
-    >
-      <div class="surah-combined-field">
-        <!-- Custom dropdown trigger -->
-        <div class="surah-dropdown" id="surah-dropdown">
-          <button
-            type="button"
-            class="surah-dropdown-trigger"
-            id="surah-dropdown-trigger"
-          >
-            <span class="surah-dropdown-label" id="surah-dropdown-label"
-              >سورة...</span
-            >
-            <i class="fas fa-chevron-down surah-dropdown-arrow"></i>
-          </button>
-          <!-- Dropdown panel -->
-          <div class="surah-dropdown-panel" id="surah-dropdown-panel">
-            <div class="surah-dropdown-filter-wrap">
-              <i class="fas fa-filter surah-dropdown-filter-icon"></i>
-              <input
-                type="text"
-                class="surah-dropdown-filter"
-                id="surah-dropdown-filter"
-                placeholder="ابحث عن سورة..."
-                autocomplete="off"
-              />
-            </div>
-            <ul class="surah-dropdown-list" id="surah-dropdown-list">
-              {% for surah in surahs %}
-              <li
-                class="surah-dropdown-item"
-                data-value="{{ surah.id }}"
-                data-name="{{ surah.name }}"
-              >
-                <span class="surah-dropdown-item-num">{{ surah.id }}</span>
-                <span class="surah-dropdown-item-name">{{ surah.name }}</span>
-              </li>
-              {% endfor %}
-            </ul>
-          </div>
-        </div>
-        <input type="hidden" id="surah-select" value="" />
-        <div class="surah-combined-divider"></div>
-        <input
-          type="text"
-          class="surah-combined-input"
-          id="surah-search-text"
-          placeholder="بحث داخل السورة (اختياري)..."
-        />
-        <i class="fa fa-search surah-combined-icon"></i>
-      </div>
-    </div>
-
-    <!-- Page number input -->
-    <div
-      class="input-group-wrapper"
-      id="page-input-group"
-      style="display: none"
-    >
-      <input
-        type="number"
-        class="search-input-num"
-        id="page-number"
-        placeholder="رقم الصفحة (1-604)"
-        min="1"
-        max="604"
-      />
-    </div>
-
-    <!-- Range inputs -->
-    <div
-      class="input-group-wrapper"
-      id="range-input-group"
-      style="display: none"
-    >
-      <div class="range-inputs">
-        <input
-          type="number"
-          class="search-input-num"
-          id="range-start"
-          placeholder="من آية (1-6236)"
-          min="1"
-          max="6236"
-        />
-        <span class="range-separator">إلى</span>
-        <input
-          type="number"
-          class="search-input-num"
-          id="range-end"
-          placeholder="إلى آية (1-6236)"
-          min="1"
-          max="6236"
-        />
-      </div>
-    </div>
-
-    <button class="search-btn" id="search-btn">
-      <i class="fas fa-search"></i>
-      بحث
-    </button>
-  </div>
-
+  <div class="ds-search-row"><div class="ds-field"><i class="ds-icon ds-icon-search" aria-hidden="true"></i><input id="search-text" aria-label="نص البحث في القرآن الكريم" placeholder="اكتب كلمة أو جملة للبحث..."></div><button class="ds-button ds-primary" id="search-btn">بحث</button></div>
+  <div id="text-input-group"></div>
+  <div class="ds-filter-row" aria-label="طريقة مطابقة النص"><button class="mode-pill ds-chip active" data-mode="search" aria-pressed="true">تحتوي على</button><button class="mode-pill ds-chip" data-mode="starts-with" aria-pressed="false">تبدأ بـ</button><button class="mode-pill ds-chip" data-mode="ends-with" aria-pressed="false">تنتهي بـ</button></div>
+  <details class="ds-advanced" id="advanced-search"><summary>بحث متقدم <span>· السورة · الصفحة · نطاق الآيات</span><i class="fa-chevron-down" aria-hidden="true"></i></summary><div class="ds-advanced-panel">
+      <div class="ds-filter-row"><button class="mode-pill ds-chip" data-mode="surah">في سورة</button><button class="mode-pill ds-chip" data-mode="page">صفحة</button><button class="mode-pill ds-chip" data-mode="range">نطاق الآيات</button></div>
+      <div class="input-group-wrapper" id="surah-input-group" style="display:none"><label class="ds-label" for="surah-select">السورة</label><select id="surah-select" class="ds-select"><option value="">اختر سورة</option>{% for surah in surahs %}<option value="{{ surah.id }}">{{ surah.name }}</option>{% endfor %}</select><label class="ds-label" for="surah-search-text">بحث داخل السورة (اختياري)</label><input class="ds-input" id="surah-search-text" placeholder="كلمة أو جملة"></div>
+      <div class="input-group-wrapper" id="page-input-group" style="display:none"><label class="ds-label" for="page-number">رقم الصفحة</label><input class="ds-input" type="number" id="page-number" min="1" max="604" placeholder="١–٦٠٤"></div>
+      <div class="input-group-wrapper" id="range-input-group" style="display:none"><div class="ds-range"><label>من آية<input class="ds-input" id="range-start" type="number" min="1" max="6236"></label><label>إلى آية<input class="ds-input" id="range-end" type="number" min="1" max="6236"></label></div></div>
+      <button class="ds-button ds-primary" id="advanced-search-btn">بحث بالخيارات المحددة</button>
+  </div></details>
   <!-- Loading Spinner -->
   <div class="loading-spinner" id="loading-spinner" style="display: none">
     <div class="spinner"></div>
@@ -144,12 +23,13 @@
 
   <!-- Result Count -->
   <div class="result-count" id="result-count" style="display: none">
-    عدد النتائج: <span id="count-number">0</span>
+    <h2 id="results-heading">نتائج البحث</h2><span><span id="count-number">0</span> نتائج</span>
   </div>
 
   <!-- Results Area -->
   <div class="results-container" id="results-container" aria-live="polite"></div>
 
+  <button class="ds-button ds-secondary ds-more" id="search-load-more" hidden>المزيد من النتائج</button>
   <!-- Empty State -->
   <div class="empty-state" id="empty-state" style="display: none">
     <i class="fas fa-search"></i>
