@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.templatetags.static import static
 from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404
 from django.db.models import F
@@ -110,6 +111,9 @@ class RadioDetail(TemplateView):
         Radio.objects.filter(pk=radio.pk).update(views_count=F('views_count') + 1)
         radio.refresh_from_db()
         data['radio'] = radio
+        data['radio_image_url'] = self.request.build_absolute_uri(
+            radio.image.url if radio.image else static('radio/img/radio_img_not_available.png')
+        )
         data['current_page_link'] = get_object_or_404(NavLink, name="radios_list")
         return data
 

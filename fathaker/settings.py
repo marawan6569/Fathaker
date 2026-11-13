@@ -12,9 +12,11 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 from dotenv import load_dotenv
+from django.core.exceptions import ImproperlyConfigured
+import dj_database_url
 import os
 
-load_dotenv()
+load_dotenv(override=False)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,12 +26,28 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv('SECRETKEY')
+PRODUCTION = os.getenv('DEBLOYED', '0') == '1' or bool(os.getenv('K_SERVICE'))
+
+
+def required_env(name):
+    value = os.getenv(name, '').strip()
+    if not value:
+        raise ImproperlyConfigured(f'{name} is required in production.')
+    return value
+
+
+SECRET_KEY = required_env('SECRETKEY') if PRODUCTION else os.getenv(
+    'SECRETKEY', 'local-development-only-not-for-production-fathaker-secret-key'
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(int(os.getenv('DEBUG')))
+DEBUG = os.getenv('DEBUG', '0' if PRODUCTION else '1') == '1'
+if PRODUCTION and DEBUG:
+    raise ImproperlyConfigured('DEBUG must be 0 in production.')
 
-ALLOWED_HOSTS = os.getenv('ALLOWEDHOSTS').split(';')
+ALLOWED_HOSTS = [host.strip() for host in (
+    required_env('ALLOWEDHOSTS') if PRODUCTION else os.getenv('ALLOWEDHOSTS', 'localhost;127.0.0.1;[::1]')
+).split(';') if host.strip()]
 
 
 # Application definition
@@ -55,6 +73,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -88,12 +107,22 @@ WSGI_APPLICATION = 'fathaker.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
+DATABASE_URL = required_env('DATABASE_URL') if PRODUCTION else os.getenv('DATABASE_URL', '')
+if DATABASE_URL:
+    database = dj_database_url.parse(DATABASE_URL, conn_max_age=0)
+    if database['ENGINE'] != 'django.db.backends.postgresql':
+        raise ImproperlyConfigured('DATABASE_URL must use PostgreSQL; use SQLITE_PATH for local SQLite.')
+    if PRODUCTION:
+        options = database.setdefault('OPTIONS', {})
+        if options.get('sslmode') not in ('require', 'verify-ca', 'verify-full'):
+            options['sslmode'] = 'require'
+    database['DISABLE_SERVER_SIDE_CURSORS'] = True
+    DATABASES = {'default': database}
+else:
+    DATABASES = {'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+        'NAME': os.getenv('SQLITE_PATH', str(BASE_DIR / 'db.sqlite3')),
+    }}
 
 
 # Password validation
@@ -130,22 +159,49 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
-MEDIA_URL = 'media/'
-MEDIA_ROOT = 'media/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+STORAGES = {
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+    'staticfiles': {'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage'},
+}
+if PRODUCTION:
+    STORAGES['default'] = {
+        'BACKEND': 'storages.backends.gcloud.GoogleCloudStorage',
+        'OPTIONS': {
+            'bucket_name': required_env('GS_BUCKET_NAME'),
+            'location': '',
+            'default_acl': None,
+            'querystring_auth': False,
+            'file_overwrite': False,
+        },
+    }
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-if bool(int(os.getenv('DEBLOYED'))):
-    STATIC_ROOT = 'static/'
-    CSRF_TRUSTED_ORIGINS = os.getenv('TRUSTEDORIGINS').split(';')
-else:
-    STATICFILES_DIRS = [
-        BASE_DIR / "static",
-    ]
+CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in (
+    required_env('TRUSTEDORIGINS') if PRODUCTION else os.getenv('TRUSTEDORIGINS', '')
+).split(';') if origin.strip()]
+
+if PRODUCTION:
+    # Cloud Run terminates TLS and sets this header. Do not expose Gunicorn directly.
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    # Start with a short HSTS policy, without preload or unrelated subdomains.
+    SECURE_HSTS_SECONDS = 3600
+    SESSION_COOKIE_NAME = '__session'
+    CSRF_USE_SESSIONS = True
+    MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+    MIDDLEWARE.insert(2, 'fathaker.middleware.NoStoreMiddleware')
 
 TAGGIT_CASE_INSENSITIVE = True
 

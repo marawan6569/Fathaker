@@ -1,4 +1,12 @@
 #!/bin/sh
 
-python manage.py collectstatic --no-input
-gunicorn fathaker.wsgi:application --workers 3 --bind 0.0.0.0:8000
+set -eu
+
+if [ "$#" -gt 0 ]; then
+    exec "$@"
+fi
+
+exec gunicorn fathaker.wsgi:application \
+    --workers 1 --threads 4 \
+    --bind "0.0.0.0:${PORT:-8080}" \
+    --access-logfile - --error-logfile -

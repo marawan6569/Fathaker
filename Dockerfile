@@ -1,28 +1,14 @@
-FROM python:3.12-alpine
-LABEL authors="marwanfazora"
+FROM python:3.12-slim
 
-# setup working directory
-WORKDIR /fathaker/
+WORKDIR /fathaker
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
 
-# installing packages
-COPY requirements.txt /fathaker/requirements.txt
-RUN pip install -r requirements.txt && pip install gunicorn
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
 
-# copy project files
-COPY . /fathaker/
+# Static assets only: no database, bucket, or runtime secrets.
+RUN DEBLOYED=0 DEBUG=0 SQLITE_PATH=:memory: python manage.py collectstatic --noinput
 
-#setup environment variables
-ENV PYTHONUNBUFFERED=1
-COPY deployment/.env /fathaker/fathaker/.env
-
-COPY ./deployment/entrypoint.sh /
-ENTRYPOINT ["sh", "/entrypoint.sh"]
-
-## collect statics
-#RUN python manage.py collectstatic --noinput
-#
-## setup Gunicorn
-#RUN pip install gunicorn
-#CMD gunicorn fathaker.wsgi:application --workers 3 --bind 0.0.0.0:8000
-#
-#EXPOSE 8000
+EXPOSE 8080
+ENTRYPOINT ["sh", "/fathaker/deployment/entrypoint.sh"]
