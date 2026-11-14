@@ -90,6 +90,8 @@ latency and are **not Cloud Run HTTP latency**. JSON semantic hashes match basel
 | --- | --- | --- | --- |
 | Radio | 169 → 6 | 37339.17 → 1389.14 | 37639.19 → 1514.86 |
 | Search `الرحمن` (48 verses) | 97 → 2 | 18548.05 → 331.64 | 18626.80 → 342.20 |
+| Mutashabihat search `الرحمن` | 343 → 4 | 76060.11 → 892.43 | 76357.35 → 921.05 |
+| Mushaf page 1 | 4 → 3 | 787.67 → 452.58 | 795.75 → 457.35 |
 
 The optimized mutashabihat search used 4 queries / 892.43 ms cursor time /
 921.05 ms response; mushaf page 1 used 3 / 452.58 ms / 457.35 ms.
