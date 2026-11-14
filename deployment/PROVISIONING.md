@@ -11,7 +11,7 @@ Do not create a second project, service-account keys, or Cloud SQL.
 | --- | --- |
 | Media bucket | `gs://fathaker-media`, Standard, `us-east1`, uniform bucket access, Google-managed encryption, public object reads |
 | Runtime identity | `fathaker-runtime@fathaker-quran.iam.gserviceaccount.com` |
-| Docker registry | `us-east1-docker.pkg.dev/fathaker-quran/fathaker` (empty; scanning disabled) |
+| Docker registry | `us-east1-docker.pkg.dev/fathaker-quran/fathaker` (one application image; scanning disabled) |
 | Django secret | `fathaker-django-secret-key`, version `1`, generated securely without logging its value |
 | Database secret | `fathaker-database-url`, version `1`, verified Neon pooled URL with original TLS parameters |
 | Secret replication | One user-managed replica in `us-east1`, Google-managed encryption |
@@ -36,9 +36,9 @@ only after inspecting the source assets and verifying the cloud inventory.
 Cloud Run's managed service agent handles same-project image pulls; the runtime
 identity does not need an Artifact Registry writer or project Editor role.
 
-No Cloud Run service/revision, Firebase Hosting release, DNS change, or application
-image push has been performed. An application service needs the real imported Neon
-database, so CPU/memory/scaling limits will take effect at deployment, not before.
+Cloud Run is deployed and publicly accessible at its generated URLs for testing.
+Firebase Hosting and DNS remain unchanged; existing production traffic still uses
+the old host. PR #24 remains unmerged. Deployment details are recorded below.
 
 ## Media migration
 
@@ -163,6 +163,88 @@ The temporary staging container was removed after validation.
 Full source/target comparisons and verification reports are private beside the
 backup. Do not upload these files to the public media bucket or add them to Git.
 
+## Cloud Run deployment — 2026-11-14
+
+- Service: `fathaker`, project `fathaker-quran`, region `us-east1`.
+- Website: https://fathaker-251791733172.us-east1.run.app
+- Alternate service URL: https://fathaker-kc557mz5kq-ue.a.run.app
+- Reviewed application commit: `28f858367837c976c57d17db3c39ebf3f48a4d6a`.
+- Immutable deployed image:
+  `us-east1-docker.pkg.dev/fathaker-quran/fathaker/web@sha256:ad435b8148c576fd9223bb6c11e6c36ac8bf2dc194b76ae18f8197a578041887`.
+- Tag: `web:28f858367837c976c57d17db3c39ebf3f48a4d6a`.
+- Final serving revision: `fathaker-upload-28f8583`, Ready, 100% of service traffic.
+  A new revision of the same immutable image verified upload persistence.
+
+The clean migration branch matched the reviewed commit. Both GitHub Actions runs
+for that commit passed. Build input came from `git archive` of the reviewed SHA,
+not the working directory. The existing Dockerfile built `linux/amd64` without
+runtime credentials; 214 static files were collected. Image inspection excluded
+credentials, SQLite, media, backups, and Git. `pip check` and all 30 tests passed
+inside the built image using disposable SQLite. Registry image size is
+81,625,396 bytes (local uncompressed image: 238,226,045 bytes).
+
+Verified deployed configuration:
+
+| Setting | Actual value |
+| --- | --- |
+| CPU / memory | 1 vCPU / 512 MiB |
+| Service scaling | Minimum 0, maximum 2 |
+| Concurrency / timeout / port | 4 / 60 seconds / 8080 |
+| Billing | Request-based; CPU throttling enabled; startup CPU boost disabled |
+| Runtime identity | `fathaker-runtime@fathaker-quran.iam.gserviceaccount.com` |
+| Public invocation | `allUsers` has `roles/run.invoker` on this service |
+| Runtime variables | `DEBLOYED=1`, `DEBUG=0`, `GS_BUCKET_NAME=fathaker-media` |
+| Secrets | `SECRETKEY=fathaker-django-secret-key:1`, `DATABASE_URL=fathaker-database-url:1` |
+| Allowed hosts / trusted origins | Both actual Run URLs plus `fathaker.com` and `www.fathaker.com`; exact HTTPS origins |
+
+No local database/media mounts, startup migrations, VPC connector, load balancer,
+service-account keys, or new project. The attached identity retains bucket-scoped
+object access and access to only the two required secrets. Direct and pooled Neon
+TLS connectivity passed; live content proves runtime database access. The runtime
+uses the pooled secret, closes Django connections after requests (`CONN_MAX_AGE=0`),
+and disables server-side cursors for the transaction pooler.
+
+Real HTTP content checks passed for homepage redirects, radio listing, two Arabic
+radio detail URLs, Quran search/pages/APIs, three mushaf pages, phrase/by-ayah/search
+mutashabihat endpoints, CSS/JavaScript, both Arabic fonts, GCS images, and Open Graph
+images (including the no-image fallback). HTTP redirects to HTTPS; dynamic pages
+have no-store, HSTS, nosniff, and frame-denial headers. Admin login forms provide
+session-backed CSRF; `__session` is Secure/HttpOnly/SameSite=Lax, with no separate
+CSRF cookie. A POST without a CSRF token correctly returned 403.
+
+The user confirmed real admin login and a new image upload. The exact temporary
+radio was ID **167**, **Cloud Run upload test**, slug `cloud-run-upload-test`, rank
+1000. Its image `radio/Radivine__Branch_Into_Action.png` was stored in GCS, publicly
+readable, and retained identical bytes across a fresh serving revision. The new
+revision rendered the test radio using that GCS URL. After verification, only that
+radio and object were removed, with an object-generation precondition. The original
+154 objects retain identical keys, generations, sizes, and checksums. Content counts
+returned to baseline; the upload's admin audit record is retained (228 admin logs),
+8 sessions were present at verification, and automated detail tests added one view
+each to radio IDs 4 and 11. No original radio/image was deleted.
+
+No unexpected application errors, startup failures, OOMs, or worker timeouts were
+found in the deployment logs. The one test 403 was deliberate CSRF rejection.
+Observed performance is a small smoke-test sample, not a capacity benchmark:
+
+- Warm single-verse API: 0.32–0.40 seconds from the operator machine.
+- Warm radio listing: 3.3–5.2 seconds. A read-only local query capture confirms
+  169 queries, including 164 tag queries: template `radio.tags.names` bypasses the
+  existing tag prefetch.
+- Larger mutashabihat responses: approximately 3.7–5.3 seconds.
+- One real Quran search took **42.8 seconds server-side**, near the 60-second limit.
+  Existing nested verse serialization queries related audio/surah data repeatedly.
+- A sampled memory utilization was approximately 28% of 512 MiB (about 145 MiB).
+
+Keep the requested resource limits. Review a small query-optimization change before
+public cutover, especially broad Quran searches; larger results may exceed the
+request timeout. This deployment uses only the reviewed code. There is no
+infrastructure blocker to starting Firebase integration, but that integration still
+needs its own login/CSRF/upload tests and performance acceptance before cutover.
+
+Private deployment evidence and helper scripts are outside Git at
+`~/Documents/Fathaker-migration-backups/deployment-20261114-28f8583/`.
+
 ## Remaining steps (commands are preparation, not already executed)
 
 ### 1. Preserve the verified snapshot until deployment
@@ -174,15 +256,19 @@ reviewed final synchronization/export/import is required before switching traffi
 Small like/view counter differences alone are acceptable. Never blindly rerun
 `loaddata` into a populated database or truncate an unverified target.
 
-### 2. Build and deploy the approved application
+### 2. Deployment reference (already completed)
 
-Keep PR #24 unmerged until it is approved. At the deployment phase, build the
-approved commit with Docker (no Cloud Build service is necessary):
+Keep PR #24 unmerged. The application deployed above is the reviewed commit, even
+when later documentation commits advance the PR branch. For a deliberate rebuild,
+use that exact commit (no Cloud Build service is necessary):
 
 ```sh
 gcloud auth configure-docker us-east1-docker.pkg.dev --project=fathaker-quran
-FATHAKER_IMAGE="us-east1-docker.pkg.dev/fathaker-quran/fathaker/web:$(git rev-parse --short HEAD)"
-docker build --platform=linux/amd64 -t "$FATHAKER_IMAGE" .
+FATHAKER_COMMIT=28f858367837c976c57d17db3c39ebf3f48a4d6a
+FATHAKER_BUILD_CONTEXT="$(mktemp -d)"
+git archive "$FATHAKER_COMMIT" | tar -x -C "$FATHAKER_BUILD_CONTEXT"
+FATHAKER_IMAGE="us-east1-docker.pkg.dev/fathaker-quran/fathaker/web:${FATHAKER_COMMIT}"
+docker build --platform=linux/amd64 -t "$FATHAKER_IMAGE" "$FATHAKER_BUILD_CONTEXT"
 docker push "$FATHAKER_IMAGE"
 ```
 
@@ -260,9 +346,10 @@ and private backups until accepted. Cloudflare CDN tuning is a later task.
 
 ## Cost expectations
 
-Current resources have no fixed compute cost: Run is not deployed, the registry is
-empty, and there are two active secret versions (one per secret). The media
-occupies about 0.289 GiB.
+Cloud Run has minimum instances 0 and request-based billing. The registry holds
+one approximately 81.6 MB compressed image, and there are two active secret
+versions (one per secret). Original media occupies about 0.289 GiB. The deleted
+0.52 MiB upload test may remain in GCS soft-delete retention for seven days.
 Expected incremental monthly cost is approximately **USD 0 if the billing account's
 free allowances remain available**, excluding future traffic. After deployment,
 a small low-traffic site may remain near zero, but traffic, Neon/Firebase quotas,
@@ -275,7 +362,7 @@ active versions/10,000 accesses; request-based Run 180,000 vCPU-seconds,
 the billing account. Storage soft-delete retains deleted objects for seven days;
 versioning, Autoclass, paid image scanning, and replication were not added.
 
-Prices checked during provisioning:
+Prices checked during provisioning and Cloud Run deployment:
 [GCS](https://cloud.google.com/storage/pricing),
 [Artifact Registry](https://cloud.google.com/artifact-registry/pricing),
 [Secret Manager](https://cloud.google.com/secret-manager/pricing),
