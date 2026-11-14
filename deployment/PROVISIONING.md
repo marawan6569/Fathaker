@@ -13,7 +13,7 @@ Do not create a second project, service-account keys, or Cloud SQL.
 | Runtime identity | `fathaker-runtime@fathaker-quran.iam.gserviceaccount.com` |
 | Docker registry | `us-east1-docker.pkg.dev/fathaker-quran/fathaker` (empty; scanning disabled) |
 | Django secret | `fathaker-django-secret-key`, version `1`, generated securely without logging its value |
-| Database secret | `fathaker-database-url`, no version yet; never populated with a dummy database |
+| Database secret | `fathaker-database-url`, version `1`, verified Neon pooled URL with original TLS parameters |
 | Secret replication | One user-managed replica in `us-east1`, Google-managed encryption |
 | Budget | Project-only USD 5/month, 50%/90%/100% actual and 100% forecast alerts; excludes credits |
 
@@ -68,43 +68,111 @@ Verification completed successfully:
   rehashed after migration and remain unchanged.
 
 Private evidence is stored next to the backup in `gcs-inventory-verification.json`,
-`public-verification.json`, and `upload.log`. No production database was read or
-modified. Database-to-image-reference verification remains part of the Neon import.
+`public-verification.json`, and `upload.log`. The media phase did not read or modify
+the production database. The subsequent
+Neon import verified all 154 database image references against this bucket, and
+all 154 referenced public image URLs returned HTTP 200.
 Any content added after this snapshot needs a final verified sync before cutover.
+
+## Neon migration record — 2026-11-14
+
+The existing Neon project is `dry-cell-15480638`, branch
+`br-dry-queen-bcyxhwbq`, database `fathaker_db`, endpoint
+`ep-calm-lake-bcapcq2z`, AWS `us-east-1`, PostgreSQL 18.7. No second Neon
+project/database was created. Both direct and pooled URLs were read privately from
+`~/.config/fathaker/neon.env`, preserving all TLS parameters.
+
+The user identified repository-root `db.sqlite3` as the production source.
+It was opened read-only and snapshotted using SQLite's backup API. Private backup,
+fixtures, and verification evidence are outside Git at:
+`~/Documents/Fathaker-migration-backups/database-20261114T102004Z/`.
+`source-untouched.sqlite3` is read-only (0400); its SHA-256 is
+`148ce000005e2de2edcef8ef0bc5457c1cb22fc70de9b2ca113b712310b47e92`.
+Source and snapshot passed integrity and foreign-key checks. The source remained
+unchanged through verification. Its authority is based on the user's confirmation;
+this does not independently establish synchronization with a separate live host.
+
+Only the isolated working copy received the pending taggit 0007 migration.
+The source has historical migration records from archived radio migrations;
+Neon's 41 current migrations match the active code graph, not the obsolete history.
+No migrations were faked, and the original database was not modified.
+
+Native Django exports contain 30,271 application records, plus 18 natural-key
+content types and 72 permissions. All fixtures retain application primary keys.
+To avoid hours of per-row network round trips, native `loaddata` was rehearsed in
+an isolated local PostgreSQL 17 container with memory-backed storage. The staging
+records were compared with the actual SQLite columns, including password hashes,
+Arabic text, counters, image names, and relationships. Automatic join-table primary
+keys and 232 sub-millisecond timestamps were restored from the snapshot because
+native fixture serialization does not preserve those details completely.
+
+Neon was verified empty before migrations, then checked again for only the expected
+initial schema/default permissions. Verified staging rows were copied using
+PostgreSQL COPY in one transaction, with table locks, deferred constraints, exact
+per-table content hashes/counts, and foreign-key validation before commit. Sequences
+were set for future inserts and checked without consuming values or inserting test
+records. Content-type/permission identifiers are regenerated and mapped by natural
+keys; their meanings and user assignments are preserved.
+
+| Data | SQLite | Neon |
+| --- | ---: | ---: |
+| Surahs | 114 | 114 |
+| Verses | 6,236 | 6,236 |
+| Audio records | 18,708 | 18,708 |
+| Verse/audio links | 18,708 | 18,708 |
+| Mutashabihat phrases | 814 | 814 |
+| Phrase occurrences | 3,558 | 3,558 |
+| Radios, including ranks/likes/views | 163 | 163 |
+| Tags / tagged-item links | 21 / 419 | 21 / 419 |
+| Navigation records | 8 | 8 |
+| Users / groups | 3 / 0 | 3 / 0 |
+| User permission assignments | 8 | 8 |
+| Permissions / content types | 72 / 18 | 72 / 18 |
+| Admin logs | 227 | 227 |
+| Legacy categories / category links | 9 / 101 | 9 / 101 |
+| Sessions (intentionally omitted) | 13 | 0 |
+
+The three legacy, unmodeled radio tables are retained in `fathaker_legacy` within
+the same Neon database: `radio_category` (9), `radio_radiocategoriesm2m` (101), and
+`radio_radiocategory` (0). These are recovery archives, not new application models;
+archive references were verified without adding constraints that would block future
+Django deletions. All 419 generic tag references resolve to existing radios.
+The old sessions are intentionally omitted; users sign in again.
+
+Read-only acceptance passed on the imported database:
+
+- Direct and pooled connections use TLS and resolve to the expected project,
+  branch, and database; all current migrations are applied and Django checks pass.
+- Arabic search (with/without tashkeel), prefix/suffix search, surah/range queries,
+  three mushaf pages, verse detail, and mutashabihat endpoints match SQLite results.
+- All 163 Unicode radio routes resolve and the radio list renders. Counter-changing
+  detail/like/rank requests were deliberately not executed against the imported DB.
+- All three active staff accounts retain their exact password hashes and permission
+  sets; two are superusers. Hash algorithms and Django backend/admin eligibility
+  pass. Actual password login remains a deployment smoke test; no passwords were
+  requested or reset, and no sessions/last-login writes were made during validation.
+- All 154 relative image references exist in GCS, and all 154 public image URLs
+  return HTTP 200 with `image/png`.
+
+After acceptance, the exact pooled URL was added to the existing
+`fathaker-database-url` secret as **version 1**, confirmed **ENABLED**, and securely
+read back for byte equality without printing its value. The runtime service
+account's secretAccessor binding was verified. The Django secret was not changed.
+The temporary staging container was removed after validation.
+
+Full source/target comparisons and verification reports are private beside the
+backup. Do not upload these files to the public media bucket or add them to Git.
 
 ## Remaining steps (commands are preparation, not already executed)
 
-### 1. Neon and fixtures
+### 1. Preserve the verified snapshot until deployment
 
-Create a Neon PostgreSQL project/database in **AWS us-east-1**, if available. Keep
-its default scale-to-zero behavior. Obtain the **direct** URL for migration and
-**pooled** URL for runtime. Preserve Neon's TLS parameters (`sslmode=require`, plus
-`channel_binding=require` if supplied); URL-encode special password characters.
-
-Follow [MIGRATION.md](MIGRATION.md#sqlite-to-postgresql) on an authorized consistent
-SQLite working snapshot. Use the direct Neon URL with `DEBLOYED=0 DEBUG=0` for CLI
-migration/import; GCS credentials are unnecessary because fixtures contain file
-names. Run all migrations, load natural-key permissions before the main fixture,
-and verify all content/relationships/sequences. Never point tests at production.
-
-After the actual import is verified, add the pooled URL as a new version of
-`fathaker-database-url`. To avoid shell history, files, and printed secrets, use a
-local terminal prompt with the authenticated gcloud CLI:
-
-```python
-import getpass
-import subprocess
-
-url = getpass.getpass('Verified Neon pooled DATABASE_URL: ')
-subprocess.run([
-    'gcloud', 'secrets', 'versions', 'add', 'fathaker-database-url',
-    '--data-file=-', '--project=fathaker-quran', '--quiet',
-], input=url.encode(), check=True)
-```
-
-Use the returned numeric version below. Do not paste credentials into Git, a PR,
-chat, environment examples, or command-line arguments. The first database secret
-version will normally be `1`; verify it rather than assuming.
+Use the existing Neon database; do not create another database or replay fixtures
+into this populated target. Freeze content edits/uploads on the old site before
+cutover. If content, users, admin edits, or media change after this snapshot, a
+reviewed final synchronization/export/import is required before switching traffic.
+Small like/view counter differences alone are acceptable. Never blindly rerun
+`loaddata` into a populated database or truncate an unverified target.
 
 ### 2. Build and deploy the approved application
 
@@ -122,8 +190,8 @@ Ensure the Google Cloud SDK `bin` directory is on PATH for both `gcloud` and the
 Docker credential helper. Do not build from a directory containing unignored secrets.
 The reviewed `.dockerignore` excludes media, SQLite, backups, and `.env` files.
 
-Set `FATHAKER_DATABASE_SECRET_VERSION` to the verified numeric version. The initial
-host list intentionally contains only known domains; add the actual generated Run
+Set `FATHAKER_DATABASE_SECRET_VERSION=1` for the verified pooled connection.
+The initial host list intentionally contains only known domains; add the actual generated Run
 URL immediately after creation, before web verification:
 
 ```sh
@@ -193,7 +261,8 @@ and private backups until accepted. Cloudflare CDN tuning is a later task.
 ## Cost expectations
 
 Current resources have no fixed compute cost: Run is not deployed, the registry is
-empty, and there is one active secret version. The media occupies about 0.289 GiB.
+empty, and there are two active secret versions (one per secret). The media
+occupies about 0.289 GiB.
 Expected incremental monthly cost is approximately **USD 0 if the billing account's
 free allowances remain available**, excluding future traffic. After deployment,
 a small low-traffic site may remain near zero, but traffic, Neon/Firebase quotas,

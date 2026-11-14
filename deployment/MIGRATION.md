@@ -1,7 +1,8 @@
 # Fathaker hosting migration
 
-Code preparation only. Provisioning, production exports, DNS changes, and deployment
-are separate steps. Never run the old `backup.py` or `import_mutashabihat` as a restore.
+This is the migration procedure; completed provisioning and database-import results
+are recorded in PROVISIONING.md. DNS changes and deployment remain separate steps.
+Never run the old `backup.py` or `import_mutashabihat` as a restore.
 
 For the provisioned project, resource names, media verification, and exact remaining
 commands, see [PROVISIONING.md](PROVISIONING.md).
@@ -147,7 +148,7 @@ separate natural-key fixture and load it first; do not silently discard records.
 Sessions are intentionally omitted (users sign in again). Fixtures contain sensitive
 account data and must not enter Git, images, logs, or the public media bucket.
 
-### Import into a new empty Neon database
+### Import into the verified empty Neon database
 
 Use the **direct** Neon URL, including TLS options, from the operator environment.
 For this CLI operation `DEBLOYED=0 DEBUG=0` permits local storage without GCS
@@ -168,6 +169,29 @@ retried in a fresh disposable database, not merged into an active database.
 `loaddata` restores relationships and resets PostgreSQL sequences for loaded models.
 Check sequences for automatic M2M tables as well as ordinary model tables before
 acceptance; don't blindly run sequence-reset SQL on production.
+
+### Actual-source rehearsal considerations
+
+The November 2026 source contains three obsolete radio-category tables outside
+Django's model registry. Native `dumpdata` cannot export these: preserve their
+schema and rows separately and retain them in the same database's
+`fathaker_legacy` archive schema. Do not silently omit unmodeled content.
+Export the obsolete content types as well, using
+`dumpdata contenttypes --all --natural-foreign --natural-primary`, and load that
+fixture before permissions and application data.
+
+For a high-latency direct connection, load fixtures into a disposable local
+PostgreSQL instance first. Verify all modeled source columns and relationships,
+then transfer those rows with COPY to the migrated, verified empty Neon schema in
+one transaction. Replace only known migration-generated content types/permissions,
+never unknown user records. Validate exact table hashes, deferred foreign keys,
+generic tag references, and sequence state. Recheck the committed data read-only.
+
+Django JSON fixtures truncate datetimes to milliseconds and regenerate implicit
+join-row IDs. If exact preservation is required, restore those values in staging
+from the untouched snapshot after verifying the logical relationships. Content-type
+and permission IDs may change, so resolve those through natural keys. Compare the
+actual source values, not just two serialized fixture files.
 
 ### Acceptance
 
