@@ -3,6 +3,9 @@
 Code preparation only. Provisioning, production exports, DNS changes, and deployment
 are separate steps. Never run the old `backup.py` or `import_mutashabihat` as a restore.
 
+For the provisioned project, resource names, media verification, and exact remaining
+commands, see [PROVISIONING.md](PROVISIONING.md).
+
 ## Runtime
 
 Python 3.12; Django 5.2.19 LTS; Cloud Run in `us-east1`; Neon in AWS
