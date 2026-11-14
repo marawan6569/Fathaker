@@ -367,3 +367,34 @@ Prices checked during provisioning and Cloud Run deployment:
 [Artifact Registry](https://cloud.google.com/artifact-registry/pricing),
 [Secret Manager](https://cloud.google.com/secret-manager/pricing),
 [Cloud Run](https://cloud.google.com/run/pricing).
+
+## ORM deployment update — 2026-11-14
+
+Application `abf821162c2917fb3e154943ad2a8795fd87487b` now serves 100% traffic
+on revision `fathaker-orm-abf8211`. Immutable image:
+`us-east1-docker.pkg.dev/fathaker-quran/fathaker/web@sha256:a3d1ababc4d39683aa62276988de303b0a9bc8de46027fc82f4b0ad7b20daa19`.
+
+Cloud Build `1fcebe6e-d5c0-473a-b48c-351e3b47798d` used an exact-SHA,
+hash-verified Git archive, linux/amd64 Docker build, and 35 passing in-image tests.
+Cloud Build API was enabled; the temporary build identity and its narrow IAM grants
+were removed after success. No source bucket, build trigger, private pool or keys.
+The API/service agent remain; no recurring build infrastructure was configured.
+
+All runtime resource limits, scaling, request billing, environment, identity,
+version-1 secrets and GCS configuration were compared and preserved. No migration,
+import, content/counter mutation, original GCS write, DNS, Firebase or old-host change.
+Admin availability checks created only normal anonymous CSRF sessions.
+
+Actual Cloud Run HTTPS comparison, payload validation, large-response checks,
+pricing, memory observations and rollback instructions are in
+[PERFORMANCE.md](PERFORMANCE.md#cloud-run-deployment-and-https-acceptance--2026-11-14).
+Warm radio improved 3.474s → 0.772s; broad search improved approximately 59.47s →
+1.67s client time. Full corpus returned 5.37 MB in 3.49s; large mutashabihat returned
+4.85 MB in 2.86s. External verse-audio CDN resolution remains unverified from this
+machine; radio streaming, static/fonts, GCS reads and admin CSRF availability passed.
+
+Previous revision `fathaker-upload-28f8583` and immutable digest
+`sha256:ad435b8148c576fd9223bb6c11e6c36ac8bf2dc194b76ae18f8197a578041887`
+are retained and verified available for rollback. The migration PR remains open
+and unmerged. Subsequent commits documenting this deployment do not change the
+serving application commit `abf8211`.
