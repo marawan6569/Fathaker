@@ -186,3 +186,36 @@ class RadioRankDownViewTest(TestCase):
         # Check if rank changed successfully
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Radio.objects.get(id=self.radio3.id).rank, 3)
+
+
+class RadioMigrationTests(TestCase):
+    def setUp(self):
+        NavLink.objects.create(name='radios_list', display_name='Radio', destination='radio:radios_list')
+        self.radio = Radio.objects.create(name='إذاعة القرآن', rank=1, image='radio/existing.jpg')
+        self.url = reverse('radio:radio_detail', kwargs={'slug': self.radio.slug})
+
+    def test_arabic_slug_counters_and_relative_media_path(self):
+        response = self.client.get(self.url, secure=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'https://testserver/media/radio/existing.jpg')
+        response = self.client.post(reverse('radio:radio_like', kwargs={'slug': self.radio.slug}))
+        self.assertEqual(response.status_code, 200)
+        self.radio.refresh_from_db()
+        self.assertEqual(self.radio.views_count, 1)
+        self.assertEqual(self.radio.likes_count, 1)
+        self.assertEqual(self.radio.image.name, 'radio/existing.jpg')
+
+    def test_absolute_storage_url_is_not_prefixed_with_site_hostname(self):
+        from unittest.mock import patch
+        url = 'https://storage.googleapis.com/test-media/radio/existing.jpg'
+        with patch.object(Radio._meta.get_field('image').storage, 'url', return_value=url):
+            response = self.client.get(self.url, secure=True)
+        self.assertContains(response, f'<meta property="og:image" content="{url}">')
+        self.assertContains(response, f'<meta name="twitter:image" content="{url}">')
+        self.assertNotContains(response, 'https://testserverhttps://')
+
+    def test_missing_image_uses_absolute_static_fallback(self):
+        self.radio.image = ''
+        self.radio.save()
+        response = self.client.get(self.url, secure=True)
+        self.assertContains(response, 'https://testserver/static/radio/img/radio_img_not_available.png')

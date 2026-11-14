@@ -4,8 +4,11 @@ services:
     image: fathaker
     container_name: fathaker
     ports:
-      - "8000:8000"
+      - "8000:8080"
+    environment:
+      DEBLOYED: "0"
+      DEBUG: "1"
+      ALLOWEDHOSTS: "localhost;127.0.0.1;[::1]"
     volumes:
       - ./media/:/fathaker/media/
-      - ./static/:/fathaker/static/
       - ./db.sqlite3:/fathaker/db.sqlite3
