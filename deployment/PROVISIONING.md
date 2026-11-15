@@ -398,3 +398,31 @@ Previous revision `fathaker-upload-28f8583` and immutable digest
 are retained and verified available for rollback. The migration PR remains open
 and unmerged. Subsequent commits documenting this deployment do not change the
 serving application commit `abf8211`.
+
+## Radio WebP deployment — 2026-11-15
+
+Application `bc3c91b694feb61428e6e91d9549ce6c96625ec3` serves 100% on
+`fathaker-images-bc3c91b`, using
+`us-east1-docker.pkg.dev/fathaker-quran/fathaker/web@sha256:2e74d992983983fba936aae68e37972350d1e527bb700c0ce91680a97aa7146d`.
+All runtime configuration and resource limits were preserved. Cloud Build
+`14dd3450-fec2-436b-9eb5-54c678f2a50a` and application CI passed; 40 tests pass
+on SQLite/disposable PostgreSQL and inside the built image. Temporary build
+identity/grants were removed.
+
+All 154 original PNGs retain original keys, generations, MD5 values and sizes
+(310,443,753 bytes). Added only 268 verified, immutable WebP objects under
+`radio/optimized/v1/`, totaling 6,878,006 bytes. No original object deletion or
+replacement. Radio.image database values are unchanged; social previews retain
+original PNG URLs. One detail smoke test caused one normal view increment on
+radio-004, and admin CSRF checks created normal anonymous sessions.
+
+Chrome listing transfers fell from 310,528,054 to 413,529 bytes (99.867%); all
+154 images decoded. Cards use thumbnails; detail/players/backgrounds use artwork.
+Admin/session/CSRF availability, radio streaming and Quran smoke checks passed.
+Controlled rollback to `fathaker-orm-abf8211` returned the original PNG listing;
+then the optimized revision was restored to 100%. Both immutable images remain.
+
+Inventory, quality comparisons, per-file metadata, compression totals, upload
+checks, final media-sync regeneration and rollback commands are documented in
+[RADIO_IMAGES.md](RADIO_IMAGES.md). Final media/content sync and subsequent
+Firebase/CDN work remain separate. No DNS, Firebase, old-host or PR merge changes.

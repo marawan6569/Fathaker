@@ -226,3 +226,12 @@ external audio availability and large original radio images (sample images excee
 optimization can be planned next with original backups preserved; no conversion,
 Firebase setup, DNS changes, old-host changes, Redis, or PR merge occurred here.
 Recheck external audio and cold-start behavior before public cutover.
+
+## Radio image follow-up — 2026-11-15
+
+Radio WebP optimization is deployed as `fathaker-images-bc3c91b` (application
+`bc3c91b`). Chrome complete-list image transfers improved from 310.53 MB to
+413.53 KB; the 154 originals and all database image references are preserved.
+See [RADIO_IMAGES.md](RADIO_IMAGES.md) for exact bytes, verified image digest,
+visual comparisons, tests, rollback verification and final-sync instructions.
+The ORM query loading and Cloud Run resource limits are unchanged.
