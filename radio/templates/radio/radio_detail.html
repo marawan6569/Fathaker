@@ -1,5 +1,5 @@
 {% extends 'base/base.html' %}
-{% load static %}
+{% load static radio_images %}
 {% block style %}
     <link href="{% static 'radio/css/radio_detail.css' %}" rel="stylesheet">
 {% endblock style %}
@@ -18,7 +18,7 @@
 
 {% block content %}
     <div class="detail-hero">
-        <div class="hero-bg" style="background-image: url('{% if radio.image %}{{ radio.image.url }}{% else %}{% static 'radio/img/radio_img_not_available.png' %}{% endif %}')"></div>
+        <div class="hero-bg" style="background-image: url('{{ radio.image|radio_image:'artwork' }}')"></div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <a href="{% url 'radio:radios_list' %}" class="back-link">
@@ -26,7 +26,7 @@
                 العودة للإذاعات
             </a>
             <div class="detail-art-wrapper">
-                <img class="detail-art" src="{% if radio.image %}{{ radio.image.url }}{% else %}{% static 'radio/img/radio_img_not_available.png' %}{% endif %}" alt="{{ radio.name }}">
+                <img class="detail-art" src="{{ radio.image|radio_image:'artwork' }}" alt="{{ radio.name }}">
             </div>
             <div class="detail-visualizer paused" id="detail-visualizer">
                 <div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div><div class="vis-bar"></div>
@@ -91,7 +91,7 @@
             id: {{ radio.id }},
             name: "{{ radio.name|escapejs }}",
             src: "{{ radio.stream_url }}",
-            img: "{% if radio.image %}{{ radio.image.url }}{% else %}{% static 'radio/img/radio_img_not_available.png' %}{% endif %}",
+            img: "{{ radio.image|radio_image:'artwork'|escapejs }}",
             description: "{{ radio.description|default:''|escapejs }}",
             slug: "{{ radio.slug|escapejs }}",
             likes_count: {{ radio.likes_count }},

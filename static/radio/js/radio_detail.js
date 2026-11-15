@@ -42,7 +42,7 @@ function togglePlay() {
                 title: RADIO_DATA.name,
                 artist: 'فذكر',
                 artwork: [
-                    { src: RADIO_DATA.img, sizes: '512x512', type: 'image/jpeg' }
+                    { src: RADIO_DATA.img }
                 ]
             });
 
@@ -132,7 +132,6 @@ detailLikeBtn.addEventListener('click', () => {
 detailShareBtn.addEventListener('click', () => {
     const name = RADIO_DATA.name;
     const desc = RADIO_DATA.description || '';
-    const imgUrl = window.location.origin + RADIO_DATA.img;
     const pageUrl = decodeURI(RADIO_DETAIL_URL);
     const text = name + '\n' + (desc ? '\n' + desc : '') + '\n' + pageUrl;
 
