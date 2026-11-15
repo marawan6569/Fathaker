@@ -426,3 +426,32 @@ Inventory, quality comparisons, per-file metadata, compression totals, upload
 checks, final media-sync regeneration and rollback commands are documented in
 [RADIO_IMAGES.md](RADIO_IMAGES.md). Final media/content sync and subsequent
 Firebase/CDN work remain separate. No DNS, Firebase, old-host or PR merge changes.
+
+## Firebase Hosting and selective CDN — 2026-11-15
+
+Existing project now has Firebase enabled with default Hosting site
+`fathaker-quran`: https://fathaker-quran.web.app and
+https://fathaker-quran.firebaseapp.com. Release `1794737564753000`, version
+`b75c6d61a4c0ce12`: zero files, catch-all rewrite to fathaker/us-east1, no revision
+pin, SPA fallback, App Hosting or custom domains. Existing billing is shared with
+Firebase/Blaze; pricing and provisioned supporting APIs are in FIREBASE.md.
+
+Serving application `10b7b0b2c443220537f28f4072e17b301fbe46de`, revision
+`fathaker-cdn-restored-10b7b0b`, 100%, image
+`us-east1-docker.pkg.dev/fathaker-quran/fathaker/web@sha256:efa426efec4fed3747d0215739c296f8e8e1f5bec8b4a9a9c711203faa4ceb16`.
+49 tests and CI passed; existing ORM budgets also passed with caching enabled on
+both disposable backends. No resources/identity/secrets/database/media changes.
+
+Selected cookie-free read-only JSON APIs use s-maxage=300; all dynamic HTML,
+sessions, auth, mutations, errors, searches and oversized/unsupported requests
+remain private/no-store. Real CDN sample: MISS 0.572s then four HITs 0.084–0.106s,
+identical payloads, and only one matching Cloud Run request. Post-TTL refill and
+TTL=0 rollback were verified; final TTL restored to 300. Cache/session/query-key
+samples, exact endpoint inventory and safe disable/TTL-drain instructions are in
+[FIREBASE.md](FIREBASE.md).
+
+Proxy functions and anonymous __session/CSRF tests passed. Real authenticated
+admin login/logout, GCS uploads and messages still need manual user acceptance at
+https://fathaker-quran.web.app/admin/login/. Passwords were not requested or handled.
+External verse-audio DNS remains unresolved at two independent public resolvers.
+No final reconciliation, DNS/custom-domain work, old-host change or PR merge.

@@ -125,4 +125,121 @@ Hosting domains). Existing anonymous entries remain bounded by their prior TTL.
 No rollback changes Neon or GCS. Firebase Hosting continues following service
 traffic, since there is no revision tag pin.
 
-Live CDN evidence and final deployed digest will be appended after validation.
+## Deployed cache acceptance — 2026-11-15
+
+Application commit `10b7b0b2c443220537f28f4072e17b301fbe46de`.
+Final serving revision `fathaker-cdn-restored-10b7b0b`, 100% traffic, TTL 300.
+Image: `us-east1-docker.pkg.dev/fathaker-quran/fathaker/web@sha256:efa426efec4fed3747d0215739c296f8e8e1f5bec8b4a9a9c711203faa4ceb16`.
+
+Cloud Build `e3a44764-819b-4332-8ba1-4f5e1e269de8` succeeded using the existing
+linux/amd64 process and a temporary narrowly scoped build identity. All build grants
+and `fathaker-build-cdn` were removed afterward. Exact reviewed Git archive hash:
+`4b8d5cc7ecc040cc5a602d3100989b9eef8ef11f94ede9b95923e7b99b902776`.
+GitHub Actions `43703592486` passed both database jobs and Docker build.
+All 49 tests passed on SQLite and disposable PostgreSQL 16. The five existing ORM
+performance tests were additionally rerun on both databases with the production
+middleware order and TTL 300 enabled; all query budgets and payload checks passed.
+No migrations. Production database was not used by the test runner.
+
+### Observed CDN reuse and correctness
+
+Sanitized request/header/hash samples and matching origin request summaries are
+in [CDN_EVIDENCE.json](firebase/CDN_EVIDENCE.json). No session tokens or request
+Authorization values are included.
+
+| Controlled range 4331–4333 sample | CDN | Client seconds |
+| --- | --- | ---: |
+| Initial | MISS | 0.572 |
+| Repeat 1 | HIT | 0.106 |
+| Repeat 2 | HIT | 0.106 |
+| Repeat 3 | HIT | 0.084 |
+| Repeat 4 | HIT | 0.093 |
+
+All five bodies had identical SHA-256 and 2,162 bytes. Same edge identifier;
+X-Cache-Hits increased 0→4. Matching Cloud Run logs contain exactly one origin
+request for that five-request sample (0.158s origin latency). Thus four requests
+were actually served without running Django: 80% origin-request reduction in this
+controlled sample, not an estimate of production-wide hit rate. Median HIT latency
+was 0.100s, versus 0.572s on the initial warm-origin MISS. Direct Cloud Run remains
+functional and returned identical bytes for the other sampled range (4321–4323).
+
+A separate first-request sample took 5.150s client / 4.660s origin and is treated as
+initial warm-up, not steady-state latency or a verified scale-from-zero cold-start
+benchmark. New connections sometimes reached different edge nodes and caused
+additional misses; no global hit-rate claim is based on this small sample.
+
+Pages 17/18 and 201/202 returned their correct, distinct verse data. Cache-key tests
+include repeated page URLs; q searches returned distinct correct content and stayed
+private. Mutashabihat phrase 4596 and by-ayah S2V23 passed. Phrase 1 was absent and
+correctly returned an uncached 404; no API contract change was made to force it.
+
+Two requests with a genuine anonymous __session from the admin CSRF form both
+returned private/no-store and MISS, reaching the origin each time. Their JSON bytes
+matched the public payload. An invalid Basic Authorization request returned private
+403/MISS; POST returned private 405/MISS. Radio/admin HTML (including Set-Cookie),
+search, and >100-verse ranges stayed private. HEAD returned correct headers without
+a body. Real authenticated-user cache bypass is covered locally, but live user
+authentication remains pending manual acceptance, as stated above.
+
+### Expiry and disable verification
+
+After 315.58 seconds from the first fill, the identical range URL returned MISS,
+X-Cache-Hits 0 and the exact original payload. A new request appears in Cloud Run
+logs at 10:29:12 UTC on `fathaker-cdn-restored-10b7b0b` (0.159s origin latency).
+This is a real post-TTL refill observation; no data was edited to manufacture it.
+It is not a claim to have inspected every CDN node or purged global caches.
+
+The disable switch was exercised live: config revision
+`fathaker-cdn-disabled-10b7b0b` with TTL 0 served a fresh bounded-range URL as 200,
+private/no-store, MISS. Then TTL 300 was restored in a new config revision and
+traffic returned to the final serving revision above. No rebuild or data changes
+were required. The disabled revision remains an immediately available origin
+rollback, preserving the forwarded-host fix:
+
+```sh
+gcloud run services update-traffic fathaker --project=fathaker-quran \
+  --region=us-east1 --to-revisions=fathaker-cdn-disabled-10b7b0b=100
+```
+
+For a new TTL config update, remember that traffic is explicitly pinned. An env
+update alone creates a revision but may not move traffic. Review the new revision,
+then route traffic explicitly (or `--to-latest` immediately after the reviewed
+update). Existing CDN entries still expire by their previous TTL. Original image
+revision `fathaker-images-bc3c91b`, config-only Hosting revision and immutable
+images are retained for application rollback.
+
+### Cost, stability and outstanding acceptance
+
+Final runtime comparison preserved 1 vCPU/512 MiB, min 0/max 2, concurrency 4,
+60s timeout, request billing, runtime identity, all existing secrets and GCS config.
+Only reviewed image, Hosting hosts/origins and TTL differ from the original setup.
+No unexpected errors, worker timeouts or memory-limit failures were observed in
+the sampled new-revision logs. This was sequential testing, not concurrent load.
+Concurrent full-corpus memory and fresh scale-from-zero latency remain previous
+risks to observe; public-cache eligibility does not change uncached API semantics.
+
+Hosting Monitoring's delayed monthly_sent samples showed 752,911 bytes for
+firebaseapp.com (10:13:59 UTC) and 3,468,615 bytes for web.app (10:18:59 UTC), about
+4.22 MB combined. Those samples lag this validation and are not a complete bill.
+The Hosting release has zero user static files; storage metric had no samples yet.
+No unexpected recurring infrastructure was introduced, but Hosting egress beyond
+its allowance is billable and the Blaze transfer limit is not a spending cap.
+GCS images are downloaded directly and are outside Hosting's transfer counter.
+
+No Neon provider activity metrics were available. Four avoided range requests
+would avoid roughly eight ORM queries using the verified two-query loading plan;
+that is an inference, not measured Neon telemetry. Most visitors who already have
+an anonymous radio/admin CSRF session bypass this conservative CDN policy too;
+real traffic data is needed before claiming broad cost savings or caching search.
+
+Independent external verse-audio check: the stored cdn.alquran.cloud URL still
+fails from this machine, and both Google and Cloudflare DNS-over-HTTPS return
+NOERROR with no A/AAAA answers. Existing audio URLs were not rewritten. Radio
+streaming works; resolve this external-audio issue before domain cutover.
+
+Before cutover: obtain manual authenticated login/logout/upload/messages acceptance
+on Hosting; reconcile old-host content/media under separate approval; regenerate
+WebP manifest if needed; verify Firebase cookie behavior on the approved custom
+hosts; extend the exact forwarded-host allowlist only when attaching those domains;
+and perform the separately approved DNS transition. No custom domains, DNS changes,
+old-host modifications, original-media writes, final sync or PR merge occurred.

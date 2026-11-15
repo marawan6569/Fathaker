@@ -235,3 +235,13 @@ Radio WebP optimization is deployed as `fathaker-images-bc3c91b` (application
 See [RADIO_IMAGES.md](RADIO_IMAGES.md) for exact bytes, verified image digest,
 visual comparisons, tests, rollback verification and final-sync instructions.
 The ORM query loading and Cloud Run resource limits are unchanged.
+
+## Firebase selective API CDN follow-up — 2026-11-15
+
+Hosting URLs and conservative cache policy are deployed; see
+[FIREBASE.md](FIREBASE.md) for complete acceptance evidence and caveats.
+A controlled five-request range sample produced one MISS (0.572s) then four HITs
+(0.084–0.106s), with one origin request confirmed in logs. Distinct page queries,
+session/Authorization bypass, expiry after 315s and TTL=0 rollback passed. Search
+and HTML remain private. These are repeat-request measurements, not a production
+hit-rate estimate. Serving revision: `fathaker-cdn-restored-10b7b0b`.

@@ -1,0 +1,794 @@
+{
+  "keepalive_samples": [
+    {
+      "sample": 0,
+      "utc": "2026-11-15T10:25:10.868004+00:00",
+      "status": 200,
+      "seconds": 0.572,
+      "sha256": "c0080cb20b612ba28ad1aac224b3dc140a5dd96fc19b19cdf1939635c7019e23",
+      "cache": "MISS",
+      "cache_hits": "0",
+      "pop": "cache-lhr-egwu1540045-LHR",
+      "bytes": 2162
+    },
+    {
+      "sample": 1,
+      "utc": "2026-11-15T10:25:12.974280+00:00",
+      "status": 200,
+      "seconds": 0.106,
+      "sha256": "c0080cb20b612ba28ad1aac224b3dc140a5dd96fc19b19cdf1939635c7019e23",
+      "cache": "HIT",
+      "cache_hits": "1",
+      "pop": "cache-lhr-egwu1540045-LHR",
+      "bytes": 2162
+    },
+    {
+      "sample": 2,
+      "utc": "2026-11-15T10:25:15.080649+00:00",
+      "status": 200,
+      "seconds": 0.106,
+      "sha256": "c0080cb20b612ba28ad1aac224b3dc140a5dd96fc19b19cdf1939635c7019e23",
+      "cache": "HIT",
+      "cache_hits": "2",
+      "pop": "cache-lhr-egwu1540045-LHR",
+      "bytes": 2162
+    },
+    {
+      "sample": 3,
+      "utc": "2026-11-15T10:25:17.164619+00:00",
+      "status": 200,
+      "seconds": 0.084,
+      "sha256": "c0080cb20b612ba28ad1aac224b3dc140a5dd96fc19b19cdf1939635c7019e23",
+      "cache": "HIT",
+      "cache_hits": "3",
+      "pop": "cache-lhr-egwu1540045-LHR",
+      "bytes": 2162
+    },
+    {
+      "sample": 4,
+      "utc": "2026-11-15T10:25:19.258256+00:00",
+      "status": 200,
+      "seconds": 0.093,
+      "sha256": "c0080cb20b612ba28ad1aac224b3dc140a5dd96fc19b19cdf1939635c7019e23",
+      "cache": "HIT",
+      "cache_hits": "4",
+      "pop": "cache-lhr-egwu1540045-LHR",
+      "bytes": 2162
+    }
+  ],
+  "initial_and_privacy_samples": [
+    {
+      "label": "fill",
+      "url": "https://fathaker-quran.web.app/verses/api/range/4321/4323/",
+      "utc": "2026-11-15T10:23:56.767651+00:00",
+      "status": 200,
+      "seconds": 5.15,
+      "bytes": 2791,
+      "sha256": "6763f93b3fa75ab4b2d758bbdd582ba2ebf28b07e5ac29b081d58005d2a5a717",
+      "set_cookie": false,
+      "headers": {
+        "Cache-Control": "public, max-age=0, s-maxage=300",
+        "Server": "Google Frontend",
+        "Date": "Sun, 15 Nov 2026 10:23:56 GMT",
+        "X-Served-By": "cache-lhr-egwu1540062-LHR",
+        "X-Cache": "MISS",
+        "X-Cache-Hits": "0",
+        "Vary": "Accept, Cookie, Authorization,cookie,need-authorization, x-fh-requested-host, accept-encoding"
+      }
+    },
+    {
+      "label": "repeat-0",
+      "url": "https://fathaker-quran.web.app/verses/api/range/4321/4323/",
+      "utc": "2026-11-15T10:23:59.312836+00:00",
+      "status": 200,
+      "seconds": 0.545,
+      "bytes": 2791,
+      "sha256": "6763f93b3fa75ab4b2d758bbdd582ba2ebf28b07e5ac29b081d58005d2a5a717",
+      "set_cookie": false,
+      "headers": {
+        "Cache-Control": "public, max-age=0, s-maxage=300",
+        "Server": "Google Frontend",
+        "Date": "Sun, 15 Nov 2026 10:23:59 GMT",
+        "X-Served-By": "cache-lcy-eglc8600043-LCY",
+        "X-Cache": "MISS",
+        "X-Cache-Hits": "0",
+        "Vary": "Accept, Cookie, Authorization,cookie,need-authorization, x-fh-requested-host, accept-encoding"
+      }
+    },
+    {
+      "label": "repeat-1",
+      "url": "https://fathaker-quran.web.app/verses/api/range/4321/4323/",
+      "utc": "2026-11-15T10:24:01.663394+00:00",
+      "status": 200,
+      "seconds": 0.349,
+      "bytes": 2791,
+      "sha256": "6763f93b3fa75ab4b2d758bbdd582ba2ebf28b07e5ac29b081d58005d2a5a717",
+      "set_cookie": false,
+      "headers": {
+        "Cache-Control": "public, max-age=0, s-maxage=300",
+        "Server": "Google Frontend",
+        "Date": "Sun, 15 Nov 2026 10:24:01 GMT",
+        "X-Served-By": "cache-lcy-eglc8600067-LCY",
+        "X-Cache": "HIT",
+        "X-Cache-Hits": "1",
+        "Vary": "Accept, Cookie, Authorization,cookie,need-authorization, x-fh-requested-host, accept-encoding"
+      }
+    },
+    {
+      "label": "repeat-2",
+      "url": "https://fathaker-quran.web.app/verses/api/range/4321/4323/",
+      "utc": "2026-11-15T10:24:03.937462+00:00",
+      "status": 200,
+      "seconds": 0.272,
+      "bytes": 2791,
+      "sha256": "6763f93b3fa75ab4b2d758bbdd582ba2ebf28b07e5ac29b081d58005d2a5a717",
+      "set_cookie": false,
+      "headers": {
+        "Cache-Control": "public, max-age=0, s-maxage=300",
+        "Server": "Google Frontend",
+        "Date": "Sun, 15 Nov 2026 10:24:03 GMT",
+        "X-Served-By": "cache-lhr-egll1980033-LHR",
+        "X-Cache": "HIT",
+        "X-Cache-Hits": "1",
+        "Vary": "Accept, Cookie, Authorization,cookie,need-authorization, x-fh-requested-host, accept-encoding"
+      }
+    },
+    {
+      "label": "repeat-3",
+      "url": "https://fathaker-quran.web.app/verses/api/range/4321/4323/",
+      "utc": "2026-11-15T10:24:06.197982+00:00",
+      "status": 200,
+      "seconds": 0.258,
+      "bytes": 2791,
+      "sha256": "6763f93b3fa75ab4b2d758bbdd582ba2ebf28b07e5ac29b081d58005d2a5a717",
+      "set_cookie": false,
+      "headers": {
+        "Cache-Control": "public, max-age=0, s-maxage=300",
+        "Server": "Google Frontend",
+        "Date": "Sun, 15 Nov 2026 10:24:06 GMT",
+        "X-Served-By": "cache-lhr-egwu1540047-LHR",
+        "X-Cache": "HIT",
+        "X-Cache-Hits": "1",
+        "Vary": "Accept, Cookie, Authorization,cookie,need-authorization, x-fh-requested-host, accept-encoding"
+      }
+    },
+    {
+      "label": "direct",
+      "url": "https://fathaker-251791733172.us-east1.run.app/verses/api/range/4321/4323/",
+      "utc": "2026-11-15T10:24:07.007060+00:00",
+      "status": 200,
+      "seconds": 0.808,
+      "bytes": 2791,
+      "sha256": "6763f93b3fa75ab4b2d758bbdd582ba2ebf28b07e5ac29b081d58005d2a5a717",
+      "set_cookie": false,
+      "headers": {
+        "server": "Google Frontend",
+        "date": "Sun, 15 Nov 2026 10:24:06 GMT",
+        "vary": "Accept, Cookie, Authorization",
+        "cache-control": "public, max-age=0, s-maxage=300"
+      }
+    },
+    {
+      "label": "page-17",
+      "url": "https://fathaker-quran.web.app/verses/api/mushaf-page/?page=17",
+      "utc": "2026-11-15T10:24:07.728197+00:00",
+      "status": 200,
+      "seconds": 0.72,
+      "bytes": 4706,
+      "sha256": "26cd2aaf27f5c5321f8a8f6a09e1b0761bc9457fe72aee79a2bb2f9f87855256",
+      "set_cookie": false,
+      "headers": {
+        "Cache-Control": "public, max-age=0, s-maxage=300",
+        "Server": "Google Frontend",
+        "Date": "Sun, 15 Nov 2026 10:24:07 GMT",
+        "X-Served-By": "cache-lcy-eglc8600048-LCY",
+        "X-Cache": "MISS",
+        "X-Cache-Hits": "0",
+        "Vary": "Accept, Cookie, Authorization,cookie,need-authorization, x-fh-requested-host, accept-encoding"
+      }
+    },
+    {
+      "label": "page-18",
+      "url": "https://fathaker-quran.web.app/verses/api/mushaf-page/?page=18",
+      "utc": "2026-11-15T10:24:08.543297+00:00",
+      "status": 200,
+      "seconds": 0.814,
+      "bytes": 4775,
+      "sha256": "3cfe6df49361008b08b501a4248c5154d475feabee7cf292e601076d6c2f1c58",
+      "set_cookie": false,
+      "headers": {
+        "Cache-Control": "public, max-age=0, s-maxage=300",
+        "Server": "Google Frontend",
+        "Date": "Sun, 15 Nov 2026 10:24:08 GMT",
+        "X-Served-By": "cache-lcy-eglc8600081-LCY",
+        "X-Cache": "MISS",
+        "X-Cache-Hits": "0",
+        "Vary": "Accept, Cookie, Authorization,cookie,need-authorization, x-fh-requested-host, accept-encoding"
+      }
+    },
+    {
+      "label": "page-17",
+      "url": "https://fathaker-quran.web.app/verses/api/mushaf-page/?page=17",
+      "utc": "2026-11-15T10:24:09.325119+00:00",
+      "status": 200,
+      "seconds": 0.78,
+      "bytes": 4706,
+      "sha256": "26cd2aaf27f5c5321f8a8f6a09e1b0761bc9457fe72aee79a2bb2f9f87855256",
+      "set_cookie": false,
+      "headers": {
+        "Cache-Control": "public, max-age=0, s-maxage=300",
+        "Server": "Google Frontend",
+        "Date": "Sun, 15 Nov 2026 10:24:09 GMT",
+        "X-Served-By": "cache-lhr-egll1980092-LHR",
+        "X-Cache": "MISS",
+        "X-Cache-Hits": "0",
+        "Vary": "Accept, Cookie, Authorization,cookie,need-authorization, x-fh-requested-host, accept-encoding"
+      }
+    },
+    {
+      "label": "candidate",
+      "url": "https://fathaker-quran.web.app/verses/api/verse/1/1/",
+      "utc": "2026-11-15T10:24:09.894374+00:00",
+      "status": 200,
+      "seconds": 0.567,
+      "bytes": 624,
+      "sha256": "209475125ed6960ae161fa00ca3d61127d7a906514277b1b6c4468ebe8d26bb6",
+      "set_cookie": false,
+      "headers": {
+        "Cache-Control": "public, max-age=0, s-maxage=300",
+        "Server": "Google Frontend",
+        "Date": "Sun, 15 Nov 2026 10:24:09 GMT",
+        "X-Served-By": "cache-lcy-eglc8600043-LCY",
+        "X-Cache": "MISS",
+        "X-Cache-Hits": "0",
+        "Vary": "Accept, Cookie, Authorization,cookie,need-authorization, x-fh-requested-host, accept-encoding"
+      }
+    },
+    {
+      "label": "candidate",
+      "url": "https://fathaker-quran.web.app/verses/api/surah/1/",
+      "utc": "2026-11-15T10:24:10.436865+00:00",
+      "status": 200,
+      "seconds": 0.542,
+      "bytes": 4444,
+      "sha256": "b4ae00b7ac06d6f07a4e98166dda3f4657c5dc6012cadeb50ca3d655dc2e357c",
+      "set_cookie": false,
+      "headers": {
+        "Cache-Control": "public, max-age=0, s-maxage=300",
+        "Server": "Google Frontend",
+        "Date": "Sun, 15 Nov 2026 10:24:10 GMT",
+        "X-Served-By": "cache-lcy-eglc8600026-LCY",
+        "X-Cache": "MISS",
+        "X-Cache-Hits": "0",
+        "Vary": "Accept, Cookie, Authorization,cookie,need-authorization, x-fh-requested-host, accept-encoding"
+      }
+    },
+    {
+      "label": "candidate",
+      "url": "https://fathaker-quran.web.app/verses/api/mutashabihat/phrase/1/",
+      "utc": "2026-11-15T10:24:11.183080+00:00",
+      "status": 404,
+      "seconds": 0.745,
+      "bytes": 47,
+      "sha256": "8357491b58580e52c3f6d9641b54ac520605fb6652cd094a9669cb75b6e71cb4",
+      "set_cookie": false,
+      "headers": {
+        "Cache-Control": "private, no-store",
+        "Server": "Google Frontend",
+        "Date": "Sun, 15 Nov 2026 10:24:11 GMT",
+        "X-Served-By": "cache-mrs1530025-MRS",
+        "X-Cache": "MISS",
+        "X-Cache-Hits": "0",
+        "Vary": "Accept, Cookie, x-fh-requested-host, accept-encoding"
+      }
+    },
+    {
+      "label": "existing-phrase",
+      "url": "https://fathaker-quran.web.app/verses/api/mutashabihat/phrase/4596/",
+      "utc": "2026-11-15T10:25:11.213864+00:00",
+      "status": 200,
+      "seconds": 0.634,
+      "bytes": 4429,
+      "sha256": "4c580f05808426e246e86b48fbc8cc7f76c234bb8d96fed01c7d06e528776894",
+      "set_cookie": false,
+      "headers": {
+        "Cache-Control": "public, max-age=0, s-maxage=300",
+        "Server": "Google Frontend",
+        "Date": "Sun, 15 Nov 2026 10:25:11 GMT",
+        "X-Served-By": "cache-lhr-egwu1540061-LHR",
+        "X-Cache": "MISS",
+        "X-Cache-Hits": "0",
+        "Vary": "Accept, Cookie, Authorization,cookie,need-authorization, x-fh-requested-host, accept-encoding"
+      }
+    },
+    {
+      "label": "by-ayah",
+      "url": "https://fathaker-quran.web.app/verses/api/mutashabihat/by-ayah/?ayah=S2V23",
+      "utc": "2026-11-15T10:25:12.278865+00:00",
+      "status": 200,
+      "seconds": 1.064,
+      "bytes": 155447,
+      "sha256": "b4f161394b1d15a11112b1558a80879548626d7e7a6de525d24acfe9d5106085",
+      "set_cookie": false,
+      "headers": {
+        "Cache-Control": "public, max-age=0, s-maxage=300",
+        "Server": "Google Frontend",
+        "Date": "Sun, 15 Nov 2026 10:25:12 GMT",
+        "X-Served-By": "cache-mrs1530021-MRS",
+        "X-Cache": "MISS",
+        "X-Cache-Hits": "0",
+        "Vary": "Accept, Cookie, Authorization,cookie,need-authorization, x-fh-requested-host, accept-encoding"
+      }
+    },
+    {
+      "label": "session-0",
+      "url": "https://fathaker-quran.web.app/verses/api/range/4321/4323/",
+      "utc": "2026-11-15T10:25:13.549770+00:00",
+      "status": 200,
+      "seconds": 0.64,
+      "bytes": 2791,
+      "sha256": "6763f93b3fa75ab4b2d758bbdd582ba2ebf28b07e5ac29b081d58005d2a5a717",
+      "set_cookie": false,
+      "headers": {
+        "Cache-Control": "private, no-store",
+        "Server": "Google Frontend",
+        "Date": "Sun, 15 Nov 2026 10:25:13 GMT",
+        "X-Served-By": "cache-lhr-egll1980072-LHR",
+        "X-Cache": "MISS",
+        "X-Cache-Hits": "0",
+        "Vary": "Accept, Cookie,cookie,need-authorization, x-fh-requested-host, accept-encoding"
+      }
+    },
+    {
+      "label": "session-1",
+      "url": "https://fathaker-quran.web.app/verses/api/range/4321/4323/",
+      "utc": "2026-11-15T10:25:14.183454+00:00",
+      "status": 200,
+      "seconds": 0.632,
+      "bytes": 2791,
+      "sha256": "6763f93b3fa75ab4b2d758bbdd582ba2ebf28b07e5ac29b081d58005d2a5a717",
+      "set_cookie": false,
+      "headers": {
+        "Cache-Control": "private, no-store",
+        "Server": "Google Frontend",
+        "Date": "Sun, 15 Nov 2026 10:25:14 GMT",
+        "X-Served-By": "cache-lhr-egwu1540074-LHR",
+        "X-Cache": "MISS",
+        "X-Cache-Hits": "0",
+        "Vary": "Accept, Cookie,cookie,need-authorization, x-fh-requested-host, accept-encoding"
+      }
+    },
+    {
+      "label": "authorization",
+      "url": "https://fathaker-quran.web.app/verses/api/range/4321/4323/",
+      "utc": "2026-11-15T10:25:14.983403+00:00",
+      "status": 403,
+      "seconds": 0.798,
+      "bytes": 39,
+      "sha256": "d15f2439f22c5b87b4794d4461b9c3995dc66f35fca4e6b15fbd559ece48c3e6",
+      "set_cookie": false,
+      "headers": {
+        "Cache-Control": "private, no-store",
+        "Server": "Google Frontend",
+        "Date": "Sun, 15 Nov 2026 10:25:14 GMT",
+        "X-Served-By": "cache-mrs1530067-MRS",
+        "X-Cache": "MISS",
+        "X-Cache-Hits": "0",
+        "Vary": "Accept, Cookie, x-fh-requested-host, accept-encoding"
+      }
+    },
+    {
+      "label": "head",
+      "url": "https://fathaker-quran.web.app/verses/api/range/4321/4323/",
+      "utc": "2026-11-15T10:25:15.254292+00:00",
+      "status": 200,
+      "seconds": 0.269,
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "set_cookie": false,
+      "headers": {
+        "Cache-Control": "public, max-age=0, s-maxage=300",
+        "Server": "Google Frontend",
+        "Date": "Sun, 15 Nov 2026 10:25:15 GMT",
+        "X-Served-By": "cache-lcy-eglc8600043-LCY",
+        "X-Cache": "HIT",
+        "X-Cache-Hits": "0",
+        "Vary": "Accept, Cookie, Authorization,cookie,need-authorization, x-fh-requested-host, accept-encoding"
+      }
+    },
+    {
+      "label": "mutation",
+      "url": "https://fathaker-quran.web.app/verses/api/range/4321/4323/",
+      "utc": "2026-11-15T10:25:15.820879+00:00",
+      "status": 405,
+      "seconds": 0.563,
+      "bytes": 41,
+      "sha256": "3986c0d4df30cfcf7db784ea02470c5776de9c1121b7306350b346bb695a752f",
+      "set_cookie": false,
+      "headers": {
+        "Cache-Control": "private, no-store",
+        "Server": "Google Frontend",
+        "Date": "Sun, 15 Nov 2026 10:25:15 GMT",
+        "X-Served-By": "cache-lcy-eglc8600036-LCY",
+        "X-Cache": "MISS",
+        "X-Cache-Hits": "0",
+        "Vary": "Accept, Cookie, x-fh-requested-host, accept-encoding"
+      }
+    },
+    {
+      "label": "excluded",
+      "url": "https://fathaker-quran.web.app/radio/",
+      "utc": "2026-11-15T10:25:17.145717+00:00",
+      "status": 200,
+      "seconds": 1.324,
+      "bytes": 182744,
+      "sha256": "514abc667cca81c69a23f768d87541f1ba22acaf2940e67080bb3688fe627278",
+      "set_cookie": true,
+      "headers": {
+        "Cache-Control": "private, no-store",
+        "Server": "Google Frontend",
+        "Date": "Sun, 15 Nov 2026 10:25:16 GMT",
+        "X-Served-By": "cache-mrs1530028-MRS",
+        "X-Cache": "MISS",
+        "X-Cache-Hits": "0",
+        "Vary": "Cookie,need-authorization, x-fh-requested-host, accept-encoding"
+      }
+    },
+    {
+      "label": "excluded",
+      "url": "https://fathaker-quran.web.app/verses/api/search/?q=الله",
+      "utc": "2026-11-15T10:25:19.702919+00:00",
+      "status": 200,
+      "seconds": 2.556,
+      "bytes": 1841679,
+      "sha256": "fbd1e50a9ae307a4e6295eb1efdf2aff69331f6932c7d2d57bd076244f209399",
+      "set_cookie": false,
+      "headers": {
+        "Cache-Control": "private, no-store",
+        "Server": "Google Frontend",
+        "Date": "Sun, 15 Nov 2026 10:25:18 GMT",
+        "X-Served-By": "cache-mrs1530044-MRS",
+        "X-Cache": "MISS",
+        "X-Cache-Hits": "0",
+        "Vary": "Accept, Cookie,cookie,need-authorization, x-fh-requested-host, accept-encoding"
+      }
+    },
+    {
+      "label": "excluded",
+      "url": "https://fathaker-quran.web.app/admin/login/",
+      "utc": "2026-11-15T10:25:20.327372+00:00",
+      "status": 200,
+      "seconds": 0.622,
+      "bytes": 4168,
+      "sha256": "4d6c5b398e031034f24d240c1096c7ed06ccca565b189902a82616cb98267f04",
+      "set_cookie": true,
+      "headers": {
+        "Cache-Control": "private, no-store",
+        "Server": "Google Frontend",
+        "Date": "Sun, 15 Nov 2026 10:25:20 GMT",
+        "X-Served-By": "cache-mrs1530062-MRS",
+        "X-Cache": "MISS",
+        "X-Cache-Hits": "0",
+        "Vary": "Cookie,need-authorization, x-fh-requested-host, accept-encoding"
+      }
+    },
+    {
+      "label": "excluded",
+      "url": "https://fathaker-quran.web.app/verses/api/range/1/101/",
+      "utc": "2026-11-15T10:25:21.273578+00:00",
+      "status": 200,
+      "seconds": 0.942,
+      "bytes": 95792,
+      "sha256": "6c709e6fddceab18173137c5e796f50dcb093fbce7aee456bfc8f3e3675a188a",
+      "set_cookie": false,
+      "headers": {
+        "Cache-Control": "private, no-store",
+        "Server": "Google Frontend",
+        "Date": "Sun, 15 Nov 2026 10:25:21 GMT",
+        "X-Served-By": "cache-mrs1530046-MRS",
+        "X-Cache": "MISS",
+        "X-Cache-Hits": "0",
+        "Vary": "Accept, Cookie,cookie,need-authorization, x-fh-requested-host, accept-encoding"
+      }
+    }
+  ],
+  "expiry": {
+    "utc": "2026-11-15T10:29:12.349440+00:00",
+    "elapsed_since_fill": 315.58,
+    "status": 200,
+    "same_payload": true,
+    "headers": {
+      "Cache-Control": "public, max-age=0, s-maxage=300",
+      "Date": "Sun, 15 Nov 2026 10:29:12 GMT",
+      "X-Cache": "MISS",
+      "X-Cache-Hits": "0"
+    }
+  },
+  "disable_switch": {
+    "status": 200,
+    "cache": "private, no-store",
+    "x_cache": "MISS",
+    "revision": "fathaker-cdn-disabled-10b7b0b"
+  },
+  "origin_requests": [
+    {
+      "utc": "2026-11-15T10:29:12.052756Z",
+      "revision": "fathaker-cdn-restored-10b7b0b",
+      "method": "GET",
+      "url": "https://fathaker-kc557mz5kq-ue.a.run.app/verses/api/range/4321/4323/",
+      "status": 200,
+      "latency": "0.158690s",
+      "user_agent": "Fathaker-CDN-Acceptance-20261115-Expiry"
+    },
+    {
+      "utc": "2026-11-15T10:25:20.567690Z",
+      "revision": "fathaker-cdn-10b7b0b",
+      "method": "GET",
+      "url": "https://fathaker-kc557mz5kq-ue.a.run.app/verses/api/range/1/101/",
+      "status": 200,
+      "latency": "0.189535s",
+      "user_agent": "Fathaker-CDN-Acceptance-20261115"
+    },
+    {
+      "utc": "2026-11-15T10:25:19.944042Z",
+      "revision": "fathaker-cdn-10b7b0b",
+      "method": "GET",
+      "url": "https://fathaker-kc557mz5kq-ue.a.run.app/admin/login/",
+      "status": 200,
+      "latency": "0.182665s",
+      "user_agent": "Fathaker-CDN-Acceptance-20261115"
+    },
+    {
+      "utc": "2026-11-15T10:25:17.357333Z",
+      "revision": "fathaker-cdn-10b7b0b",
+      "method": "GET",
+      "url": "https://fathaker-kc557mz5kq-ue.a.run.app/verses/api/search/?q=%D8%A7%D9%84%D9%84%D9%87",
+      "status": 200,
+      "latency": "0.572276s",
+      "user_agent": "Fathaker-CDN-Acceptance-20261115"
+    },
+    {
+      "utc": "2026-11-15T10:25:16.064851Z",
+      "revision": "fathaker-cdn-10b7b0b",
+      "method": "GET",
+      "url": "https://fathaker-kc557mz5kq-ue.a.run.app/radio/",
+      "status": 200,
+      "latency": "0.404673s",
+      "user_agent": "Fathaker-CDN-Acceptance-20261115"
+    },
+    {
+      "utc": "2026-11-15T10:25:15.509046Z",
+      "revision": "fathaker-cdn-10b7b0b",
+      "method": "POST",
+      "url": "https://fathaker-kc557mz5kq-ue.a.run.app/verses/api/range/4321/4323/",
+      "status": 405,
+      "latency": "0.003557s",
+      "user_agent": "Fathaker-CDN-Acceptance-20261115"
+    },
+    {
+      "utc": "2026-11-15T10:25:14.390241Z",
+      "revision": "fathaker-cdn-10b7b0b",
+      "method": "GET",
+      "url": "https://fathaker-kc557mz5kq-ue.a.run.app/verses/api/range/4321/4323/",
+      "status": 403,
+      "latency": "0.358935s",
+      "user_agent": "Fathaker-CDN-Acceptance-20261115"
+    },
+    {
+      "utc": "2026-11-15T10:25:13.823125Z",
+      "revision": "fathaker-cdn-10b7b0b",
+      "method": "GET",
+      "url": "https://fathaker-kc557mz5kq-ue.a.run.app/verses/api/range/4321/4323/",
+      "status": 200,
+      "latency": "0.168527s",
+      "user_agent": "Fathaker-CDN-Acceptance-20261115"
+    },
+    {
+      "utc": "2026-11-15T10:25:13.152865Z",
+      "revision": "fathaker-cdn-10b7b0b",
+      "method": "GET",
+      "url": "https://fathaker-kc557mz5kq-ue.a.run.app/verses/api/range/4321/4323/",
+      "status": 200,
+      "latency": "0.167199s",
+      "user_agent": "Fathaker-CDN-Acceptance-20261115"
+    },
+    {
+      "utc": "2026-11-15T10:25:11.436218Z",
+      "revision": "fathaker-cdn-10b7b0b",
+      "method": "GET",
+      "url": "https://fathaker-kc557mz5kq-ue.a.run.app/verses/api/mutashabihat/by-ayah/?ayah=S2V23",
+      "status": 200,
+      "latency": "0.261708s",
+      "user_agent": "Fathaker-CDN-Acceptance-20261115"
+    },
+    {
+      "utc": "2026-11-15T10:25:10.831540Z",
+      "revision": "fathaker-cdn-10b7b0b",
+      "method": "GET",
+      "url": "https://fathaker-kc557mz5kq-ue.a.run.app/verses/api/mutashabihat/phrase/4596/",
+      "status": 200,
+      "latency": "0.190916s",
+      "user_agent": "Fathaker-CDN-Acceptance-20261115"
+    },
+    {
+      "utc": "2026-11-15T10:25:10.573934Z",
+      "revision": "fathaker-cdn-10b7b0b",
+      "method": "GET",
+      "url": "https://fathaker-kc557mz5kq-ue.a.run.app/verses/api/range/4331/4333/",
+      "status": 200,
+      "latency": "0.157977s",
+      "user_agent": "Fathaker-CDN-Keepalive-20261115"
+    },
+    {
+      "utc": "2026-11-15T10:24:10.907379Z",
+      "revision": "fathaker-cdn-10b7b0b",
+      "method": "GET",
+      "url": "https://fathaker-kc557mz5kq-ue.a.run.app/verses/api/mutashabihat/phrase/1/",
+      "status": 404,
+      "latency": "0.146233s",
+      "user_agent": "Fathaker-CDN-Acceptance-20261115"
+    },
+    {
+      "utc": "2026-11-15T10:24:10.141779Z",
+      "revision": "fathaker-cdn-10b7b0b",
+      "method": "GET",
+      "url": "https://fathaker-kc557mz5kq-ue.a.run.app/verses/api/surah/1/",
+      "status": 200,
+      "latency": "0.163561s",
+      "user_agent": "Fathaker-CDN-Acceptance-20261115"
+    },
+    {
+      "utc": "2026-11-15T10:24:09.601657Z",
+      "revision": "fathaker-cdn-10b7b0b",
+      "method": "GET",
+      "url": "https://fathaker-kc557mz5kq-ue.a.run.app/verses/api/verse/1/1/",
+      "status": 200,
+      "latency": "0.162241s",
+      "user_agent": "Fathaker-CDN-Acceptance-20261115"
+    },
+    {
+      "utc": "2026-11-15T10:24:09.003048Z",
+      "revision": "fathaker-cdn-10b7b0b",
+      "method": "GET",
+      "url": "https://fathaker-kc557mz5kq-ue.a.run.app/verses/api/mushaf-page/?page=17",
+      "status": 200,
+      "latency": "0.177035s",
+      "user_agent": "Fathaker-CDN-Acceptance-20261115"
+    },
+    {
+      "utc": "2026-11-15T10:24:07.997027Z",
+      "revision": "fathaker-cdn-10b7b0b",
+      "method": "GET",
+      "url": "https://fathaker-kc557mz5kq-ue.a.run.app/verses/api/mushaf-page/?page=18",
+      "status": 200,
+      "latency": "0.182203s",
+      "user_agent": "Fathaker-CDN-Acceptance-20261115"
+    },
+    {
+      "utc": "2026-11-15T10:24:07.268695Z",
+      "revision": "fathaker-cdn-10b7b0b",
+      "method": "GET",
+      "url": "https://fathaker-kc557mz5kq-ue.a.run.app/verses/api/mushaf-page/?page=17",
+      "status": 200,
+      "latency": "0.234985s",
+      "user_agent": "Fathaker-CDN-Acceptance-20261115"
+    },
+    {
+      "utc": "2026-11-15T10:24:06.560188Z",
+      "revision": "fathaker-cdn-10b7b0b",
+      "method": "GET",
+      "url": "https://fathaker-251791733172.us-east1.run.app/verses/api/range/4321/4323/",
+      "status": 200,
+      "latency": "0.165921s",
+      "user_agent": "Fathaker-CDN-Acceptance-20261115"
+    },
+    {
+      "utc": "2026-11-15T10:23:59.010308Z",
+      "revision": "fathaker-cdn-10b7b0b",
+      "method": "GET",
+      "url": "https://fathaker-kc557mz5kq-ue.a.run.app/verses/api/range/4321/4323/",
+      "status": 200,
+      "latency": "0.153887s",
+      "user_agent": "Fathaker-CDN-Acceptance-20261115"
+    },
+    {
+      "utc": "2026-11-15T10:23:51.895601Z",
+      "revision": "fathaker-cdn-10b7b0b",
+      "method": "GET",
+      "url": "https://fathaker-kc557mz5kq-ue.a.run.app/verses/api/range/4321/4323/",
+      "status": 200,
+      "latency": "4.660474s",
+      "user_agent": "Fathaker-CDN-Acceptance-20261115"
+    }
+  ],
+  "external_audio_dns": [
+    {
+      "resolver": "https://dns.google/resolve",
+      "kind": "A",
+      "status": 0,
+      "answers": []
+    },
+    {
+      "resolver": "https://dns.google/resolve",
+      "kind": "AAAA",
+      "status": 0,
+      "answers": []
+    },
+    {
+      "resolver": "https://cloudflare-dns.com/dns-query",
+      "kind": "A",
+      "status": 0,
+      "answers": []
+    },
+    {
+      "resolver": "https://cloudflare-dns.com/dns-query",
+      "kind": "AAAA",
+      "status": 0,
+      "answers": []
+    }
+  ],
+  "query_key_samples": [
+    {
+      "page": 201,
+      "cache": "MISS",
+      "verse_keys": [
+        "S9V87",
+        "S9V88",
+        "S9V89",
+        "S9V90",
+        "S9V91",
+        "S9V92",
+        "S9V93"
+      ]
+    },
+    {
+      "page": 202,
+      "cache": "MISS",
+      "verse_keys": [
+        "S9V94",
+        "S9V95",
+        "S9V96",
+        "S9V97",
+        "S9V98",
+        "S9V99"
+      ]
+    },
+    {
+      "page": 201,
+      "cache": "HIT",
+      "verse_keys": [
+        "S9V87",
+        "S9V88",
+        "S9V89",
+        "S9V90",
+        "S9V91",
+        "S9V92",
+        "S9V93"
+      ]
+    },
+    {
+      "page": 202,
+      "cache": "HIT",
+      "verse_keys": [
+        "S9V94",
+        "S9V95",
+        "S9V96",
+        "S9V97",
+        "S9V98",
+        "S9V99"
+      ]
+    },
+    {
+      "query": "بسم",
+      "cache": "MISS",
+      "cache_control": "private, no-store",
+      "count": 5
+    },
+    {
+      "query": "الرحمن",
+      "cache": "MISS",
+      "cache_control": "private, no-store",
+      "count": 48
+    }
+  ]
+}

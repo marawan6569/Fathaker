@@ -266,3 +266,11 @@ References: [Cloud Run contract](https://cloud.google.com/run/docs/container-con
 [Firebase cookies](https://firebase.google.com/docs/hosting/manage-cache),
 [GCS storage options](https://django-storages.readthedocs.io/en/latest/backends/gcloud.html),
 [Neon Django](https://neon.com/docs/guides/django).
+
+## Deployed Hosting/CDN update
+
+Firebase Hosting is now active on the existing project's default domains, with
+selective anonymous JSON caching and private HTML/session/auth behavior. See
+[FIREBASE.md](FIREBASE.md) for the actual URLs, audited cache inventory, TTL/rollback,
+CDN evidence and pending manual authenticated checks. Custom-domain attachment,
+final content/media reconciliation and DNS cutover remain separately approved tasks.
