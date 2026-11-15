@@ -214,3 +214,11 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'API for the Fathaker (فذكر) Islamic platform — Quranic verses and radio stations.',
     'VERSION': '1.0.0',
 }
+
+# Zero disables future shared-cache responses; existing CDN entries expire by TTL.
+PUBLIC_API_CACHE_TTL = int(os.getenv('PUBLIC_API_CACHE_TTL', '0'))
+if not 0 <= PUBLIC_API_CACHE_TTL <= 900:
+    raise ImproperlyConfigured('PUBLIC_API_CACHE_TTL must be between 0 and 900 seconds.')
+
+# Exact proxy host names only; custom domain attachment is a separate cutover step.
+FIREBASE_HOSTS = ('fathaker-quran.web.app', 'fathaker-quran.firebaseapp.com')

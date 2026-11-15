@@ -1,9 +1,20 @@
 {
   "hosting": {
     "public": "public",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
     "rewrites": [
-      {"source": "**", "run": {"serviceId": "fathaker", "region": "us-east1"}}
-    ]
+      {
+        "source": "**",
+        "run": {
+          "serviceId": "fathaker",
+          "region": "us-east1"
+        }
+      }
+    ],
+    "site": "fathaker-quran"
   }
 }
