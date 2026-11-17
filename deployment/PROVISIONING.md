@@ -455,3 +455,21 @@ admin login/logout, GCS uploads and messages still need manual user acceptance a
 https://fathaker-quran.web.app/admin/login/. Passwords were not requested or handled.
 External verse-audio DNS remains unresolved at two independent public resolvers.
 No final reconciliation, DNS/custom-domain work, old-host change or PR merge.
+
+## Final Django custom-domain integration — 2026-11-17
+
+Serving revision `fathaker-domains-57c17d2` (100%), application
+`57c17d2452670ef5987e7216bad72cbff0b1d9bb`, immutable image:
+`us-east1-docker.pkg.dev/fathaker-quran/fathaker/web@sha256:73444c53c707d656664634c0d8fe36f2f2aa4273068ced08c452be2dea0675af`.
+
+Strict FIREBASE_HOSTS now includes apex/www. Runtime ALLOWEDHOSTS and HTTPS
+TRUSTEDORIGINS already included both; exact environment, secrets, resources, database,
+GCS and TTL 300 are preserved. Existing www→apex redirect remains; production
+og:url now uses fathaker.com. Firebase/run.app access remains valid.
+55 tests passed on SQLite/disposable PostgreSQL, CI/build passed, and live HTTPS,
+images/static/fonts/Admin availability/CSRF and GA4 collection transport passed.
+Production authenticated login/logout and GA4 Realtime require owner verification.
+Previous `fathaker-cdn-restored-10b7b0b` revision/image remain Ready for rollback.
+See [CUSTOM_DOMAINS.md](CUSTOM_DOMAINS.md) for exact verification and limits.
+No DNS, Hostinger, Firebase resources, old hosting, production content/media/audio,
+final data reconciliation or PR merge changes occurred in this task.

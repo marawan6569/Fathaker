@@ -243,3 +243,21 @@ WebP manifest if needed; verify Firebase cookie behavior on the approved custom
 hosts; extend the exact forwarded-host allowlist only when attaching those domains;
 and perform the separately approved DNS transition. No custom domains, DNS changes,
 old-host modifications, original-media writes, final sync or PR merge occurred.
+
+## Production-domain integration — 2026-11-17
+
+The owner connected production domains outside this task. Django now restores the
+exact allowlisted forwarded hosts `fathaker.com` and `www.fathaker.com`, in addition
+to the two Firebase-managed names. Existing ALLOWEDHOSTS/TRUSTEDORIGINS already
+contained both production domains and were preserved. www redirects to apex as
+configured by the owner; generated apex Open Graph/share URLs now remain public.
+
+Serving application `57c17d2`, revision `fathaker-domains-57c17d2`, 100% traffic.
+Image digest `sha256:73444c53c707d656664634c0d8fe36f2f2aa4273068ced08c452be2dea0675af`.
+55 tests and application CI passed; existing cache TTL 300 and runtime config are
+unchanged. Production GA4 tag/collection transport passed; actual custom-domain
+admin login/logout and GA4 Realtime remain manual. Full state/evidence/rollback:
+[CUSTOM_DOMAINS.md](CUSTOM_DOMAINS.md). No DNS, Hostinger, Firebase release,
+production data synchronization, original media or audio changes were made.
+Earlier pending Firebase Admin checks were subsequently confirmed by the owner;
+legacy verse audio was explicitly accepted/deferred as a non-blocking limitation.
