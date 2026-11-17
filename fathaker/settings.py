@@ -220,5 +220,8 @@ PUBLIC_API_CACHE_TTL = int(os.getenv('PUBLIC_API_CACHE_TTL', '0'))
 if not 0 <= PUBLIC_API_CACHE_TTL <= 900:
     raise ImproperlyConfigured('PUBLIC_API_CACHE_TTL must be between 0 and 900 seconds.')
 
-# Exact proxy host names only; custom domain attachment is a separate cutover step.
-FIREBASE_HOSTS = ('fathaker-quran.web.app', 'fathaker-quran.firebaseapp.com')
+# Exact public Hosting names only; also require membership in ALLOWED_HOSTS.
+FIREBASE_HOSTS = (
+    'fathaker-quran.web.app', 'fathaker-quran.firebaseapp.com',
+    'fathaker.com', 'www.fathaker.com',
+)

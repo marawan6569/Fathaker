@@ -42,7 +42,7 @@ class NoStoreMiddleware:
         return name == 'mutashabihat_phrase_detail_api'
 
     def __call__(self, request):
-        # Hosting rewrites Host to the Run service. Restore only our two known
+        # Hosting rewrites Host to the Run service. Restore only our exact known
         # public Hosting names, never an arbitrary client-controlled host.
         for header in ('HTTP_X_FH_REQUESTED_HOST', 'HTTP_X_FORWARDED_HOST'):
             host = request.META.get(header, '')
