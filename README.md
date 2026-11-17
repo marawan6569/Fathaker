@@ -3,6 +3,9 @@
 
 
 # Fathaker
+For local setup and the Cloud Run/GCS/Neon migration procedure, see
+[deployment/MIGRATION.md](deployment/MIGRATION.md).
+
 Fathker is an online platform that offers various resources related to the Quran, including a database of Quranic repetitions and similarities, live radio stations broadcasting Quran recitations, and tools for reading and listening to the Quran. It provides a user-friendly interface that allows users to easily navigate through the different features and customize their experience. Fathker aims to facilitate Quranic studies and provide a comprehensive resource for anyone interested in learning and exploring the Quran.
 
 

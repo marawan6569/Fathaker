@@ -5,33 +5,54 @@ on:
   pull_request:
 
 env:
-  SECRETKEY: ${{secrets.SECRET_KEY}}
-  DEBUG: 1
-  ALLOWEDHOSTS: 127.0.0.1;
-  DEBLOYED: 0
+  SECRETKEY: ci-only-not-for-production-secret-key-with-at-least-fifty-characters
+  DEBUG: "0"
+  ALLOWEDHOSTS: localhost;127.0.0.1;testserver
+  DEBLOYED: "0"
+  SQLITE_PATH: /tmp/fathaker-ci.sqlite3
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 4
       matrix:
-        python-version: [3.12]
-
+        database: [sqlite, postgres]
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: disposable-test-only
+          POSTGRES_DB: fathaker_rehearsal
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: ${{ matrix.database == 'postgres' && 'postgresql://postgres:disposable-test-only@127.0.0.1:5432/fathaker_rehearsal' || '' }}
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: Migrations
-      run: |
-        python manage.py migrate
-    - name: Run Tests
-      run: |
-        python manage.py test
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip check
+      - name: Check settings, migration state, and static collection
+        run: |
+          python manage.py check
+          python manage.py makemigrations --check --dry-run
+          python manage.py collectstatic --noinput
+      - name: Rehearse SQLite to PostgreSQL fixtures
+        if: matrix.database == 'postgres'
+        env:
+          REHEARSAL_DATABASE_URL: ${{ env.DATABASE_URL }}
+        run: python deployment/rehearse_migration.py
+      - name: Run all tests
+        run: python manage.py test --noinput
+      - name: Build container without credentials
+        if: matrix.database == 'sqlite'
+        run: docker build -t fathaker:ci .

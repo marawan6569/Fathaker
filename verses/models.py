@@ -44,3 +44,7 @@ class Verse(models.Model):
 
     def __str__(self):
         return self.verse[:50]
+
+
+# Register these models for commands without relying on admin autodiscovery.
+from .mutashabihat import Phrase, PhraseOccurrence  # noqa: E402,F401

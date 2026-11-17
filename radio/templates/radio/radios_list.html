@@ -1,5 +1,5 @@
 {% extends 'base/base.html' %}
-{% load static %}
+{% load static radio_images %}
 {% block style %}
     <link href="{% static 'radio/css/radios.css' %}" rel="stylesheet">
 {% endblock style %}
@@ -98,10 +98,11 @@
                     id: {{ radio.id }},
                     name: "{{ radio.name|escapejs }}",
                     src: "{{ radio.stream_url }}",
-                    img: "{% if radio.image %}{{ radio.image.url }}{% else %}{% static 'brand/radio-placeholder.png' %}{% endif %}",
+                    img: "{% if radio.image %}{{ radio.image|radio_image:'artwork'|escapejs }}{% else %}{% static 'brand/radio-placeholder.png' %}{% endif %}",
+                    thumbnail: "{{ radio.image|radio_image:'thumb'|escapejs }}",
                     has_image: {% if radio.image %}true{% else %}false{% endif %},
                     description: "{{ radio.description|default:''|escapejs }}",
-                    tags: [{% for name in radio.tags.names %}"{{ name|escapejs }}",{% endfor %}],
+                    tags: [{% for tag in radio.tags.all %}"{{ tag.name|escapejs }}",{% endfor %}],
                     slug: "{{ radio.slug|escapejs }}",
                     likes_count: {{ radio.likes_count }},
                     views_count: {{ radio.views_count }},

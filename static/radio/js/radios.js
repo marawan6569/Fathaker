@@ -74,7 +74,7 @@ function renderRadioCard(radio) {
     const playing = currentRadio && currentRadio.src === radio.src && !audio.paused;
     const liked = isLiked(radio.slug);
     const artwork = radio.has_image
-        ? `<img class="station-artwork" src="${escapeRadio(radio.img)}" alt="" width="56" height="56" loading="lazy">`
+        ? `<img class="station-artwork" src="${escapeRadio(radio.thumbnail || radio.img)}" alt="" width="56" height="56" loading="lazy">`
         : '';
     return `<article class="station-card radio-card${playing ? ' playing' : ''}" data-src="${escapeRadio(radio.src)}" data-slug="${escapeRadio(radio.slug)}">
         <div class="station-identity"><div class="station-symbol"><i class="ds-icon ds-icon-radio" aria-hidden="true"></i>${artwork}</div><div class="station-label"><a href="${escapeRadio(getDetailUrl(radio.slug))}" class="station-title card-radio-name">${escapeRadio(radio.name)}</a><p>${escapeRadio(radio.tags.join(' · ') || 'تلاوات القرآن الكريم')}</p></div></div>
@@ -241,7 +241,7 @@ function playAudio() {
             title: currentRadio.name,
             artist: 'فذكر',
             artwork: [
-                { src: currentRadio.img, sizes: '512x512', type: 'image/jpeg' }
+                { src: currentRadio.img }
             ]
         });
 

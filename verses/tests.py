@@ -65,3 +65,41 @@ class VersesListAPITest(APITestCase):
         response = self.client.get(self.endpoint + '?page=604', data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
+
+
+class QuranMigrationSearchTests(TestCase):
+    def setUp(self):
+        surah = Surah.objects.create(name='الفاتحة', name_without_tashkeel='الفاتحة')
+        self.verse = Verse.objects.create(
+            verse_pk='S1V1', page=1, the_quarter=1, juz=1, surah=surah,
+            verse='بِسْمِ اللَّهِ', verse_without_tashkeel='بسم الله',
+            number_in_surah=1, number_in_quran=1, is_sajda=False,
+        )
+
+    def test_arabic_search_with_and_without_diacritics(self):
+        cases = [
+            ('verses_search_api', 'بِسْمِ'),
+            ('verses_search_api', 'بسم'),
+            ('verses_starts_with_api', 'بسم'),
+            ('verses_ends_with_api', 'الله'),
+        ]
+        for endpoint, query in cases:
+            with self.subTest(endpoint=endpoint, query=query):
+                response = self.client.get(reverse('verses:' + endpoint), {'q': query})
+                self.assertEqual(response.status_code, 200)
+                self.assertEqual([v['verse_pk'] for v in response.json()], ['S1V1'])
+
+    def test_mushaf_preserves_phrase_and_audio_relationships(self):
+        from .models import Audio, Phrase, PhraseOccurrence
+        audio = Audio.objects.create(url='https://example.test/recitation.mp3')
+        self.verse.audio.add(audio)
+        phrase = Phrase.objects.create(
+            phrase_id=42, source_verse=self.verse, surahs_count=1, ayahs_count=1,
+            occurrences_count=1, source_word_from=1, source_word_to=2,
+        )
+        PhraseOccurrence.objects.create(phrase=phrase, verse=self.verse, word_from=1, word_to=2)
+        response = self.client.get(reverse('verses:mushaf_page_api'), {'page': 1})
+        self.assertEqual(response.status_code, 200)
+        verse = response.json()['verses'][0]
+        self.assertEqual(verse['audio_url'], audio.url)
+        self.assertEqual(verse['mutashabihat'][0]['phrase_id'], 42)

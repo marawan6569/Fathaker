@@ -1,12 +1,13 @@
-from django.db.models import Q, Min
+from django.db.models import Q, Prefetch
 from django.shortcuts import get_object_or_404
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
 from .models import Verse
-from .mutashabihat import Phrase, PhraseOccurrence
+from .mutashabihat import PhraseOccurrence
 from .serializers import VerseSerializer, PhraseSerializer
+from .querysets import serialized_verses, serialized_phrases
 
 
 # #1
@@ -30,7 +31,7 @@ class VersesList(ListAPIView):
         Endpoint To Get all verses
         or get a page of quran using ?page=page_number
     """
-    queryset = Verse.objects.all()
+    queryset = serialized_verses()
     serializer_class = VerseSerializer
 
     def list(self, request, *args, **kwargs):
@@ -65,7 +66,7 @@ class VersesSearch(ListAPIView):
         q = self.request.GET.get('q', '')
         if not q:
             return Verse.objects.none()
-        return Verse.objects.filter(
+        return serialized_verses().filter(
             Q(verse__icontains=q) | Q(verse_without_tashkeel__icontains=q)
         )
 
@@ -98,7 +99,7 @@ class SurahVerses(ListAPIView):
     def get_queryset(self):
         surah_id = self.kwargs['surah_id']
         surah_prefix = f'S{surah_id}V'
-        queryset = Verse.objects.filter(verse_pk__startswith=surah_prefix)
+        queryset = serialized_verses().filter(verse_pk__startswith=surah_prefix)
         q = self.request.GET.get('q', '').strip()
         if q:
             queryset = queryset.filter(
@@ -131,7 +132,7 @@ class VerseDetail(APIView):
     )
     def get(self, request, surah_id, verse_number):
         verse_pk = f'S{surah_id}V{verse_number}'
-        verse = get_object_or_404(Verse, verse_pk=verse_pk)
+        verse = get_object_or_404(serialized_verses(), verse_pk=verse_pk)
         return Response(VerseSerializer(verse).data)
 
 
@@ -164,7 +165,7 @@ class VersesRange(ListAPIView):
         end = self.kwargs['end']
         if start > end:
             start, end = end, start
-        return Verse.objects.filter(number_in_quran__range=(start, end))
+        return serialized_verses().filter(number_in_quran__range=(start, end))
 
 
 # #6
@@ -190,7 +191,7 @@ class VersesStartsWith(ListAPIView):
         q = self.request.GET.get('q', '')
         if not q:
             return Verse.objects.none()
-        return Verse.objects.filter(
+        return serialized_verses().filter(
             Q(verse__startswith=q) | Q(verse_without_tashkeel__startswith=q)
         )
 
@@ -218,7 +219,7 @@ class VersesEndsWith(ListAPIView):
         q = self.request.GET.get('q', '')
         if not q:
             return Verse.objects.none()
-        return Verse.objects.filter(
+        return serialized_verses().filter(
             Q(verse__endswith=q) | Q(verse_without_tashkeel__endswith=q)
         )
 
@@ -253,8 +254,7 @@ class MushafPageAPI(APIView):
 
         verses = Verse.objects.filter(page=page_num).select_related('surah').prefetch_related(
             'audio',
-            'phrase_occurrences',
-            'phrase_occurrences__phrase'
+            Prefetch('phrase_occurrences', queryset=PhraseOccurrence.objects.select_related('phrase'))
         ).order_by('number_in_quran')
 
         # Build enriched verse data with surah-start flags
@@ -338,11 +338,9 @@ class MutashabihatByAyah(APIView):
         if not ayah:
             return Response({'error': 'ayah parameter is required'}, status=400)
 
-        phrases = Phrase.objects.filter(
+        phrases = serialized_phrases().filter(
             occurrences__verse__verse_pk=ayah
-        ).distinct().prefetch_related(
-            'occurrences__verse', 'source_verse'
-        )
+        ).distinct()
 
         return Response(PhraseSerializer(phrases, many=True).data)
 
@@ -376,27 +374,11 @@ class MutashabihatSearch(APIView):
         ).values_list('verse_pk', flat=True)
 
         # Find phrases that have occurrences in those verses
-        phrases = Phrase.objects.filter(
+        phrases = serialized_phrases().filter(
             occurrences__verse__verse_pk__in=matching_verse_pks
-        ).distinct().prefetch_related(
-            'occurrences__verse', 'source_verse'
-        )
+        ).distinct()
 
         return Response(PhraseSerializer(phrases, many=True).data)
-
-
-class MutashabihatPhraseDetail(APIView):
-    """Get details of a specific phrase by ID"""
-
-    def get(self, request, phrase_id):
-        try:
-            phrase = Phrase.objects.select_related('source_verse').prefetch_related(
-                'occurrences__verse'
-            ).get(phrase_id=phrase_id)
-        except Phrase.DoesNotExist:
-            return Response({'error': 'Phrase not found'}, status=404)
-
-        return Response(PhraseSerializer(phrase).data)
 
 
 # #11 Mutashabihat Phrase Detail
@@ -408,6 +390,6 @@ class MutashabihatPhraseDetail(APIView):
 class MutashabihatPhraseDetail(RetrieveAPIView):
     """Get full details for a specific mutashabihat phrase by phrase_id"""
     serializer_class = PhraseSerializer
-    queryset = Phrase.objects.prefetch_related('occurrences__verse', 'source_verse')
+    queryset = serialized_phrases()
     lookup_field = 'phrase_id'
 
